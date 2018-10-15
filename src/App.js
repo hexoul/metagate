@@ -20,7 +20,7 @@ class App extends React.Component {
       <Layout className="layout">
         <Header>
           <div className="logo">
-            <img className="logoimg" alt="logo" src="https://etherscan.io/token/images/metadium2_28.png" />
+            <img className="logoimg" alt="logo" src="https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true" />
           </div>
           <Menu
             theme="dark"
