@@ -1,10 +1,9 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import './App.css';
-
 import { User, Topic, Achievement } from './components';
 
-const { Header, Footer, Content } = Layout;
+// Styles.
+import './App.css';
 
 class App extends React.Component {
   state = {
@@ -18,7 +17,7 @@ class App extends React.Component {
   render() {
     return (
       <Layout className="layout">
-        <Header>
+        <Layout.Header>
           <div className="logo">
             <img className="logoimg" alt="logo" src="https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true" />
           </div>
@@ -33,15 +32,15 @@ class App extends React.Component {
             <Menu.Item key="2">Topic Registry</Menu.Item>
             <Menu.Item key="3">Achievement Registry</Menu.Item>
           </Menu>
-        </Header>
-        <Content style={{ padding: '0 50px' }}>
+        </Layout.Header>
+        <Layout.Content style={{ padding: '0 50px' }}>
           {this.state.nav === '1' && <User />}
           {this.state.nav === '2' && <Topic />}
           {this.state.nav === '3' && <Achievement />}
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>
+        </Layout.Content>
+        <Layout.Footer style={{ textAlign: 'center' }}>
           metagate ©2018 Created by hexoul
-        </Footer>
+        </Layout.Footer>
       </Layout>
     );
   }
