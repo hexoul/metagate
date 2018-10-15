@@ -1,5 +1,5 @@
 # Gateway
-
+To enter by registering topic and achievement.
 
 ## Preview
 

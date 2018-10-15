@@ -1,19 +1,31 @@
 import React from 'react';
-import { Tabs } from 'antd';
+import { Layout, Menu } from 'antd';
 import './App.css';
 
-const TabPane = Tabs.TabPane;
-
-function callback(key) {
-  console.log(key);
-}
+const { Header, Footer, Content } = Layout;
 
 const App = () => (
-  <Tabs defaultActiveKey="1" onChange={callback}>
-    <TabPane tab="Tab 1" key="1">Content of Tab Pane 1</TabPane>
-    <TabPane tab="Tab 2" key="2">Content of Tab Pane 2</TabPane>
-    <TabPane tab="Tab 3" key="3">Content of Tab Pane 3</TabPane>
-  </Tabs>
+  <Layout className="layout">
+    <Header>
+      <div className="logo" />
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        defaultSelectedKeys={['1']}
+        style={{ lineHeight: '64px' }}
+      >
+        <Menu.Item key="1">nav 1</Menu.Item>
+        <Menu.Item key="2">nav 2</Menu.Item>
+        <Menu.Item key="3">nav 3</Menu.Item>
+      </Menu>
+    </Header>
+    <Content style={{ padding: '0 50px' }}>
+      <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>Content</div>
+    </Content>
+    <Footer style={{ textAlign: 'center' }}>
+      metagate ©2018 Created by hexoul
+    </Footer>
+  </Layout>
 );
 
 export default App;
