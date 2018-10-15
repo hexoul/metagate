@@ -23,11 +23,15 @@
 }
 
 .logo {
-  width: 120px;
-  height: 31px;
+  height: 100%;
   background: rgba(255,255,255,.2);
-  margin: 16px 24px 16px 0;
   float: left;
+  align-items: center;
+}
+
+.logoimg {
+  height: 100%;
+  object-fit: contain;
 }
 
 @keyframes App-logo-spin {

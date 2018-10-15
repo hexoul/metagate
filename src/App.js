@@ -7,16 +7,18 @@ const { Header, Footer, Content } = Layout;
 const App = () => (
   <Layout className="layout">
     <Header>
-      <div className="logo" />
+      <div className="logo">
+        <img className="logoimg" alt="logo" src="https://etherscan.io/token/images/metadium2_28.png" />
+      </div>
       <Menu
         theme="dark"
         mode="horizontal"
         defaultSelectedKeys={['1']}
         style={{ lineHeight: '64px' }}
       >
-        <Menu.Item key="1">nav 1</Menu.Item>
-        <Menu.Item key="2">nav 2</Menu.Item>
-        <Menu.Item key="3">nav 3</Menu.Item>
+        <Menu.Item key="1">AA/SP Registry</Menu.Item>
+        <Menu.Item key="2">Topic Registry</Menu.Item>
+        <Menu.Item key="3">Achievement Registry</Menu.Item>
       </Menu>
     </Header>
     <Content style={{ padding: '0 50px' }}>
