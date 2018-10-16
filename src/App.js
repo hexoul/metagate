@@ -9,8 +9,7 @@ import './App.css';
 import web3config from './ethereum/web3-config.json';
 
 // Contracts.
-import { getContractsAddresses } from './ethereum/contracts/addresses';
-import Identity from './ethereum/contracts/Identity.contract';
+import { getContractsAddresses, Identity, TopicRegistry, AchievementManager } from './ethereum/contracts';
 
 class App extends React.Component {
   state = {

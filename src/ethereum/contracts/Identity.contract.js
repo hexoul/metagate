@@ -4,7 +4,7 @@ import { getBranch, getABI } from './helpers';
 
 const ethUtil = require('ethereumjs-util');
 
-export default class Identity {
+class Identity {
   async init() {
     const branch = getBranch(web3config.netid);
 
@@ -29,3 +29,5 @@ export default class Identity {
     return this.identityInstance.methods.addClaim(topic, scheme, web3config.addr, signature, bData, uri).encodeABI();
   }
 }
+
+export {Identity}
