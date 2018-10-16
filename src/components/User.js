@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Table, Input, Modal, Button, List } from 'antd';
 
 var structArr = [];
 var typeArr = ['Personal', 'Institution'];
@@ -7,6 +7,9 @@ var titleArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var rollArr = ['Attestation Agency', 'Service Provider'];
 var metaidArr = ['0x1111111', '0x1111112','0x1111113','0x1111114', '0x1111115','0x1111116'];
 var registerdate;
+var user;
+
+const Search = Input.Search;
 
 const columns = [{
   title: 'Type',
@@ -16,7 +19,8 @@ const columns = [{
   }, {
   title: 'Title',
   dataIndex: 'title',
-  render: text => <a href="https://github.com/hexoul/metagate">{text}</a>
+  render: text => <Button type="dashed" size='default' style={{width: '100%'}} onClick={user.showModal}>{text}</Button>,
+  width: '10%',
   }, {
   title: 'Roll',
   dataIndex: 'roll',
@@ -36,50 +40,44 @@ const columns = [{
   dataIndex: 'registerDate',
   }];
 
+  const listData = [
+    'Racing car sprays burning fuel into crowd.',
+    'Japanese princess to wed commoner.',
+    'Australian walks 100km after outback crash.',
+    'Man charged over missing wedding girl.',
+    'Los Angeles battles huge wildfires.',
+  ];
+
 class User extends React.Component {
-   state = {
-     data: [],
-   };
+  state = {
+    data: [],
+    modalVisible: false,
+  }
+  
+  constructor(props) {
+    super(props);
+    user=this;
+  }
 
-  // handleTableChange = (pagination, filters, sorter) => {
-  //   const pager = { ...this.state.pagination };
-  //   pager.current = pagination.current;
-  //   this.setState({
-  //     pagination: pager,
-  //   });
-  //   console.log(pagination,filters,sorter);
-  //   this.fetch({
-  //     results: pagination.pageSize,
-  //     page: pagination.current,
-  //     sortField: sorter.field,
-  //     sortOrder: sorter.order,
-  //     ...filters,
-  //   });
-  // }
+  showModal = () => {
+    this.setState({
+      modalVisible: true,
+    });
+  }
 
-  // fetch = (params = {}) => {
-  //   console.log('params:', params);
-  //   this.setState({ loading: true });
-  //   reqwest({
-  //     url: 'https://randomuser.me/api',
-  //     method: 'get',
-  //     data: {
-  //       results: 10,
-  //       ...params,
-  //     },
-  //     type: 'json',
-  //   }).then((data) => {
-  //     const pagination = { ...this.state.pagination };
-  //     // Read total count from server
-  //     // pagination.total = data.totalCount;
-  //     pagination.total = 200;
-  //     this.setState({
-  //       loading: false,
-  //       data: data.results,
-  //       pagination,
-  //     });
-  //   });
-  // }
+  handleOk = (e) => {
+    console.log(e);
+    this.setState({
+      modalVisible: false,
+    });
+  }
+
+  handleCancel = (e) => {
+    console.log(e);
+    this.setState({
+      modalVisible: false,
+    });
+  }
 
   componentDidMount() {
     this.initialize();
@@ -100,27 +98,45 @@ class User extends React.Component {
     this.setState({data: structArr});
   }
 
-  //   const pagination = { ...this.state.pagination };
-  //     // Read total count from server
-  //     // pagination.total = data.totalCount;
-  //     pagination.total = 200;
-  //     this.setState({
-  //       loading: false,
-  //       data: structArr,
-  //       pagination,
-  //     });
-  // }
   onChange(pagination, filters, sorter) {
     console.log('params', pagination, filters, sorter);
   }
+
   render() {
     console.log(structArr);
     return (
-      <Table
-        columns={columns}
-        dataSource={this.state.data}
-        onChange={this.onChange}
-      />
+      <div>
+        <Search
+          placeholder="Search by Type, Meta ID, Title"
+          onSearch={value => console.log(value)}
+          enterButton
+          style={{ width: 500, right: 0 }}
+        />
+        <br />
+        <Modal
+          title="getting title"
+          visible={this.state.modalVisible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}>
+          <h3 style={{ margin: '16px 0' }}>AA or SP</h3>
+          <h3 style={{ margin: '16px 0' }}>Explain</h3>
+          <h3 style={{ margin: '16px 0' }}>MetaID</h3>
+          <List
+            size="small"
+            header={<div>Topic Created</div>}
+            footer={<div>Footer</div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+        </Modal>
+        <br />
+        <Table
+          columns={columns}
+          dataSource={this.state.data}
+          onChange={this.onChange}
+        />
+      </div>
     );
   }
 }

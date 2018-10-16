@@ -51,7 +51,7 @@ class App extends React.Component {
             <Menu.Item key="3">Achievement Registry</Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content style={{ padding: '50px 10px 50px 10px', background: '#fff' }}>
+        <Layout.Content style={{ padding: '50px 50px 0px 50px', background: '#fff' }}>
           {this.state.nav === '1' && <User />}
           {this.state.nav === '2' && <Topic />}
           {this.state.nav === '3' && <Achievement />}
