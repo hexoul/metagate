@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Button, List } from 'antd';
+import { Table, Input, Modal, List } from 'antd';
 
 var structArr = [];
 var typeArr = ['Personal', 'Institution'];
@@ -14,16 +14,18 @@ const Search = Input.Search;
 const columns = [{
   title: 'Type',
   dataIndex: 'type',
+  key: 'type',
   sorter: (a, b) => a.type.length - b.type.length,
   width: '10%',
   }, {
   title: 'Title',
   dataIndex: 'title',
-  render: text => <Button type="dashed" size='default' style={{width: '100%'}} onClick={user.showModal}>{text}</Button>,
+  key: 'title',
   width: '10%',
   }, {
   title: 'Roll',
   dataIndex: 'roll',
+  key: 'roll',
   filters: [
     { text: 'AA', value: 'Attestation Agency' },
     { text: 'SP', value: 'Service Provider' },
@@ -34,10 +36,12 @@ const columns = [{
   }, {
   title: 'MetaID',
   dataIndex: 'metaID',
+  key: 'metaID',
   width: '30%',
   }, {
   title: 'Registered on',
   dataIndex: 'registerDate',
+  key: 'registerDate',
   }];
 
   const listData = [
@@ -79,7 +83,7 @@ class User extends React.Component {
     });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.initialize();
   }
 
@@ -103,7 +107,6 @@ class User extends React.Component {
   }
 
   render() {
-    console.log(structArr);
     return (
       <div>
         <Search
@@ -123,8 +126,15 @@ class User extends React.Component {
           <h3 style={{ margin: '16px 0' }}>MetaID</h3>
           <List
             size="small"
-            header={<div>Topic Created</div>}
-            footer={<div>Footer</div>}
+            header={<div><h2>Topic Created</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+          <br />
+          <List
+            size="small"
+            header={<div><h2>Acheivement Created</h2></div>}
             bordered
             dataSource={listData}
             renderItem={item => (<List.Item>{item}</List.Item>)}
@@ -132,6 +142,9 @@ class User extends React.Component {
         </Modal>
         <br />
         <Table
+          onRow={(record, index) => ({
+            onClick: () => { console.log('onRow', record,index); this.showModal(); } 
+          })}
           columns={columns}
           dataSource={this.state.data}
           onChange={this.onChange}

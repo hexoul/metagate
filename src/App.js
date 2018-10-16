@@ -9,18 +9,23 @@ import './App.css';
 import web3config from './ethereum/web3-config.json';
 
 // Contracts.
-import { getContractsAddresses } from './ethereum/contracts/addresses';
-import Identity from './ethereum/contracts/Identity.contract';
+import { getContractsAddresses, Identity, TopicRegistry, AchievementManager } from './ethereum/contracts';
 
 class App extends React.Component {
   state = {
-    nav: '1'
+    nav: '1',
+    contractReady: false,
   };
 
   async initContracts() {
     await getContractsAddresses(web3config.netid);
-    this.identity = new Identity();
-    await this.identity.init();
+    this.contracts = {
+      identity: new Identity(),
+      topicRegistry: new TopicRegistry(),
+      achievementManager: new AchievementManager()
+    };
+    Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
+      .then(() => { this.setState({contractReady: true}) });
   }
 
   constructor(props) {
@@ -33,6 +38,16 @@ class App extends React.Component {
   }
 
   render() {
+    let content;
+    if (this.state.contractReady) {
+      switch (this.state.nav) {
+        case '1': content = <User />; break;
+        case '2': content = <Topic />; break;
+        case '3': content = <Achievement />; break;
+        default: break;
+      }
+    }
+
     return (
       <Layout className="layout">
         <Layout.Header>
@@ -51,10 +66,8 @@ class App extends React.Component {
             <Menu.Item key="3">Achievement Registry</Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content style={{ padding: '50px 50px 0px 50px', background: '#fff' }}>
-          {this.state.nav === '1' && <User />}
-          {this.state.nav === '2' && <Topic />}
-          {this.state.nav === '3' && <Achievement />}
+        <Layout.Content style={{ padding: '50px 50px 0px 50px', backgroundColor: '#fff' }}>
+          {content}
         </Layout.Content>
         <Layout.Footer style={{ textAlign: 'center' }}>
           metagate ©2018 Created by hexoul

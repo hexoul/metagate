@@ -3,7 +3,7 @@ import web3config from '../web3-config.json';
 import { getAddresses } from './addresses';
 import { getBranch, getABI } from './helpers';
 
-export default class IdentityManager {
+class IdentityManager {
   async init() {
     const { IDENTITY_MANAGER_ADDRESS } = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
@@ -12,3 +12,5 @@ export default class IdentityManager {
     this.identityManagerInstance = new web3.eth.Contract(identityManagerAbi.abi, IDENTITY_MANAGER_ADDRESS);
   }
 }
+
+export {IdentityManager}
