@@ -67,7 +67,7 @@ class App extends React.Component {
             <Menu.Item key="3">Achievement Registry</Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content style={{ padding: '0 50px' }}>
+        <Layout.Content style={{ padding: '50px 50px 0px 50px', backgroundColor: '#fff' }}>
           {content}
         </Layout.Content>
         <Layout.Footer style={{ textAlign: 'center' }}>
