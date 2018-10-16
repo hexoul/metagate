@@ -5,10 +5,28 @@ import { User, Topic, Achievement } from './components';
 // Styles.
 import './App.css';
 
+// Web3.
+import web3config from './ethereum/web3-config.json';
+
+// Contracts.
+import { getContractsAddresses } from './ethereum/contracts/addresses';
+import Identity from './ethereum/contracts/Identity.contract';
+
 class App extends React.Component {
   state = {
     nav: '1'
   };
+
+  async initContracts() {
+    await getContractsAddresses(web3config.netid);
+    this.identity = new Identity();
+    await this.identity.init();
+  }
+
+  constructor(props) {
+    super(props);
+    this.initContracts();
+  }
 
   onMenuClick = ({key}) => {
     this.setState({nav: key});
