@@ -56,6 +56,11 @@ class User extends React.Component {
   state = {
     data: [],
     modalVisible: false,
+    type: '',
+    title: '',
+    roll: '',
+    metaID: '',
+    registerDate: '',
   }
   
   constructor(props) {
@@ -63,9 +68,14 @@ class User extends React.Component {
     user=this;
   }
 
-  showModal = () => {
+  showModal = (record) => {
     this.setState({
       modalVisible: true,
+      type: record.type,
+      title: record.title,
+      roll: record.roll,
+      metaID: record.metaID,
+      registerDate: record.registerDate,
     });
   }
 
@@ -102,8 +112,22 @@ class User extends React.Component {
     this.setState({data: structArr});
   }
 
-  onChange(pagination, filters, sorter) {
-    console.log('params', pagination, filters, sorter);
+  onSearch(value) {
+    console.log('onSearch value: ',value);
+    if(value == '' || value == undefined) {
+      this.setState({data: structArr});
+    }
+    else {
+      var searchData = [];
+      this.state.data.forEach(function(element) {
+        //Exist value
+        if(Object.values(element).indexOf(value) > -1) {
+          console.log('onSearch1: ',Object.values(element).indexOf(value));
+          searchData.push(element);
+        }
+      });
+      this.setState({data: searchData});
+    }
   }
 
   render() {
@@ -111,43 +135,46 @@ class User extends React.Component {
       <div>
         <Search
           placeholder="Search by Type, Meta ID, Title"
-          onSearch={value => console.log(value)}
+          onSearch={value => this.onSearch(value)}
           enterButton
-          style={{ width: 500, right: 0 }}
+          style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         <br />
         <Modal
-          title="getting title"
+          title={this.state.title}
           visible={this.state.modalVisible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}>
-          <h3 style={{ margin: '16px 0' }}>AA or SP</h3>
-          <h3 style={{ margin: '16px 0' }}>Explain</h3>
-          <h3 style={{ margin: '16px 0' }}>MetaID</h3>
-          <List
-            size="small"
-            header={<div><h2>Topic Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
-          />
-          <br />
-          <List
-            size="small"
-            header={<div><h2>Acheivement Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
-          />
+          <div>
+            <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
+             <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
+            <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
+            <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
+            <List
+              size="small"
+              header={<div><h2>Topic Created</h2></div>}
+              bordered
+              dataSource={listData}
+              renderItem={item => (<List.Item>{item}</List.Item>)}
+            />
+            <br />
+            <List
+              size="small"
+              header={<div><h2>Acheivement Created</h2></div>}
+              bordered
+              dataSource={listData}
+              renderItem={item => (<List.Item>{item}</List.Item>)}
+            />
+          </div>
         </Modal>
         <br />
         <Table
+          rowKey={record => record.uid}
           onRow={(record, index) => ({
-            onClick: () => { console.log('onRow', record,index); this.showModal(); } 
+            onClick: () => { console.log('onRow', record); this.showModal(record); } 
           })}
           columns={columns}
           dataSource={this.state.data}
-          onChange={this.onChange}
         />
       </div>
     );
