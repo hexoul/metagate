@@ -38,17 +38,17 @@ class App extends React.Component {
     this.setState({nav: key});
   }
 
-  render() {
-    let content;
-    if (this.state.contractReady) {
-      switch (this.state.nav) {
-        case '1': content = <User />; break;
-        case '2': content = <Topic />; break;
-        case '3': content = <Achievement />; break;
-        default: break;
-      }
+  getContent() {
+    if (! this.state.contractReady) return;
+    switch (this.state.nav) {
+      case '1': return <User />;
+      case '2': return <Topic />;
+      case '3': return <Achievement />;
+      default: return;
     }
+  }
 
+  render() {
     return (
       <Layout className="layout">
         <Layout.Header>
@@ -68,7 +68,7 @@ class App extends React.Component {
           </Menu>
         </Layout.Header>
         <Layout.Content style={{ padding: '0 50px' }}>
-          {content}
+          {this.getContent()}
         </Layout.Content>
         <Layout.Footer style={{ textAlign: 'center' }}>
           metagate ©2018 Created by hexoul
