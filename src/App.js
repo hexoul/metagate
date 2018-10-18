@@ -17,14 +17,15 @@ class App extends React.Component {
     contractReady: false,
   };
 
+  contracts = {
+    identity: new Identity(),
+    identityManager: new IdentityManager(),
+    topicRegistry: new TopicRegistry(),
+    achievementManager: new AchievementManager()
+  };
+  
   async initContracts() {
     await getContractsAddresses(web3config.netid);
-    this.contracts = {
-      identity: new Identity(),
-      identityManager: new IdentityManager(),
-      topicRegistry: new TopicRegistry(),
-      achievementManager: new AchievementManager()
-    };
     Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
       .then(() => { this.setState({contractReady: true}) });
   }
