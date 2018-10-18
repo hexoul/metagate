@@ -98,10 +98,10 @@ const columns = [
           addModalVisible: false,
           qrModalVisible: true,
         });
-        console.log(this.state);
         break;
       default: break;
     }
+    console.log(this.state);
   }
 
   handleClose = (e) => {
@@ -230,8 +230,8 @@ const columns = [
           width={500}
           title={'Add New Topic'}
           visible={this.state.addModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
+          onOk={this.handleClose}
+          onCancel={this.handleClose}
           footer={null}>
             <Form layout='vertical'>
               <FormItem
@@ -267,6 +267,15 @@ const columns = [
               </Button></center>
               </FormItem>
             </Form>
+        </Modal>
+        <br />
+        <Modal
+          width={500}
+          title={'Scan QR Code to Add New Topic'}
+          visible={this.state.qrModalVisible}
+          onOk={this.handleClose}
+          onCancel={this.handleClose}
+          footer={null}>
         </Modal>
         <br />
         <Table
