@@ -1,48 +1,49 @@
 import React from 'react';
 import { Table, Input, Modal, List } from 'antd';
 
-var structArr = [];
+var storedData = [];
 var typeArr = ['Personal', 'Institution'];
 var titleArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var rollArr = ['Attestation Agency', 'Service Provider'];
-var metaidArr = ['0x1111111', '0x1111112','0x1111113','0x1111114', '0x1111115','0x1111116'];
+var metaidArr = ['0x7304f14b0909640acc4f6a192381091eb1f37701', '0x7304f14b0909640acc4f6a192381091eb1f37702',  
+                 '0x7304f14b0909640acc4f6a192381091eb1f37703', '0x7304f14b0909640acc4f6a192381091eb1f37704',
+                 '0x7304f14b0909640acc4f6a192381091eb1f37705', '0x7304f14b0909640acc4f6a192381091eb1f37706'];
 var registerdate;
-var user;
 
 const Search = Input.Search;
 
 const columns = [{
-  title: 'Type',
-  dataIndex: 'type',
-  key: 'type',
-  sorter: (a, b) => a.type.length - b.type.length,
-  width: '10%',
-  }, {
-  title: 'Title',
-  dataIndex: 'title',
-  key: 'title',
-  width: '10%',
-  }, {
-  title: 'Roll',
-  dataIndex: 'roll',
-  key: 'roll',
-  filters: [
-    { text: 'AA', value: 'Attestation Agency' },
-    { text: 'SP', value: 'Service Provider' },
-  ],
-  width: '15%',
-  filterMultiple: false,
-  onFilter: (value, record) => record.roll.indexOf(value) === 0,
-  }, {
-  title: 'MetaID',
-  dataIndex: 'metaID',
-  key: 'metaID',
-  width: '30%',
-  }, {
-  title: 'Registered on',
-  dataIndex: 'registerDate',
-  key: 'registerDate',
-  }];
+                    title: 'Type',
+                    dataIndex: 'type',
+                    key: 'type',
+                    sorter: (a, b) => a.type.length - b.type.length,
+                    width: '10%',
+                  }, {
+                    title: 'Title',
+                    dataIndex: 'title',
+                    key: 'title',
+                    width: '10%',
+                  }, {
+                    title: 'Roll',
+                    dataIndex: 'roll',
+                    key: 'roll',
+                    filters: [
+                      { text: 'AA', value: 'Attestation Agency' },
+                      { text: 'SP', value: 'Service Provider' },
+                    ],
+                    width: '15%',
+                    filterMultiple: false,
+                    onFilter: (value, record) => record.roll.indexOf(value) === 0,
+                  }, {
+                    title: 'MetaID',
+                    dataIndex: 'metaID',
+                    key: 'metaID',
+                    width: '30%',
+                  }, {
+                    title: 'Registered on',
+                    dataIndex: 'registerDate',
+                    key: 'registerDate',
+                }];
 
   const listData = [
     'Racing car sprays burning fuel into crowd.',
@@ -61,11 +62,6 @@ class User extends React.Component {
     roll: '',
     metaID: '',
     registerDate: '',
-  }
-  
-  constructor(props) {
-    super(props);
-    user=this;
   }
 
   showModal = (record) => {
@@ -94,14 +90,15 @@ class User extends React.Component {
   }
 
   componentWillMount() {
+    console.log('componentWillMount');
     this.initialize();
   }
 
   initialize() {
     var i;
-    for(i=0; i<20; i++) {
+    for (i=0; i<20; i++) {
       //Get data (hardcoding)
-      structArr.push({
+      storedData.push({
         type: typeArr[Math.floor((Math.random() * 10)/9)],
         title: titleArr[Math.floor(Math.random() * 6)],
         roll: rollArr[Math.floor((Math.random() * 10)/9)],
@@ -109,17 +106,17 @@ class User extends React.Component {
         registerDate: Date.now() - Math.floor((Math.random()*10)),
       });
     }
-    this.setState({data: structArr});
+    this.setState({data: storedData});
   }
 
   onSearch(value) {
     console.log('onSearch value: ',value);
-    if(value == '' || value == undefined) {
-      this.setState({data: structArr});
+    if (value == '' || value == undefined) {
+      this.setState({data: storedData});
     }
     else {
       var searchData = [];
-      this.state.data.forEach(function(element) {
+      storedData.forEach(function(element) {
         //Exist value
         if(Object.values(element).indexOf(value) > -1) {
           console.log('onSearch1: ',Object.values(element).indexOf(value));
@@ -147,7 +144,7 @@ class User extends React.Component {
           onCancel={this.handleCancel}>
           <div>
             <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-             <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
+            <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
             <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
             <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
             <List
