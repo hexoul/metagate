@@ -41,9 +41,9 @@ class App extends React.Component {
   getContent() {
     if (! this.state.contractReady) return;
     switch (this.state.nav) {
-      case '1': return <User />;
-      case '2': return <Topic />;
-      case '3': return <Achievement />;
+      case '1': return <User contracts={this.contracts} />;
+      case '2': return <Topic contracts={this.contracts} />;
+      case '3': return <Achievement contracts={this.contracts} />;
       default: return;
     }
   }
