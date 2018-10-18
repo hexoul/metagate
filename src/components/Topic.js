@@ -1,16 +1,32 @@
 import React from 'react';
 import { Table, Input, Modal, List, Button, Radio, Form } from 'antd';
 
+// Test data
 var storedData = [];
 var newTopicData = [];
 var issuerArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
 var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
-var registerdate;
+const listData = [
+  'Racing car sprays burning fuel into crowd.',
+  'Japanese princess to wed commoner.',
+  'Australian walks 100km after outback crash.',
+  'Man charged over missing wedding girl.',
+  'Los Angeles battles huge wildfires.',
+];
 
-const Search = Input.Search;
-const FormItem = Form.Item;
-const { TextArea } = Input;
+function setTestData() {
+  for (var i=0; i < 20; i++) {
+    // Get data (hardcoding)
+    storedData.push({
+      topicID: Math.floor((Math.random() * 2000)+1),
+      issuer: issuerArr[Math.floor(Math.random() * 6)],
+      title: titleArr[Math.floor((Math.random() * 6))],
+      explanation: explanationArr[Math.floor(Math.random() * 6)],
+      registerDate: Date.now() - Math.floor((Math.random()*10)),
+    });
+  }
+}
 
 const columns = [
   {
@@ -41,17 +57,10 @@ const columns = [
     title: 'Registered on',
     dataIndex: 'registerDate',
     key: 'registerDate',
-  }];
+  }
+];
 
-  const listData = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-  ];
-
-  class Topic extends React.Component {
+class Topic extends React.Component {
   state = {
     data: [],
     topicID: '',
@@ -68,7 +77,7 @@ const columns = [
   }
 
   showModal = (record, type) => {
-    console.log('showModal: ',record,type);
+    console.log('showModal: ', record, type);
     switch(type) {
       case 'info':
         this.setState({
@@ -98,7 +107,6 @@ const columns = [
           addModalVisible: false,
           qrModalVisible: true,
         });
-        console.log(this.state);
         break;
       default: break;
     }
@@ -117,17 +125,7 @@ const columns = [
   }
 
   initialize() {
-    var i;
-    for (i=0; i<20; i++) {
-      //Get data (hardcoding)
-      storedData.push({
-        topicID: Math.floor((Math.random() * 2000)+1),
-        issuer: issuerArr[Math.floor(Math.random() * 6)],
-        title: titleArr[Math.floor((Math.random() * 6))],
-        explanation: explanationArr[Math.floor(Math.random() * 6)],
-        registerDate: Date.now() - Math.floor((Math.random()*10)),
-      });
-    }
+    setTestData();
     this.setState({data: storedData});
   }
 
@@ -137,11 +135,11 @@ const columns = [
 
     switch(e.target.value) {
       case '1' :
-        //All topic
+        // All topic
         this.setState({data: storedData});
       break;
       case '2' :
-        //Pre-fixed topic (1 ~ 1024)
+        // Pre-fixed topic (1 ~ 1024)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]<1025) {
             sortData.push(element);
@@ -150,7 +148,7 @@ const columns = [
         this.setState({data: sortData});
       break;
       case '3' :
-        //Added topic (1025 ~)
+        // Added topic (1025 ~)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]>1024) {
             sortData.push(element);
@@ -170,11 +168,10 @@ const columns = [
     console.log('onSearch value: ',value);
     if (value == '' || value == undefined) {
       this.setState({data: storedData});
-    }
-    else {
+    } else {
       var searchData = [];
       storedData.forEach(function(element) {
-        //Exist value
+        // Exist value
         if(Object.values(element).indexOf(value) > -1) {
           console.log('onSearch1: ',Object.values(element).indexOf(value));
           searchData.push(element);
@@ -188,15 +185,15 @@ const columns = [
     return (
       <div>
         <div>
-        <Button 
-          type="primary"
-          size='large'
-          onClick={()=>this.showModal('none','add')}> Add New Topic </Button>
-        <Search
-          placeholder="Search by Creator, No., Keyword"
-          onSearch={value => this.onSearch(value)}
-          enterButton
-          style={{ width: 500, float: 'right', marginBottom: '20px' }}
+          <Button 
+            type="primary"
+            size='large'
+            onClick={()=>this.showModal('none','add')}> Add New Topic </Button>
+          <Input.Search
+            placeholder="Search by Creator, No., Keyword"
+            onSearch={value => this.onSearch(value)}
+            enterButton
+            style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         </div>
         <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>
@@ -234,14 +231,14 @@ const columns = [
           onCancel={this.handleCancel}
           footer={null}>
             <Form layout='vertical'>
-              <FormItem
+              <Form.Item
                 label="Title">
                 <Input
                   onChange={this.handleChange} 
                   id='title'
                   placeholder="Input Title"/>
-              </FormItem>
-              <FormItem
+              </Form.Item>
+              <Form.Item
                 label="Topic No"
                 >
                 <Input 
@@ -249,23 +246,25 @@ const columns = [
                   id='topic'
                   placeholder="Input Topic No or"/>
                   <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
-              </FormItem>
-              <FormItem
+              </Form.Item>
+              <Form.Item
                 label="Explanation">
-                <TextArea 
+                <Input.TextArea 
                   onChange={this.handleChange} 
                   placeholder="Enter Explanation (max. 32 bytes)" 
                   autosize={{ minRows: 2, maxRows: 6 }}
                   id='explanation'/>
-              </FormItem>
-              <FormItem>
-              <center><Button 
-                type='primary'
-                size='large'
-                onClick={()=>this.showModal('none','qr')}> 
-                  Add
-              </Button></center>
-              </FormItem>
+              </Form.Item>
+              <Form.Item>
+                <center>
+                  <Button 
+                    type='primary'
+                    size='large'
+                    onClick={()=>this.showModal('none','qr')}> 
+                      Add
+                  </Button>
+                </center>
+              </Form.Item>
             </Form>
         </Modal>
         <br />
