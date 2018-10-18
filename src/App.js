@@ -9,7 +9,7 @@ import './App.css';
 import web3config from './ethereum/web3-config.json';
 
 // Contracts.
-import { getContractsAddresses, Identity, TopicRegistry, AchievementManager } from './ethereum/contracts';
+import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager } from './ethereum/contracts';
 
 class App extends React.Component {
   state = {
@@ -17,13 +17,15 @@ class App extends React.Component {
     contractReady: false,
   };
 
+  contracts = {
+    identity: new Identity(),
+    identityManager: new IdentityManager(),
+    topicRegistry: new TopicRegistry(),
+    achievementManager: new AchievementManager()
+  };
+  
   async initContracts() {
     await getContractsAddresses(web3config.netid);
-    this.contracts = {
-      identity: new Identity(),
-      topicRegistry: new TopicRegistry(),
-      achievementManager: new AchievementManager()
-    };
     Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
       .then(() => { this.setState({contractReady: true}) });
   }
@@ -37,17 +39,17 @@ class App extends React.Component {
     this.setState({nav: key});
   }
 
-  render() {
-    let content;
-    if (this.state.contractReady) {
-      switch (this.state.nav) {
-        case '1': content = <User />; break;
-        case '2': content = <Topic />; break;
-        case '3': content = <Achievement />; break;
-        default: break;
-      }
+  getContent() {
+    if (! this.state.contractReady) return;
+    switch (this.state.nav) {
+      case '1': return <User contracts={this.contracts} />;
+      case '2': return <Topic contracts={this.contracts} />;
+      case '3': return <Achievement contracts={this.contracts} />;
+      default: return;
     }
+  }
 
+  render() {
     return (
       <Layout className="layout">
         <Layout.Header>
@@ -67,10 +69,15 @@ class App extends React.Component {
           </Menu>
         </Layout.Header>
         <Layout.Content style={{ padding: '50px 50px 0px 50px', backgroundColor: '#fff' }}>
-          {content}
+          {this.getContent()}
         </Layout.Content>
-        <Layout.Footer style={{ textAlign: 'center' }}>
-          metagate ©2018 Created by hexoul
+        <Layout.Footer>
+          <div style={{ textAlign: 'right' }}>
+            FAQ | Customer service :&nbsp;
+            <a href="mailto:contact@metadium.com" target="_blank">contact@metadium.com</a>
+          </div>
+          <br />
+          <center>metagate ©2018 Created by hexoul</center>
         </Layout.Footer>
       </Layout>
     );
