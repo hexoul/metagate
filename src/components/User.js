@@ -116,21 +116,48 @@ class User extends React.Component {
   }
 
   onSearch(value) {
-    console.log('onSearch value: ',value);
-    if (value == '' || value == undefined) {
+    // Reset search
+    if (value === '') {
       this.setState({data: storedData});
+      return;
     }
-    else {
-      var searchData = [];
-      storedData.forEach(function(element) {
-        // Exist value
-        if(Object.values(element).indexOf(value) > -1) {
-          console.log('onSearch1: ',Object.values(element).indexOf(value));
-          searchData.push(element);
-        }
-      });
-      this.setState({data: searchData});
-    }
+
+    // Search with given value
+    var searchData = [];
+    storedData.forEach(function(element) {
+      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
+    });
+    this.setState({data: searchData});
+  }
+
+  getModal() {
+    return <Modal
+      title={this.state.title}
+      visible={this.state.modalVisible}
+      onOk={this.handleOk}
+      onCancel={this.handleCancel}>
+      <div>
+        <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
+        <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
+        <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
+        <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
+        <List
+          size="small"
+          header={<div><h2>Topic Created</h2></div>}
+          bordered
+          dataSource={listData}
+          renderItem={item => (<List.Item>{item}</List.Item>)}
+        />
+        <br />
+        <List
+          size="small"
+          header={<div><h2>Acheivement Created</h2></div>}
+          bordered
+          dataSource={listData}
+          renderItem={item => (<List.Item>{item}</List.Item>)}
+        />
+      </div>
+    </Modal>;
   }
 
   render() {
@@ -143,33 +170,7 @@ class User extends React.Component {
           style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         <br />
-        <Modal
-          title={this.state.title}
-          visible={this.state.modalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}>
-          <div>
-            <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-            <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
-            <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
-            <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
-            <List
-              size="small"
-              header={<div><h2>Topic Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-            <br />
-            <List
-              size="small"
-              header={<div><h2>Acheivement Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-          </div>
-        </Modal>
+        {this.getModal()}
         <br />
         <Table
           rowKey={record => record.uid}
