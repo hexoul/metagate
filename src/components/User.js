@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, List } from 'antd';
 
+// Test data
 var storedData = [];
 var typeArr = ['Personal', 'Institution'];
 var titleArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
@@ -8,50 +9,65 @@ var rollArr = ['Attestation Agency', 'Service Provider'];
 var metaidArr = ['0x7304f14b0909640acc4f6a192381091eb1f37701', '0x7304f14b0909640acc4f6a192381091eb1f37702',  
                  '0x7304f14b0909640acc4f6a192381091eb1f37703', '0x7304f14b0909640acc4f6a192381091eb1f37704',
                  '0x7304f14b0909640acc4f6a192381091eb1f37705', '0x7304f14b0909640acc4f6a192381091eb1f37706'];
-var registerdate;
+const listData = [
+  'Racing car sprays burning fuel into crowd.',
+  'Japanese princess to wed commoner.',
+  'Australian walks 100km after outback crash.',
+  'Man charged over missing wedding girl.',
+  'Los Angeles battles huge wildfires.',
+];
 
-const Search = Input.Search;
+function setTestData() {
+  for (var i=0; i < 20; i++) {
+    // Get data (hardcoding)
+    storedData.push({
+      type: typeArr[Math.floor((Math.random() * 10)/9)],
+      title: titleArr[Math.floor(Math.random() * 6)],
+      roll: rollArr[Math.floor((Math.random() * 10)/9)],
+      metaID: metaidArr[Math.floor(Math.random() * 6)],
+      registerDate: Date.now() - Math.floor((Math.random()*10)),
+    });
+  }
+}
 
-const columns = [{
-                    title: 'Type',
-                    dataIndex: 'type',
-                    key: 'type',
-                    sorter: (a, b) => a.type.length - b.type.length,
-                    width: '10%',
-                  }, {
-                    title: 'Title',
-                    dataIndex: 'title',
-                    key: 'title',
-                    width: '10%',
-                  }, {
-                    title: 'Roll',
-                    dataIndex: 'roll',
-                    key: 'roll',
-                    filters: [
-                      { text: 'AA', value: 'Attestation Agency' },
-                      { text: 'SP', value: 'Service Provider' },
-                    ],
-                    width: '15%',
-                    filterMultiple: false,
-                    onFilter: (value, record) => record.roll.indexOf(value) === 0,
-                  }, {
-                    title: 'MetaID',
-                    dataIndex: 'metaID',
-                    key: 'metaID',
-                    width: '30%',
-                  }, {
-                    title: 'Registered on',
-                    dataIndex: 'registerDate',
-                    key: 'registerDate',
-                }];
-
-  const listData = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-  ];
+const columns = [
+  {
+    title: 'Type',
+    dataIndex: 'type',
+    key: 'type',
+    sorter: (a, b) => a.type.length - b.type.length,
+    width: '10%',
+  },
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    key: 'title',
+    width: '10%',
+  },
+  {
+    title: 'Roll',
+    dataIndex: 'roll',
+    key: 'roll',
+    filters: [
+      { text: 'AA', value: 'Attestation Agency' },
+      { text: 'SP', value: 'Service Provider' },
+    ],
+    width: '15%',
+    filterMultiple: false,
+    onFilter: (value, record) => record.roll.indexOf(value) === 0,
+  },
+  {
+    title: 'MetaID',
+    dataIndex: 'metaID',
+    key: 'metaID',
+    width: '30%',
+  },
+  {
+    title: 'Registered on',
+    dataIndex: 'registerDate',
+    key: 'registerDate',
+  }
+];
 
 class User extends React.Component {
   state = {
@@ -95,17 +111,7 @@ class User extends React.Component {
   }
 
   initialize() {
-    var i;
-    for (i=0; i<20; i++) {
-      //Get data (hardcoding)
-      storedData.push({
-        type: typeArr[Math.floor((Math.random() * 10)/9)],
-        title: titleArr[Math.floor(Math.random() * 6)],
-        roll: rollArr[Math.floor((Math.random() * 10)/9)],
-        metaID: metaidArr[Math.floor(Math.random() * 6)],
-        registerDate: Date.now() - Math.floor((Math.random()*10)),
-      });
-    }
+    setTestData();
     this.setState({data: storedData});
   }
 
@@ -117,7 +123,7 @@ class User extends React.Component {
     else {
       var searchData = [];
       storedData.forEach(function(element) {
-        //Exist value
+        // Exist value
         if(Object.values(element).indexOf(value) > -1) {
           console.log('onSearch1: ',Object.values(element).indexOf(value));
           searchData.push(element);
@@ -130,7 +136,7 @@ class User extends React.Component {
   render() {
     return (
       <div>
-        <Search
+        <Input.Search
           placeholder="Search by Type, Meta ID, Title"
           onSearch={value => this.onSearch(value)}
           enterButton
