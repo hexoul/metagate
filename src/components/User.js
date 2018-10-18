@@ -80,6 +80,15 @@ class User extends React.Component {
     registerDate: '',
   }
 
+  constructor() {
+    super();
+    setTestData();
+  }
+
+  componentWillMount() {
+    this.setState({data: storedData});
+  }
+
   showModal = (record) => {
     this.setState({
       modalVisible: true,
@@ -105,16 +114,6 @@ class User extends React.Component {
     });
   }
 
-  componentWillMount() {
-    console.log('componentWillMount');
-    this.initialize();
-  }
-
-  initialize() {
-    setTestData();
-    this.setState({data: storedData});
-  }
-
   onSearch(value) {
     // Reset search
     if (value === '') {
@@ -130,12 +129,13 @@ class User extends React.Component {
     this.setState({data: searchData});
   }
 
-  getModal() {
+  getModalUserDetail() {
     return <Modal
       title={this.state.title}
       visible={this.state.modalVisible}
       onOk={this.handleOk}
-      onCancel={this.handleCancel}>
+      onCancel={this.handleCancel}
+      >
       <div>
         <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
         <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
@@ -170,7 +170,7 @@ class User extends React.Component {
           style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         <br />
-        {this.getModal()}
+        {this.getModalUserDetail()}
         <br />
         <Table
           rowKey={record => record.uid}

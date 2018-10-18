@@ -76,6 +76,15 @@ class Topic extends React.Component {
     qrModalVisible: false,
   }
 
+  constructor() {
+    super();
+    setTestData();
+  }
+
+  componentWillMount() {
+    this.setState({data: storedData});
+  }
+
   showModal = (record, type) => {
     console.log('showModal: ', record, type);
     switch(type) {
@@ -120,25 +129,14 @@ class Topic extends React.Component {
     });
   }
 
-  componentWillMount() {
-    this.initialize();
-  }
-
-  initialize() {
-    setTestData();
-    this.setState({data: storedData});
-  }
-
   handleSorting = (e) => {
     var sortData=[];
-    console.log('hanle sorting value: ',e.target);
-
     switch(e.target.value) {
-      case '1' :
+      case '1':
         // All topic
         this.setState({data: storedData});
-      break;
-      case '2' :
+        break;
+      case '2':
         // Pre-fixed topic (1 ~ 1024)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]<1025) {
@@ -146,8 +144,8 @@ class Topic extends React.Component {
           }
         });
         this.setState({data: sortData});
-      break;
-      case '3' :
+        break;
+      case '3':
         // Added topic (1025 ~)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]>1024) {
@@ -155,30 +153,91 @@ class Topic extends React.Component {
           }
         });
         this.setState({data: sortData});
-      break;
+        break;
+      default: break;
     }
   }
 
   handleChange = (e) => {
     newTopicData[e.target.id] = e.target.value;
-    console.log('handle change: ',newTopicData);
   }
 
   onSearch(value) {
-    console.log('onSearch value: ',value);
-    if (value == '' || value == undefined) {
+    // Reset search
+    if (value === '') {
       this.setState({data: storedData});
-    } else {
-      var searchData = [];
-      storedData.forEach(function(element) {
-        // Exist value
-        if(Object.values(element).indexOf(value) > -1) {
-          console.log('onSearch1: ',Object.values(element).indexOf(value));
-          searchData.push(element);
-        }
-      });
-      this.setState({data: searchData});
+      return;
     }
+
+    // Search with given value
+    var searchData = [];
+    storedData.forEach(function(element) {
+      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
+    });
+    this.setState({data: searchData});
+  }
+
+  getModalTopicDetail(record) {
+    Modal.info({
+      width: '70%',
+      title: record.title,
+      content: (
+        <div>
+          <h5 style={{ float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
+          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
+  getModalAddTopic() {
+    return <Modal
+      width={500}
+      title={'Add New Topic'}
+      visible={this.state.addModalVisible}
+      onOk={this.handleOk}
+      onCancel={this.handleCancel}
+      footer={null}
+      >
+        <Form layout='vertical'>
+          <Form.Item
+            label="Title">
+            <Input
+              onChange={this.handleChange} 
+              id='title'
+              placeholder="Input Title"/>
+          </Form.Item>
+          <Form.Item
+            label="Topic No"
+            >
+            <Input 
+              onChange={this.handleChange} 
+              id='topic'
+              placeholder="Input Topic No or"/>
+              <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
+          </Form.Item>
+          <Form.Item
+            label="Explanation">
+            <Input.TextArea 
+              onChange={this.handleChange} 
+              placeholder="Enter Explanation (max. 32 bytes)" 
+              autosize={{ minRows: 2, maxRows: 6 }}
+              id='explanation'/>
+          </Form.Item>
+          <Form.Item>
+            <center>
+              <Button 
+                type='primary'
+                size='large'
+                onClick={()=>this.showModal('none','qr')}> 
+                  Add
+              </Button>
+            </center>
+          </Form.Item>
+        </Form>
+    </Modal>;
   }
 
   render() {
@@ -202,76 +261,12 @@ class Topic extends React.Component {
           <Radio.Button value='3'>Added</Radio.Button>
         </Radio.Group>
         <br />
-        <Modal
-          width={900}
-          title={this.state.title}
-          visible={this.state.infoModalVisible}
-          onOk={this.handleClose}
-          onCancel={this.handleClose}>
-          <div>
-            <h5 style={{ float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-            <h3 style={{ margin: '10px 0 0 0' }}>{this.state.explanation}</h3>
-            <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {this.state.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
-            <List
-              style={{ textAlign:'center' }}
-              size='small'
-              header={<div><h2>Topic Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-            <br />
-          </div>
-        </Modal>
-        <Modal
-          width={500}
-          title={'Add New Topic'}
-          visible={this.state.addModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-          footer={null}>
-            <Form layout='vertical'>
-              <Form.Item
-                label="Title">
-                <Input
-                  onChange={this.handleChange} 
-                  id='title'
-                  placeholder="Input Title"/>
-              </Form.Item>
-              <Form.Item
-                label="Topic No"
-                >
-                <Input 
-                  onChange={this.handleChange} 
-                  id='topic'
-                  placeholder="Input Topic No or"/>
-                  <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
-              </Form.Item>
-              <Form.Item
-                label="Explanation">
-                <Input.TextArea 
-                  onChange={this.handleChange} 
-                  placeholder="Enter Explanation (max. 32 bytes)" 
-                  autosize={{ minRows: 2, maxRows: 6 }}
-                  id='explanation'/>
-              </Form.Item>
-              <Form.Item>
-                <center>
-                  <Button 
-                    type='primary'
-                    size='large'
-                    onClick={()=>this.showModal('none','qr')}> 
-                      Add
-                  </Button>
-                </center>
-              </Form.Item>
-            </Form>
-        </Modal>
+        {this.getModalAddTopic()}
         <br />
         <Table
           rowKey={record => record.uid}
           onRow={(record, index) => ({
-            onClick: () => { console.log('onRow', record); this.showModal(record,'info'); }
+            onClick: () => { this.getModalTopicDetail(record); }
           })}
           columns={columns}
           dataSource={this.state.data}
