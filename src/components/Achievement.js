@@ -48,24 +48,25 @@ const columns = [
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '15%',
+    width: '20%',
   },
   {
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
-    width: '40%',
+    width: '45%',
   },
   {
     title: 'Reward',
     dataIndex: 'reward',
     key: 'reward',
-    width: '15%',
+    width: '10%',
   },
   {
     title: 'Registered on',
     dataIndex: 'registerDate',
     key: 'registerDate',
+    width: '10%',
   }];
 
   const listData = [
@@ -242,7 +243,7 @@ const columns = [
               placeholder="Search by Creator, No., Keyword"
               onSearch={value => this.onSearch(value)}
               enterButton
-              style={{ width: 500, float: 'right', marginBottom: '20px' }}
+              style={{ width: '50%', float: 'right', marginBottom: '20px' }}
             />
           </div>
           <Modal

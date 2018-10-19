@@ -33,7 +33,7 @@ function timeConverter(UNIX_timestamp){
 
 const columns = [
   {
-    title: 'TopicID',
+    title: 'Topic ID',
     dataIndex: 'topicID',
     key: 'topicID',
     width: '10%',
@@ -42,24 +42,25 @@ const columns = [
     title: 'Issuer',
     dataIndex: 'issuer',
     key: 'issuer',
-    width: '10%',
+    width: '15%',
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '15%',
+    width: '25%',
   },
   {
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
-    width: '30%',
+    width: '40%',
   },
   {
     title: 'Registered on',
     dataIndex: 'registerDate',
     key: 'registerDate',
+    width: '10%',
   }
 ];
 
