@@ -130,7 +130,7 @@ class User extends React.Component {
           <br />
           <List
             size='small'
-            header={<div><h2>Acheivement Created</h2></div>}
+            header={<div><h2>Achievement Created</h2></div>}
             bordered
             dataSource={listData}
             renderItem={item => (<List.Item>{item}</List.Item>)}
@@ -148,7 +148,7 @@ class User extends React.Component {
           placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
           enterButton
-          style={{ width: 500, float: 'right', marginBottom: '20px' }}
+          style={{ width: '50%', float: 'right', marginBottom: '20px' }}
         />
         <br />
         <Table
