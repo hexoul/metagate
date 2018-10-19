@@ -248,7 +248,7 @@ const columns = [
           <Modal
             width={900}
             title={this.data.title}
-            visible={this.data.infoModalVisible}
+            visible={this.state.infoModalVisible}
             onOk={this.handleClose}
             onCancel={this.handleClose}>
             <div>
