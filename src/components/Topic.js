@@ -25,7 +25,7 @@ function setTestData() {
 
 const columns = [
   {
-    title: 'TopicID',
+    title: 'Topic ID',
     dataIndex: 'topicID',
     key: 'topicID',
     width: '10%',
@@ -34,24 +34,25 @@ const columns = [
     title: 'Issuer',
     dataIndex: 'issuer',
     key: 'issuer',
-    width: '10%',
+    width: '15%',
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '15%',
+    width: '25%',
   },
   {
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
-    width: '30%',
+    width: '40%',
   },
   {
     title: 'Registered on',
     dataIndex: 'registerDate',
     key: 'registerDate',
+    width: '10%',
   }
 ];
 
@@ -178,16 +179,6 @@ class Topic extends React.Component {
                   placeholder="Enter Explanation (max. 32 bytes)" 
                   autosize={{ minRows: 2, maxRows: 6 }}
                   id='explanation'/>
-              </Form.Item>
-              <Form.Item>
-                <center>
-                  <Button 
-                    type='primary'
-                    size='large'
-                    onClick={()=>this.showModal('none','qr')}> 
-                      Add
-                  </Button>
-                </center>
               </Form.Item>
             </Form>
           </div>

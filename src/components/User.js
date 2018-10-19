@@ -44,7 +44,7 @@ const columns = [
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '10%',
+    width: '25%',
   },
   {
     title: 'Roll',
@@ -54,7 +54,7 @@ const columns = [
       { text: 'AA', value: 'Attestation Agency' },
       { text: 'SP', value: 'Service Provider' },
     ],
-    width: '15%',
+    width: '20%',
     filterMultiple: false,
     onFilter: (value, record) => record.roll.indexOf(value) === 0,
   },
@@ -62,12 +62,13 @@ const columns = [
     title: 'Meta ID',
     dataIndex: 'metaID',
     key: 'metaID',
-    width: '30%',
+    width: '35%',
   },
   {
     title: 'Registered on',
     dataIndex: 'registerDate',
     key: 'registerDate',
+    width: '10%',
   }
 ];
 
