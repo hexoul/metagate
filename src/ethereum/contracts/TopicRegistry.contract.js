@@ -11,6 +11,18 @@ class TopicRegistry {
     const topicRegistryAbi = await getABI(branch, 'TopicRegistry');
     this.topicRegistryInstance = new web3.eth.Contract(topicRegistryAbi.abi, TOPIC_REGISTRY_ADDRESS);
   }
+
+  async getTopic(topicID) {
+    if (! this.topicRegistryInstance.methods.topics) {
+      return null;
+    }
+    return this.topicRegistryInstance.methods.topics(topicID).call();
+  }
+
+  // TODO
+  async getAllTopic() {
+    return;
+  }
 }
 
 export {TopicRegistry}
