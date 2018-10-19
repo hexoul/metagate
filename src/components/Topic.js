@@ -128,6 +128,7 @@ class Topic extends React.Component {
   getModalTopicDetail(record) {
     Modal.info({
       width: '70%',
+      maskClosable: true,
       title: record.title,
       content: (
         <div>

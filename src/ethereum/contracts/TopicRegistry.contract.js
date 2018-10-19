@@ -13,9 +13,12 @@ class TopicRegistry {
   }
 
   async getTopic(topicID) {
+    // Validate ABI
     if (! this.topicRegistryInstance.methods.topics) {
       return null;
     }
+
+    // Call
     return this.topicRegistryInstance.methods.topics(topicID).call();
   }
 

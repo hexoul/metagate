@@ -88,20 +88,6 @@ class User extends React.Component {
     this.setState({data: storedData});
   }
 
-  handleOk = (e) => {
-    console.log(e);
-    this.setState({
-      modalVisible: false,
-    });
-  }
-
-  handleCancel = (e) => {
-    console.log(e);
-    this.setState({
-      modalVisible: false,
-    });
-  }
-
   onSearch(value) {
     // Reset search
     if (value === '') {
@@ -120,6 +106,7 @@ class User extends React.Component {
   getModalUserDetail(record) {
     Modal.info({
       width: '70%',
+      maskClosable: true,
       title: record.title,
       content: (
         <div>
