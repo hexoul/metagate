@@ -1,5 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
+import * as util from '../util';
+
 
 // Test data
 var storedData = [];
@@ -16,19 +18,9 @@ function setTestData() {
       issuer: issuerArr[Math.floor(Math.random() * 6)],
       title: titleArr[Math.floor((Math.random() * 6))],
       explanation: explanationArr[Math.floor(Math.random() * 6)],
-      registerDate: timeConverter(Date.now()),
+      registerDate: util.timeConverter(Date.now()),
     });
   }
-}
-
-function timeConverter(UNIX_timestamp){
-  var a = new Date(UNIX_timestamp);
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var time = year + ' / ' + month + ' / ' + date;
-  return time;
 }
 
 const columns = [
@@ -146,7 +138,7 @@ class Topic extends React.Component {
 
   getModalAddTopic() {
     return <Modal
-      width='30%'
+      width='50%'
       title='Add New Topic'
       visible={this.state.addModalVisible}
       okText='Add'
@@ -157,7 +149,7 @@ class Topic extends React.Component {
         {this.state.qrVisible ?
           'will be QR'
           :
-          <Form>
+          <div>
             <Form layout='inline'>
               <Form.Item
                 label="Title">
@@ -198,7 +190,7 @@ class Topic extends React.Component {
                 </center>
               </Form.Item>
             </Form>
-          </Form>
+          </div>
         }
     </Modal>;
   }
