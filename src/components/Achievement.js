@@ -10,10 +10,10 @@ var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
 var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
 var topicListArr = ['Legal Name', 'Phone Number', 'E-mail Address', 'Date of Birth', 'Nationality'];
 
-const children = [];
+var children = [];
 
 function setTestData() {
-  for (var i=0; i<20; i++) {
+  for (var i=0; i < 20; i++) {
     //Get data (hardcoding)
     storedData.push({
       creator: creatorArr[Math.floor(Math.random() * 6)],
@@ -243,95 +243,84 @@ const columns = [
         onOk() {}
       });
     }
+
+    getTopicTabs() {
+      return <Form.Item>
+        <Tabs
+          onChange={this.onTabsChange}
+          activeKey={this.data.activeKey}
+          type='editable-card'
+          onEdit={this.onTabsEdit}>
+            {this.state.isTabChange && this.data.panes.map(pane =>
+              <Tabs.TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+                <Select
+                  showSearch
+                  style={{ width: '100%' }}
+                  placeholder='Select a Topic'
+                  optionFilterProp='children'
+                  onChange={this.handleSelectChange}
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                  {this.data.claimTopics}
+                </Select>
+                <Input
+                  onChange={this.handleInputChange} 
+                  placeholder='Enter Meta ID of Issuer (Optional)'
+                  id='explanation'
+                />
+              </Tabs.TabPane>)
+            }
+          </Tabs>
+        </Form.Item>
+    }
+
     getModalAddTopic() {
       return <Modal
-      width='50%'
-      title={'Add New Achievement'}
-      visible={this.state.addModalVisible}
-      onOk={() => this.setState({ qrVisible: true })}
-      okText='Add'
-      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
-      closable={false}>
-        <Form layout='inline'>
-          <Form.Item
-            label="Title">
-            <Input
-              onChange={this.handleInputChange} 
-              id='title'
-              placeholder="Input Title"/>
-          </Form.Item>
-          <Form.Item
-            style={{ float: 'right'}}
-            label="Reward">
-            <Input 
-              onChange={this.handleInputChange} 
-              id='reward'
-              placeholder="Input Reward"
-              addonAfter="META"/>
-          </Form.Item>
+        width='50%'
+        title={'Add New Achievement'}
+        visible={this.state.addModalVisible}
+        onOk={() => this.setState({ qrVisible: true })}
+        okText='Add'
+        onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
+        closable={false}>
+          <Form layout='inline'>
+            <Form.Item label='Title'>
+              <Input
+                onChange={this.handleInputChange} 
+                id='title'
+                placeholder='Input Title'/>
+            </Form.Item>
+            <Form.Item label='Reward' style={{ float: 'right'}}>
+              <Input 
+                onChange={this.handleInputChange} 
+                id='reward'
+                placeholder='Input Reward'
+                addonAfter='META'/>
+            </Form.Item>
+          </Form>
           <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-        </Form>
-        <Form 
-          layout='vertical'
-          style={{ margin: '30px 0'}}>
-          <Form.Item
-            label="Explanation">
-            <Input.TextArea 
-              onChange={this.handleInputChange} 
-              placeholder="Enter Explanation (max. 32 bytes)" 
-              autosize={{ minRows: 2, maxRows: 6 }}
-              id='explanation'/>
-          </Form.Item>
-          {this.data.panes.length!= 0 && 
-          <Form.Item>
-            <Tabs
-              onChange={this.onTabsChange}
-              activeKey={this.data.activeKey}
-              type="editable-card"
-              onEdit={this.onTabsEdit}>
-                {this.state.isTabChange && this.data.panes.map(pane =>
-                  <Tabs.TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
-                    <Select
-                      showSearch
-                      style={{ width: '100%' }}
-                      placeholder="Select a Topic"
-                      optionFilterProp="children"
-                      onChange={this.handleSelectChange}
-                      filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
-                      {this.data.claimTopics}
-                    </Select>
-                    <Input
-                      onChange={this.handleInputChange} 
-                      placeholder="Enter Meta ID of Issuer (Optional)"
-                      id='explanation'/>
-                  </Tabs.TabPane>
-                )}
-          </Tabs>
-          </Form.Item>
-          }
-          <Form.Item>
-            <center>
-              <Button 
-                type='primary'
-                size='large'
-                onClick={()=>this.showModal('none','qr')}> 
-                  Add
-              </Button>
-            </center>
-          </Form.Item>
-        </Form>
-      </Modal>
+          <Form layout='vertical' style={{ margin: '30px 0'}}>
+            <Form.Item label='Explanation'>
+              <Input.TextArea 
+                onChange={this.handleInputChange} 
+                placeholder='Enter Explanation (max. 32 bytes)'
+                autosize={{ minRows: 2, maxRows: 6 }}
+                id='explanation'/>
+            </Form.Item>
+            {this.data.panes.length != 0 && this.getTopicTabs()}
+          </Form>
+        </Modal>
     }
+
     render() {
       return (
         <div>
           <div>
             <Button 
-              type="primary"
+              type='primary'
               size='large'
-              onClick={()=>this.showModal('none','add')}> Add New Achievement </Button>
+              onClick={() => this.showModal('none','add')}>Add New Achievement</Button>
             <Input.Search
-              placeholder="Search by Creator, No., Keyword"
+              placeholder='Search by Creator, No., Keyword'
               onSearch={value => this.onSearch(value)}
               enterButton
               style={{ width: '50%', float: 'right', marginBottom: '20px' }}
@@ -339,9 +328,7 @@ const columns = [
           </div>
           <Table
             rowKey={record => record.uid}
-            onRow={(record, index) => ({
-              onClick: () => { this.getModalTopicDetail(record); }
-            })}
+            onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
             columns={columns}
             dataSource={this.data.infoData}
           />
@@ -350,4 +337,5 @@ const columns = [
       );
     }
 }
+
 export {Achievement};
