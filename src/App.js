@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { User, Topic, Achievement } from './components';
+import { User, Topic, Achievement, FAQ } from './components';
 
 // Styles.
 import './App.css';
@@ -32,10 +32,12 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.prevNav = '1';
     this.initContracts();
   }
 
   onMenuClick = ({key}) => {
+    this.prevNav = key;
     this.setState({nav: key});
   }
 
@@ -45,6 +47,7 @@ class App extends React.Component {
       case '1': return <User contracts={this.contracts} />;
       case '2': return <Topic contracts={this.contracts} />;
       case '3': return <Achievement contracts={this.contracts} />;
+      case 'faq': return <FAQ />;
       default: return;
     }
   }
@@ -54,7 +57,12 @@ class App extends React.Component {
       <Layout className='layout'>
         <Layout.Header>
           <div className='logo'>
-            <img className='logoimg' alt='logo' src='https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true' />
+            <img
+              className='logoimg'
+              alt='logo'
+              src='https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true'
+              onClick={() => this.setState({ nav: this.prevNav })}
+            />
           </div>
           <Menu
             theme='dark'
@@ -73,7 +81,8 @@ class App extends React.Component {
         </Layout.Content>
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
-            FAQ | Customer service :&nbsp;
+            <b onClick={() => this.setState({ nav: 'faq' })}>FAQ</b>
+            &nbsp;| Customer service :&nbsp;
             <a href='mailto:contact@metadium.com' target='_blank' rel='noopener noreferrer'>contact@metadium.com</a>
           </div>
           <br />
