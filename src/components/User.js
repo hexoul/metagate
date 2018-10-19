@@ -81,13 +81,8 @@ const columns = [
 
 class User extends React.Component {
   state = {
-    data: [],
-    type: '',
-    title: '',
-    roll: '',
-    metaID: '',
-    registerDate: '',
-  }
+    data: []
+  };
 
   constructor() {
     super();
@@ -96,20 +91,6 @@ class User extends React.Component {
 
   componentWillMount() {
     this.setState({data: storedData});
-  }
-
-  handleOk = (e) => {
-    console.log(e);
-    this.setState({
-      modalVisible: false,
-    });
-  }
-
-  handleCancel = (e) => {
-    console.log(e);
-    this.setState({
-      modalVisible: false,
-    });
   }
 
   onSearch(value) {
@@ -122,6 +103,7 @@ class User extends React.Component {
     // Search with given value
     var searchData = [];
     storedData.forEach(function(element) {
+      // Exact match
       if(Object.values(element).indexOf(value) > -1) searchData.push(element);
     });
     this.setState({data: searchData});
@@ -130,6 +112,7 @@ class User extends React.Component {
   getModalUserDetail(record) {
     Modal.info({
       width: '70%',
+      maskClosable: true,
       title: record.title,
       content: (
         <div>
