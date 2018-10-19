@@ -56,14 +56,6 @@ const columns = [
 class Topic extends React.Component {
   state = {
     data: [],
-    topicID: '',
-    issuer: '',
-    title: '',
-    explanation: '',
-    newTopicId: '',
-    newTitle: '',
-    newExplanation: '',
-    registerDate: '',
     addModalVisible: false,
     qrVisible: false
   };
@@ -120,6 +112,7 @@ class Topic extends React.Component {
     // Search with given value
     var searchData = [];
     storedData.forEach(function(element) {
+      // Exact match
       if(Object.values(element).indexOf(value) > -1) searchData.push(element);
     });
     this.setState({data: searchData});

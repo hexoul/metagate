@@ -71,13 +71,8 @@ const columns = [
 
 class User extends React.Component {
   state = {
-    data: [],
-    type: '',
-    title: '',
-    roll: '',
-    metaID: '',
-    registerDate: '',
-  }
+    data: []
+  };
 
   constructor() {
     super();
@@ -98,6 +93,7 @@ class User extends React.Component {
     // Search with given value
     var searchData = [];
     storedData.forEach(function(element) {
+      // Exact match
       if(Object.values(element).indexOf(value) > -1) searchData.push(element);
     });
     this.setState({data: searchData});
