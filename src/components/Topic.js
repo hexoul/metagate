@@ -188,7 +188,7 @@ class Topic extends React.Component {
             placeholder='Search by Creator, No., Keyword'
             onSearch={value => this.onSearch(value)}
             enterButton
-            style={{ width: 500, float: 'right', marginBottom: '20px' }}
+            style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
         <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>

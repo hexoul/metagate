@@ -51,30 +51,30 @@ class App extends React.Component {
 
   render() {
     return (
-      <Layout className="layout">
+      <Layout className='layout'>
         <Layout.Header>
-          <div className="logo">
-            <img className="logoimg" alt="logo" src="https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true" />
+          <div className='logo'>
+            <img className='logoimg' alt='logo' src='https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true' />
           </div>
           <Menu
-            theme="dark"
-            mode="horizontal"
+            theme='dark'
+            mode='horizontal'
             defaultSelectedKeys={['1']}
             style={{ lineHeight: '64px' }}
             onClick={this.onMenuClick}
           >
-            <Menu.Item key="1">AA/SP Registry</Menu.Item>
-            <Menu.Item key="2">Topic Registry</Menu.Item>
-            <Menu.Item key="3">Achievement Registry</Menu.Item>
+            <Menu.Item key='1'>AA/SP Registry</Menu.Item>
+            <Menu.Item key='2'>Topic Registry</Menu.Item>
+            <Menu.Item key='3'>Achievement Registry</Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content style={{ padding: '50px 50px 0px 50px', backgroundColor: '#fff' }}>
+        <Layout.Content style={{ padding: '5vh 5vw 0vh 5vw', backgroundColor: '#fff' }}>
           {this.getContent()}
         </Layout.Content>
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
             FAQ | Customer service :&nbsp;
-            <a href="mailto:contact@metadium.com" target="_blank">contact@metadium.com</a>
+            <a href='mailto:contact@metadium.com' target='_blank'>contact@metadium.com</a>
           </div>
           <br />
           <center>metagate ©2018 Created by hexoul</center>
