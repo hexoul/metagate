@@ -59,283 +59,262 @@ const columns = [
     dataIndex: 'registerDate',
     key: 'registerDate',
     width: '10%',
-  }];
+  }
+];
 
-  const listData = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-  ];
+const listData = [
+  'Racing car sprays burning fuel into crowd.',
+  'Japanese princess to wed commoner.',
+  'Australian walks 100km after outback crash.',
+  'Man charged over missing wedding girl.',
+  'Los Angeles battles huge wildfires.',
+];
 
-  class Achievement extends React.Component {
-    data = {
-      infoData: [],
-      issuers: [],
-      claimTopics: [],
-      metaId:'0x7304f14b0909640acc4f6a192381091eb1f37701',
-      achievementAddr: '0x7304f14b0909640acc4f6a192381091eb1f37702',
-      creator: '',
-      title: '',
-      reward: '',
-      explanation: '',
-      registerDate: '',
-      panes: [],
-      activeKey: '0',
-      newTopicId: '',
-      newTitle: '',
-      newExplanation: '',
-    };
+class Achievement extends React.Component {
+  data = {
+    infoData: [],
+    issuers: [],
+    claimTopics: [],
+    metaId:'0x7304f14b0909640acc4f6a192381091eb1f37701',
+    achievementAddr: '0x7304f14b0909640acc4f6a192381091eb1f37702',
+    creator: '',
+    title: '',
+    reward: '',
+    explanation: '',
+    registerDate: '',
+    panes: [],
+    activeKey: '0',
+    newTabIndex: 1,
 
-    state = {
-      infoModalVisible: false,
-      addModalVisible: false,
-      qrVisible: false,
-      isTabChange: true,
-      isSearch: false,
-    }
+    newTopicId: '',
+    newTitle: '',
+    newExplanation: '',
+  };
 
-    constructor(props) {
-      super(props);
-      this.newTabIndex = 1;
-      setTestData();
-    }
+  state = {
+    addModalVisible: false,
+    qrVisible: false,
+    isTabChange: false,
+    isSearch: false,
+  }
 
-    componentWillMount() {
-      this.data['infoData'] = storedData;
-      this.data['claimTopics'] = children;
-      this.data['panes'].push({ title: 'New Tab', content: 'Content of new Tab', key: this.data['activeKey'] , closable: false});
-    }
+  constructor(props) {
+    super(props);
+    setTestData();
+  }
 
-    showModal = (record, type) => {
-      console.log('showModal: ',record,type);
-      switch(type) {
-        case 'info':
-          this.data['topicID'] = record.topicID;
-          this.data['creator'] = record.creator;
-          this.data['title'] = record.topicID;
-          this.data['explanation'] = record.explanation;
-          this.data['registerDate'] = record.registerDate;
-          this.setState({
-            infoModalVisible: true,
-            addModalVisible: false,
-            qrModalVisible: false,
-          });
-          break;
-        case 'add':
-          this.setState({
-            infoModalVisible: false,
-            addModalVisible: true,
-            qrModalVisible: false,
-          });
-          break;
-        case 'qr':
-          this.data['newTopicId'] = newTopicData['topic'];
-          this.data['newTitle'] = newTopicData['title'];
-          this.data['newExplanation'] = newTopicData['explanation'];
-          this.setState({
-            infoModalVisible: false,
-            addModalVisible: false,
-            qrModalVisible: true,
-          });
-          break;
-        default: break;
-      }
-    }
+  componentWillMount() {
+    this.data['infoData'] = storedData;
+    this.data['claimTopics'] = children;
+    this.data['panes'].push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey , closable: false});
+    this.setState({ isTabChange: true });
+  }
 
-    handleClose = (e) => {
-      this.setState({
-        infoModalVisible: false,
-        addModalVisible: false,
-        qrModalVisible: false,    
-      });
-    }
-
-    handleSelectChange = (value) => {
-      console.log(`selected ${value}`, this.data.panes, this.data.activeKey);
-      this.data.panes[this.data.activeKey]['title'] = topicListArr[value];
-      this.setState({ isTabChange: true });
-    }
-
-    handleInputChange = (e) => {
-      newTopicData[e.target.id] = e.target.value;
-      console.log('handle change: ',newTopicData);
-    }
-
-    onSearch(value) {
-      console.log('onSearch value: ',value);
-      if (value == '' || value == undefined) {
-        this.data['infoData'] = storedData;
-      }
-      else {
-        var searchData = [];
-        storedData.forEach(function(element) {
-          //Exist value
-          if(Object.values(element).indexOf(value) > -1) {
-            console.log('onSearch1: ',Object.values(element).indexOf(value));
-            searchData.push(element);
-          }
+  showModal = (record, type) => {
+    switch(type) {
+      case 'add':
+        this.setState({
+          addModalVisible: true,
+          qrModalVisible: false,
         });
-        this.data['infoData']=searchData;
-      }
-      this.setState({isSearch: true});
+        break;
+      case 'qr':
+        this.data['newTopicId'] = newTopicData['topic'];
+        this.data['newTitle'] = newTopicData['title'];
+        this.data['newExplanation'] = newTopicData['explanation'];
+        this.setState({
+          addModalVisible: false,
+          qrModalVisible: true,
+        });
+        break;
+      default: break;
     }
+  }
 
-    onTabsChange = (activeKey) => {
-      this.data['activeKey'] = activeKey;
-      this.setState({ isTabChange: true });
-    }
+  handleClose = (e) => {
+    this.setState({
+      addModalVisible: false,
+      qrModalVisible: false,    
+    });
+  }
 
-    onTabsEdit = (targetKey, action) => {
-      console.log('onTabsEdit: ', targetKey,action);
-      this[action](targetKey);
-    }
+  handleSelectChange = (value) => {
+    this.data.panes[this.data.activeKey]['title'] = topicListArr[value];
+    this.setState({ isTabChange: true });
+  }
 
-    add = () => {
-      const panes = this.data.panes;
-      const activeKey = `${this.newTabIndex++}`;
-      panes.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey });
-      this.data['panes'] = panes;
-      this.data['activeKey'] = activeKey;
-      this.setState({ isTabChange: true });
-    }
-  
-    remove = (targetKey) => {
-      let activeKey = this.data.activeKey;
-      let lastIndex;
-      this.data.panes.forEach((pane, i) => {
-        if (pane.key === targetKey) {
-          lastIndex = i - 1;
+  handleInputChange = (e) => {
+    newTopicData[e.target.id] = e.target.value;
+    console.log('handle change: ',newTopicData);
+  }
+
+  onSearch(value) {
+    console.log('onSearch value: ',value);
+    if (value == '' || value == undefined) {
+      this.data['infoData'] = storedData;
+    } else {
+      var searchData = [];
+      storedData.forEach(function(element) {
+        //Exist value
+        if(Object.values(element).indexOf(value) > -1) {
+          console.log('onSearch1: ',Object.values(element).indexOf(value));
+          searchData.push(element);
         }
       });
-      const panes = this.data.panes.filter(pane => pane.key !== targetKey);
-      if (lastIndex >= 0 && activeKey === targetKey) {
-        activeKey = panes[lastIndex].key;
-      }
-      this.data['panes'] = panes;
-      this.data['activeKey'] = activeKey;
-      this.setState({ isTabChange: true });
+      this.data['infoData']=searchData;
     }
+    this.setState({isSearch: true});
+  }
 
-    getModalTopicDetail(record) {
-      Modal.info({
-        width: '70%',
-        maskClosable: true,
-        title: record.title,
-        content: (
-          <div>
-              <h5 style={{ float: 'right' }}>Registered on: {record.registerDate}</h5>
-              <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.achievementAddr}</h3>
-              <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
-              <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3>
-              <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.creator} / {this.data.metaId}</h3>
-              <List
-                style={{ textAlign:'center' }}
-                size='small'
-                header={<div><h2>Required Topic</h2></div>}
-                bordered
-                dataSource={listData}
-                renderItem={item => (<List.Item>{item}</List.Item>)}
-              />
-            </div>
-        ),
-        onOk() {}
-      });
+  onTabsChange = (activeKey) => {
+    this.data.activeKey = activeKey;
+    this.setState({ isTabChange: true });
+  }
+
+  onTabsEdit = (targetKey, action) => {
+    this[action](targetKey);
+  }
+
+  add = () => {
+    this.data.activeKey = (++this.data.newTabIndex).toString();
+    this.data.panes.push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey });
+    this.setState({ isTabChange: true });
+  }
+  
+  remove = (targetKey) => {
+    let activeKey = this.data.activeKey;
+    let lastIndex;
+    this.data.panes.forEach((pane, i) => {
+      if (pane.key === targetKey) lastIndex = i - 1;
+    });
+    const panes = this.data.panes.filter(pane => pane.key !== targetKey);
+    if (lastIndex >= 0 && activeKey === targetKey) {
+      activeKey = panes[lastIndex].key;
     }
+    this.data['panes'] = panes;
+    this.data.activeKey = activeKey;
+    this.setState({ isTabChange: true });
+  }
 
-    getTopicTabs() {
-      return <Form.Item>
-        <Tabs
-          onChange={this.onTabsChange}
-          activeKey={this.data.activeKey}
-          type='editable-card'
-          onEdit={this.onTabsEdit}>
-            {this.state.isTabChange && this.data.panes.map(pane =>
-              <Tabs.TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
-                <Select
-                  showSearch
-                  style={{ width: '100%' }}
-                  placeholder='Select a Topic'
-                  optionFilterProp='children'
-                  onChange={this.handleSelectChange}
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
-                  {this.data.claimTopics}
-                </Select>
-                <Input
-                  onChange={this.handleInputChange} 
-                  placeholder='Enter Meta ID of Issuer (Optional)'
-                  id='explanation'
-                />
-              </Tabs.TabPane>)
-            }
-          </Tabs>
-        </Form.Item>
-    }
+  getModalTopicDetail(record) {
+    Modal.info({
+      width: '70%',
+      maskClosable: true,
+      title: record.title,
+      content: (
+        <div>
+          <h5 style={{ float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.achievementAddr}</h3>
+          <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
+          <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3>
+          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.creator} / {this.data.metaId}</h3>
+          <List
+            style={{ textAlign:'center' }}
+            size='small'
+            header={<div><h2>Required Topic</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+        </div>
+      ),
+      onOk() {}
+    });
+  }
 
-    getModalAddTopic() {
-      return <Modal
-        width='50%'
-        title={'Add New Achievement'}
-        visible={this.state.addModalVisible}
-        onOk={() => this.setState({ qrVisible: true })}
-        okText='Add'
-        onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
-        closable={false}>
-          <Form layout='inline'>
-            <Form.Item label='Title'>
+  getTopicTabs() {
+    return <Form.Item>
+      <Tabs
+        onChange={this.onTabsChange}
+        activeKey={this.data.activeKey}
+        type='editable-card'
+        onEdit={this.onTabsEdit}>
+          {this.state.isTabChange && this.data.panes.map(pane =>
+            <Tabs.TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+              <Select
+                showSearch
+                style={{ width: '100%' }}
+                placeholder='Select a Topic'
+                optionFilterProp='children'
+                onChange={this.handleSelectChange}
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                {this.data.claimTopics}
+              </Select>
               <Input
                 onChange={this.handleInputChange} 
-                id='title'
-                placeholder='Input Title'/>
-            </Form.Item>
-            <Form.Item label='Reward' style={{ float: 'right'}}>
-              <Input 
-                onChange={this.handleInputChange} 
-                id='reward'
-                placeholder='Input Reward'
-                addonAfter='META'/>
-            </Form.Item>
-          </Form>
-          <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-          <Form layout='vertical' style={{ margin: '30px 0'}}>
-            <Form.Item label='Explanation'>
-              <Input.TextArea 
-                onChange={this.handleInputChange} 
-                placeholder='Enter Explanation (max. 32 bytes)'
-                autosize={{ minRows: 2, maxRows: 6 }}
-                id='explanation'/>
-            </Form.Item>
-            {this.data.panes.length != 0 && this.getTopicTabs()}
-          </Form>
-        </Modal>
-    }
+                placeholder='Enter Meta ID of Issuer (Optional)'
+                id='explanation'
+              />
+            </Tabs.TabPane>)
+          }
+      </Tabs>
+    </Form.Item>
+  }
 
-    render() {
-      return (
+  getModalAddTopic() {
+    return <Modal
+      width='50%'
+      title={'Add New Achievement'}
+      visible={this.state.addModalVisible}
+      onOk={() => this.setState({ qrVisible: true })}
+      okText='Add'
+      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
+      closable={false}
+      >
+        <Form layout='inline'>
+          <Form.Item label='Title'>
+            <Input
+              onChange={this.handleInputChange} 
+              id='title'
+              placeholder='Input Title'/>
+          </Form.Item>
+          <Form.Item label='Reward' style={{ float: 'right'}}>
+            <Input 
+              onChange={this.handleInputChange} 
+              id='reward'
+              placeholder='Input Reward'
+              addonAfter='META'/>
+          </Form.Item>
+        </Form>
+        <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
+        <Form layout='vertical' style={{ margin: '30px 0'}}>
+          <Form.Item label='Explanation'>
+            <Input.TextArea 
+              onChange={this.handleInputChange} 
+              placeholder='Enter Explanation (max. 32 bytes)'
+              autosize={{ minRows: 2, maxRows: 6 }}
+              id='explanation'/>
+          </Form.Item>
+          {this.getTopicTabs()}
+        </Form>
+    </Modal>
+  }
+
+  render() {
+    return (
+      <div>
         <div>
-          <div>
-            <Button 
-              type='primary'
-              size='large'
-              onClick={() => this.showModal('none','add')}>Add New Achievement</Button>
-            <Input.Search
-              placeholder='Search by Creator, No., Keyword'
-              onSearch={value => this.onSearch(value)}
-              enterButton
-              style={{ width: '50%', float: 'right', marginBottom: '20px' }}
-            />
-          </div>
-          <Table
-            rowKey={record => record.uid}
-            onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
-            columns={columns}
-            dataSource={this.data.infoData}
+          <Button 
+            type='primary'
+            size='large'
+            onClick={() => this.showModal('none','add')}>Add New Achievement</Button>
+          <Input.Search
+            placeholder='Search by Creator, No., Keyword'
+            onSearch={value => this.onSearch(value)}
+            enterButton
+            style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
-          {this.getModalAddTopic()}
         </div>
-      );
-    }
+        <Table
+          rowKey={record => record.uid}
+          onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
+          columns={columns}
+          dataSource={this.data.infoData}
+        />
+        {this.getModalAddTopic()}
+      </div>
+    );
+  }
 }
 
 export {Achievement};
