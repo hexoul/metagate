@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, List, Button, Radio, Form } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 
 // Test data
 var storedData = [];
@@ -7,13 +7,6 @@ var newTopicData = [];
 var issuerArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
 var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
-const listData = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-];
 
 function setTestData() {
   for (var i=0; i < 20; i++) {
@@ -71,10 +64,9 @@ class Topic extends React.Component {
     newTitle: '',
     newExplanation: '',
     registerDate: '',
-    infoModalVisible: false,
     addModalVisible: false,
-    qrModalVisible: false,
-  }
+    qrVisible: false
+  };
 
   constructor() {
     super();
@@ -83,23 +75,6 @@ class Topic extends React.Component {
 
   componentWillMount() {
     this.setState({data: storedData});
-  }
-
-  showModal = (record, type) => {
-    console.log('showModal: ', record, type);
-    switch(type) {
-      case 'qr':
-        this.setState({
-          newTopicId: newTopicData['topic'],
-          newTitle: newTopicData['title'],
-          newExplanation: newTopicData['explanation'],
-          infoModalVisible: false,
-          addModalVisible: false,
-          qrModalVisible: true,
-        });
-        break;
-      default: break;
-    }
   }
 
   handleSorting = (e) => {
@@ -173,35 +148,39 @@ class Topic extends React.Component {
       title='Add New Topic'
       visible={this.state.addModalVisible}
       okText='Add'
-      onOk={() => this.setState({ addModalVisible: false })}
-      onCancel={() => this.setState({ addModalVisible: false })}
+      onOk={() => this.setState({ qrVisible: true })}
+      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
       >
-        <Form layout='vertical'>
-          <Form.Item label='Title'>
-            <Input
-              onChange={this.handleChange}
-              id='title'
-              placeholder="Input Title"
-            />
-          </Form.Item>
-          <Form.Item label='Topic No'>
-            <Input
-              onChange={this.handleChange}
-              id='topic'
-              placeholder='Input Topic No or'
-            />
-            <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
-          </Form.Item>
-          <Form.Item label='Explanation'>
-            <Input.TextArea
-              onChange={this.handleChange} 
-              placeholder='Enter Explanation (max. 32 bytes)'
-              autosize={{ minRows: 2, maxRows: 6 }}
-              id='explanation'
-            />
-          </Form.Item>
-        </Form>
+        {this.state.qrVisible ?
+          'will be QR'
+          :
+          <Form layout='vertical'>
+            <Form.Item label='Title'>
+              <Input
+                onChange={this.handleChange}
+                id='title'
+                placeholder="Input Title"
+              />
+            </Form.Item>
+            <Form.Item label='Topic No'>
+              <Input
+                onChange={this.handleChange}
+                id='topic'
+                placeholder='Input Topic No or'
+              />
+              <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
+            </Form.Item>
+            <Form.Item label='Explanation'>
+              <Input.TextArea
+                onChange={this.handleChange} 
+                placeholder='Enter Explanation (max. 32 bytes)'
+                autosize={{ minRows: 2, maxRows: 6 }}
+                id='explanation'
+              />
+            </Form.Item>
+          </Form>
+        }
     </Modal>;
   }
 
