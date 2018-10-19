@@ -23,7 +23,7 @@ class App extends React.Component {
     topicRegistry: new TopicRegistry(),
     achievementManager: new AchievementManager()
   };
-  
+
   async initContracts() {
     await getContractsAddresses(web3config.netid);
     Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))

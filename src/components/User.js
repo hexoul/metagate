@@ -25,9 +25,19 @@ function setTestData() {
       title: titleArr[Math.floor(Math.random() * 6)],
       roll: rollArr[Math.floor((Math.random() * 10)/9)],
       metaID: metaidArr[Math.floor(Math.random() * 6)],
-      registerDate: Date.now() - Math.floor((Math.random()*10)),
+      registerDate: timeConverter(Date.now()),
     });
   }
+}
+
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var time = year + ' / ' + month + ' / ' + date;
+  return time;
 }
 
 const columns = [
@@ -57,7 +67,7 @@ const columns = [
     onFilter: (value, record) => record.roll.indexOf(value) === 0,
   },
   {
-    title: 'MetaID',
+    title: 'Meta ID',
     dataIndex: 'metaID',
     key: 'metaID',
     width: '30%',
@@ -72,7 +82,6 @@ const columns = [
 class User extends React.Component {
   state = {
     data: [],
-    modalVisible: false,
     type: '',
     title: '',
     roll: '',
@@ -80,15 +89,13 @@ class User extends React.Component {
     registerDate: '',
   }
 
-  showModal = (record) => {
-    this.setState({
-      modalVisible: true,
-      type: record.type,
-      title: record.title,
-      roll: record.roll,
-      metaID: record.metaID,
-      registerDate: record.registerDate,
-    });
+  constructor() {
+    super();
+    setTestData();
+  }
+
+  componentWillMount() {
+    this.setState({data: storedData});
   }
 
   handleOk = (e) => {
@@ -105,77 +112,65 @@ class User extends React.Component {
     });
   }
 
-  componentWillMount() {
-    console.log('componentWillMount');
-    this.initialize();
-  }
-
-  initialize() {
-    setTestData();
-    this.setState({data: storedData});
-  }
-
   onSearch(value) {
-    console.log('onSearch value: ',value);
-    if (value == '' || value == undefined) {
+    // Reset search
+    if (value === '') {
       this.setState({data: storedData});
+      return;
     }
-    else {
-      var searchData = [];
-      storedData.forEach(function(element) {
-        // Exist value
-        if(Object.values(element).indexOf(value) > -1) {
-          console.log('onSearch1: ',Object.values(element).indexOf(value));
-          searchData.push(element);
-        }
-      });
-      this.setState({data: searchData});
-    }
+
+    // Search with given value
+    var searchData = [];
+    storedData.forEach(function(element) {
+      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
+    });
+    this.setState({data: searchData});
+  }
+
+  getModalUserDetail(record) {
+    Modal.info({
+      width: '70%',
+      title: record.title,
+      content: (
+        <div>
+          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
+          <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
+          <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
+          <List
+            size='small'
+            header={<div><h2>Topic Created</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+          <br />
+          <List
+            size='small'
+            header={<div><h2>Acheivement Created</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+        </div>
+      ),
+      onOk() {}
+    });
   }
 
   render() {
     return (
       <div>
         <Input.Search
-          placeholder="Search by Type, Meta ID, Title"
+          placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
           enterButton
           style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         <br />
-        <Modal
-          title={this.state.title}
-          visible={this.state.modalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}>
-          <div>
-            <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-            <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
-            <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
-            <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
-            <List
-              size="small"
-              header={<div><h2>Topic Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-            <br />
-            <List
-              size="small"
-              header={<div><h2>Acheivement Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-          </div>
-        </Modal>
-        <br />
         <Table
           rowKey={record => record.uid}
-          onRow={(record, index) => ({
-            onClick: () => { console.log('onRow', record); this.showModal(record); } 
-          })}
+          onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={columns}
           dataSource={this.state.data}
         />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, List, Button, Radio, Form } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 
 // Test data
 var storedData = [];
@@ -7,13 +7,6 @@ var newTopicData = [];
 var issuerArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
 var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
-const listData = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-];
 
 function setTestData() {
   for (var i=0; i < 20; i++) {
@@ -23,9 +16,19 @@ function setTestData() {
       issuer: issuerArr[Math.floor(Math.random() * 6)],
       title: titleArr[Math.floor((Math.random() * 6))],
       explanation: explanationArr[Math.floor(Math.random() * 6)],
-      registerDate: Date.now() - Math.floor((Math.random()*10)),
+      registerDate: timeConverter(Date.now()),
     });
   }
+}
+
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var time = year + ' / ' + month + ' / ' + date;
+  return time;
 }
 
 const columns = [
@@ -71,75 +74,27 @@ class Topic extends React.Component {
     newTitle: '',
     newExplanation: '',
     registerDate: '',
-    infoModalVisible: false,
     addModalVisible: false,
-    qrModalVisible: false,
-  }
+    qrVisible: false
+  };
 
-  showModal = (record, type) => {
-    console.log('showModal: ', record, type);
-    switch(type) {
-      case 'info':
-        this.setState({
-          topicID: record.topicID,
-          issuer: record.issuer,
-          title: record.title,
-          explanation: record.explanation,
-          registerDate: record.registerDate,
-          infoModalVisible: true,
-          addModalVisible: false,
-          qrModalVisible: false,
-        });
-        break;
-      case 'add':
-        this.setState({
-          infoModalVisible: false,
-          addModalVisible: true,
-          qrModalVisible: false,
-        });
-        break;
-      case 'qr':
-        this.setState({
-          newTopicId: newTopicData['topic'],
-          newTitle: newTopicData['title'],
-          newExplanation: newTopicData['explanation'],
-          infoModalVisible: false,
-          addModalVisible: false,
-          qrModalVisible: true,
-        });
-        break;
-      default: break;
-    }
-    console.log(this.state);
-  }
-
-  handleClose = (e) => {
-    this.setState({
-      infoModalVisible: false,
-      addModalVisible: false,
-      qrModalVisible: false,    
-    });
+  constructor() {
+    super();
+    setTestData();
   }
 
   componentWillMount() {
-    this.initialize();
-  }
-
-  initialize() {
-    setTestData();
     this.setState({data: storedData});
   }
 
   handleSorting = (e) => {
     var sortData=[];
-    console.log('hanle sorting value: ',e.target);
-
     switch(e.target.value) {
-      case '1' :
+      case '1':
         // All topic
         this.setState({data: storedData});
-      break;
-      case '2' :
+        break;
+      case '2':
         // Pre-fixed topic (1 ~ 1024)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]<1025) {
@@ -147,8 +102,8 @@ class Topic extends React.Component {
           }
         });
         this.setState({data: sortData});
-      break;
-      case '3' :
+        break;
+      case '3':
         // Added topic (1025 ~)
         storedData.forEach(function(element) {
           if(Object.values(element)[0]>1024) {
@@ -156,82 +111,60 @@ class Topic extends React.Component {
           }
         });
         this.setState({data: sortData});
-      break;
+        break;
+      default: break;
     }
   }
 
   handleChange = (e) => {
     newTopicData[e.target.id] = e.target.value;
-    console.log('handle change: ',newTopicData);
   }
 
   onSearch(value) {
-    console.log('onSearch value: ',value);
-    if (value == '' || value == undefined) {
+    // Reset search
+    if (value === '') {
       this.setState({data: storedData});
-    } else {
-      var searchData = [];
-      storedData.forEach(function(element) {
-        // Exist value
-        if(Object.values(element).indexOf(value) > -1) {
-          console.log('onSearch1: ',Object.values(element).indexOf(value));
-          searchData.push(element);
-        }
-      });
-      this.setState({data: searchData});
+      return;
     }
+
+    // Search with given value
+    var searchData = [];
+    storedData.forEach(function(element) {
+      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
+    });
+    this.setState({data: searchData});
   }
 
-  render() {
-    return (
-      <div>
+  getModalTopicDetail(record) {
+    Modal.info({
+      width: '70%',
+      title: record.title,
+      content: (
         <div>
-          <Button 
-            type="primary"
-            size='large'
-            onClick={()=>this.showModal('none','add')}> Add New Topic </Button>
-          <Input.Search
-            placeholder="Search by Creator, No., Keyword"
-            onSearch={value => this.onSearch(value)}
-            enterButton
-            style={{ width: 500, float: 'right', marginBottom: '20px' }}
-        />
+          <h5 style={{ float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
+          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
         </div>
-        <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>
-          <Radio.Button value='1'>All</Radio.Button>
-          <Radio.Button value='2'>Pre-fixed</Radio.Button>
-          <Radio.Button value='3'>Added</Radio.Button>
-        </Radio.Group>
-        <br />
-        <Modal
-          width={900}
-          title={this.state.title}
-          visible={this.state.infoModalVisible}
-          onOk={this.handleClose}
-          onCancel={this.handleClose}>
-          <div>
-            <h5 style={{ float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-            <h3 style={{ margin: '10px 0 0 0' }}>{this.state.explanation}</h3>
-            <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {this.state.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
-            <List
-              style={{ textAlign:'center' }}
-              size='small'
-              header={<div><h2>Topic Created</h2></div>}
-              bordered
-              dataSource={listData}
-              renderItem={item => (<List.Item>{item}</List.Item>)}
-            />
-            <br />
-          </div>
-        </Modal>
-        <Modal
-          width={500}
-          title={'Add New Topic'}
-          visible={this.state.addModalVisible}
-          onOk={this.handleClose}
-          onCancel={this.handleClose}
-          footer={null}>
-            <Form layout='vertical'>
+      ),
+      onOk() {}
+    });
+  }
+
+  getModalAddTopic() {
+    return <Modal
+      width='30%'
+      title='Add New Topic'
+      visible={this.state.addModalVisible}
+      okText='Add'
+      onOk={() => this.setState({ qrVisible: true })}
+      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
+      closable={false}
+      >
+        {this.state.qrVisible ?
+          'will be QR'
+          :
+          <Form>
+            <Form layout='inline'>
               <Form.Item
                 label="Title">
                 <Input
@@ -240,14 +173,18 @@ class Topic extends React.Component {
                   placeholder="Input Title"/>
               </Form.Item>
               <Form.Item
-                label="Topic No"
-                >
+                style={{ float: 'right'}}
+                label="No">
                 <Input 
                   onChange={this.handleChange} 
                   id='topic'
-                  placeholder="Input Topic No or"/>
-                  <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
+                  placeholder="Input Reward"/>
               </Form.Item>
+            </Form>
+            <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
+            <Form 
+              layout='vertical'
+              style={{ margin: '30px 0'}}>
               <Form.Item
                 label="Explanation">
                 <Input.TextArea 
@@ -267,25 +204,41 @@ class Topic extends React.Component {
                 </center>
               </Form.Item>
             </Form>
-        </Modal>
-        <br />
-        <Modal
-          width={500}
-          title={'Scan QR Code to Add New Topic'}
-          visible={this.state.qrModalVisible}
-          onOk={this.handleClose}
-          onCancel={this.handleClose}
-          footer={null}>
-        </Modal>
+          </Form>
+        }
+    </Modal>;
+  }
+
+  render() {
+    return (
+      <div>
+        <div>
+          <Button
+            type='primary'
+            size='large'
+            onClick={() => this.setState({ addModalVisible: true })}>Add New Topic</Button>
+          <Input.Search
+            placeholder='Search by Creator, No., Keyword'
+            onSearch={value => this.onSearch(value)}
+            enterButton
+            style={{ width: 500, float: 'right', marginBottom: '20px' }}
+          />
+        </div>
+        <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>
+          <Radio.Button value='1'>All</Radio.Button>
+          <Radio.Button value='2'>Pre-fixed</Radio.Button>
+          <Radio.Button value='3'>Added</Radio.Button>
+        </Radio.Group>
         <br />
         <Table
           rowKey={record => record.uid}
           onRow={(record, index) => ({
-            onClick: () => { console.log('onRow', record); this.showModal(record,'info'); }
+            onClick: () => { this.getModalTopicDetail(record); }
           })}
           columns={columns}
           dataSource={this.state.data}
         />
+        {this.getModalAddTopic()}
       </div>
     );
   }
