@@ -187,16 +187,6 @@ class Topic extends React.Component {
                   autosize={{ minRows: 2, maxRows: 6 }}
                   id='explanation'/>
               </Form.Item>
-              <Form.Item>
-                <center>
-                  <Button 
-                    type='primary'
-                    size='large'
-                    onClick={()=>this.showModal('none','qr')}> 
-                      Add
-                  </Button>
-                </center>
-              </Form.Item>
             </Form>
           </Form>
         }

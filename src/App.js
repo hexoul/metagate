@@ -74,7 +74,7 @@ class App extends React.Component {
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
             FAQ | Customer service :&nbsp;
-            <a href='mailto:contact@metadium.com' target='_blank'>contact@metadium.com</a>
+            <a href='mailto:contact@metadium.com' target='_blank' rel='noopener noreferrer'>contact@metadium.com</a>
           </div>
           <br />
           <center>metagate ©2018 Created by hexoul</center>
