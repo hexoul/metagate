@@ -16,9 +16,19 @@ function setTestData() {
       issuer: issuerArr[Math.floor(Math.random() * 6)],
       title: titleArr[Math.floor((Math.random() * 6))],
       explanation: explanationArr[Math.floor(Math.random() * 6)],
-      registerDate: Date.now() - Math.floor((Math.random()*10)),
+      registerDate: timeConverter(Date.now()),
     });
   }
+}
+
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var time = year + ' / ' + month + ' / ' + date;
+  return time;
 }
 
 const columns = [
@@ -136,7 +146,7 @@ class Topic extends React.Component {
 
   getModalAddTopic() {
     return <Modal
-      width='70%'
+      width='30%'
       title='Add New Topic'
       visible={this.state.addModalVisible}
       okText='Add'
@@ -147,30 +157,47 @@ class Topic extends React.Component {
         {this.state.qrVisible ?
           'will be QR'
           :
-          <Form layout='vertical'>
-            <Form.Item label='Title'>
-              <Input
-                onChange={this.handleChange}
-                id='title'
-                placeholder='Input Title'
-              />
-            </Form.Item>
-            <Form.Item label='Topic No'>
-              <Input
-                onChange={this.handleChange}
-                id='topic'
-                placeholder='Input Topic No or'
-              />
-              <a style={{ float: 'right', color: 'red' }}>* No. in use / choose different No.</a>
-            </Form.Item>
-            <Form.Item label='Explanation'>
-              <Input.TextArea
-                onChange={this.handleChange} 
-                placeholder='Enter Explanation (max. 32 bytes)'
-                autosize={{ minRows: 2, maxRows: 6 }}
-                id='explanation'
-              />
-            </Form.Item>
+          <Form>
+            <Form layout='inline'>
+              <Form.Item
+                label="Title">
+                <Input
+                  onChange={this.handleChange} 
+                  id='title'
+                  placeholder="Input Title"/>
+              </Form.Item>
+              <Form.Item
+                style={{ float: 'right'}}
+                label="No">
+                <Input 
+                  onChange={this.handleChange} 
+                  id='topic'
+                  placeholder="Input Reward"/>
+              </Form.Item>
+            </Form>
+            <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
+            <Form 
+              layout='vertical'
+              style={{ margin: '30px 0'}}>
+              <Form.Item
+                label="Explanation">
+                <Input.TextArea 
+                  onChange={this.handleChange} 
+                  placeholder="Enter Explanation (max. 32 bytes)" 
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                  id='explanation'/>
+              </Form.Item>
+              <Form.Item>
+                <center>
+                  <Button 
+                    type='primary'
+                    size='large'
+                    onClick={()=>this.showModal('none','qr')}> 
+                      Add
+                  </Button>
+                </center>
+              </Form.Item>
+            </Form>
           </Form>
         }
     </Modal>;
