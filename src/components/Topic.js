@@ -136,9 +136,7 @@ class Topic extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
         </div>
       ),
-      onOk() {
-        console.log('OK');
-      },
+      onOk() {}
     });
   }
 
@@ -160,7 +158,7 @@ class Topic extends React.Component {
               <Input
                 onChange={this.handleChange}
                 id='title'
-                placeholder="Input Title"
+                placeholder='Input Title'
               />
             </Form.Item>
             <Form.Item label='Topic No'>

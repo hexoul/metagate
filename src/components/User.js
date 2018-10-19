@@ -57,7 +57,7 @@ const columns = [
     onFilter: (value, record) => record.roll.indexOf(value) === 0,
   },
   {
-    title: 'MetaID',
+    title: 'Meta ID',
     dataIndex: 'metaID',
     key: 'metaID',
     width: '30%',
@@ -72,7 +72,6 @@ const columns = [
 class User extends React.Component {
   state = {
     data: [],
-    modalVisible: false,
     type: '',
     title: '',
     roll: '',
@@ -87,17 +86,6 @@ class User extends React.Component {
 
   componentWillMount() {
     this.setState({data: storedData});
-  }
-
-  showModal = (record) => {
-    this.setState({
-      modalVisible: true,
-      type: record.type,
-      title: record.title,
-      roll: record.roll,
-      metaID: record.metaID,
-      registerDate: record.registerDate,
-    });
   }
 
   handleOk = (e) => {
@@ -129,54 +117,50 @@ class User extends React.Component {
     this.setState({data: searchData});
   }
 
-  getModalUserDetail() {
-    return <Modal
-      title={this.state.title}
-      visible={this.state.modalVisible}
-      onOk={this.handleOk}
-      onCancel={this.handleCancel}
-      >
-      <div>
-        <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {this.state.registerDate}</h5>
-        <h3 style={{ margin: '10px 0' }}>Roll: {this.state.roll}</h3>
-        <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
-        <h3 style={{ margin: '10px 0' }}>Meta ID: {this.state.metaID}</h3>
-        <List
-          size="small"
-          header={<div><h2>Topic Created</h2></div>}
-          bordered
-          dataSource={listData}
-          renderItem={item => (<List.Item>{item}</List.Item>)}
-        />
-        <br />
-        <List
-          size="small"
-          header={<div><h2>Acheivement Created</h2></div>}
-          bordered
-          dataSource={listData}
-          renderItem={item => (<List.Item>{item}</List.Item>)}
-        />
-      </div>
-    </Modal>;
+  getModalUserDetail(record) {
+    Modal.info({
+      width: '70%',
+      title: record.title,
+      content: (
+        <div>
+          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
+          <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
+          <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
+          <List
+            size='small'
+            header={<div><h2>Topic Created</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+          <br />
+          <List
+            size='small'
+            header={<div><h2>Acheivement Created</h2></div>}
+            bordered
+            dataSource={listData}
+            renderItem={item => (<List.Item>{item}</List.Item>)}
+          />
+        </div>
+      ),
+      onOk() {}
+    });
   }
 
   render() {
     return (
       <div>
         <Input.Search
-          placeholder="Search by Type, Meta ID, Title"
+          placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
           enterButton
           style={{ width: 500, float: 'right', marginBottom: '20px' }}
         />
         <br />
-        {this.getModalUserDetail()}
-        <br />
         <Table
           rowKey={record => record.uid}
-          onRow={(record, index) => ({
-            onClick: () => { console.log('onRow', record); this.showModal(record); } 
-          })}
+          onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={columns}
           dataSource={this.state.data}
         />
