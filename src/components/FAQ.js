@@ -1,9 +1,27 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input, Collapse } from 'antd';
+import faqContents from './faqContent';
 
 class FAQ extends React.Component {
-  onSearch(value) {
+  constructor(props) {
+    super(props);
+  }
 
+  onSearch(value) {
+  }
+
+  getCollapseComponent() {
+    var children = [];
+  
+    for (var i=0; i < faqContents.length; i++) {
+      children.push(
+        <Collapse.Panel header={faqContents[i].title} key={i}>
+          <p>{faqContents[i].content}</p>
+        </Collapse.Panel>
+      );
+    }
+    console.log('getCollapseComponent: ',children);
+    return children;
   }
 
   render() {
@@ -15,9 +33,12 @@ class FAQ extends React.Component {
           placeholder='Search by Topic, Keywords or Phrase'
           onSearch={value => this.onSearch(value)}
           enterButton
-          style={{ width: '80%', float: 'left', marginBottom: '20px' }}
+          style={{ width: '80%', marginBottom: '20px' }}
         />
-        <br />
+        <Collapse accordion
+          style={{margin: '20px 0' }}>
+            {this.getCollapseComponent()}
+        </Collapse>
       </div>
     );
   }
