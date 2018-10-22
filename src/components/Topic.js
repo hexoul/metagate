@@ -107,18 +107,24 @@ class Topic extends React.Component {
 
   onSearch(value) {
     // Reset search
-    if (value === '') {
+    if (value === '' || value == undefined) {
       this.setState({data: storedData});
-      return;
+    } else {
+      // Search with given value
+      var searchData = [];
+      storedData.forEach(function(element) {
+        // Exact match
+        Object.values(element).forEach(function(val) {
+          if(val.toString().toLowerCase().includes(value.toString().toLowerCase()))
+            searchData.push(element);
+        });
+      });
+      this.setState({data: searchData});
     }
+  }
 
-    // Search with given value
-    var searchData = [];
-    storedData.forEach(function(element) {
-      // Exact match
-      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
-    });
-    this.setState({data: searchData});
+  onSearchInputChange = (e) => {
+    this.onSearch(e.target.value);
   }
 
   getModalTopicDetail(record) {
@@ -196,6 +202,7 @@ class Topic extends React.Component {
             onClick={() => this.setState({ addModalVisible: true })}>Add New Topic</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
+            onChange={this.onSearchInputChange}
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}

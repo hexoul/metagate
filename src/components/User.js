@@ -97,9 +97,15 @@ class User extends React.Component {
     var searchData = [];
     storedData.forEach(function(element) {
       // Exact match
-      if(Object.values(element).indexOf(value) > -1) searchData.push(element);
+      Object.values(element).forEach(function(val) {
+        if(val.toLowerCase().includes(value.toLowerCase())) searchData.push(element);
+      });
     });
     this.setState({data: searchData});
+  }
+
+  onSearchInputChange = (e) => {
+    this.onSearch(e.target.value);
   }
 
   getModalUserDetail(record) {
@@ -140,6 +146,7 @@ class User extends React.Component {
         <Input.Search
           placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
+          onChange={this.onSearchInputChange}
           enterButton
           style={{ width: '50%', float: 'right', marginBottom: '20px' }}
         />
