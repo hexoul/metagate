@@ -1,5 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, List } from 'antd';
+import * as util from '../util';
+
 
 // Test data
 var storedData = [];
@@ -25,19 +27,9 @@ function setTestData() {
       title: titleArr[Math.floor(Math.random() * 6)],
       roll: rollArr[Math.floor((Math.random() * 10)/9)],
       metaID: metaidArr[Math.floor(Math.random() * 6)],
-      registerDate: timeConverter(Date.now()),
+      registerDate: util.timeConverter(Date.now()),
     });
   }
-}
-
-function timeConverter(UNIX_timestamp){
-  var a = new Date(UNIX_timestamp);
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var time = year + ' / ' + month + ' / ' + date;
-  return time;
 }
 
 const columns = [
