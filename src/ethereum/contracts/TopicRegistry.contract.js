@@ -38,8 +38,10 @@ class TopicRegistry {
   }
 
   async getAllTopic(handler, cb) {
+    if (! handler || ! cb) return;
+    
     Promise.all(_.range(5).map(async (id) => {
-      await this.test(id).then(id => console.log('go', id));
+      await this.test(id).then(id => handler(id));
     })).then(() => cb());
   }
 }
