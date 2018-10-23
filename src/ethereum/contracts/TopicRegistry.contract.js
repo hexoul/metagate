@@ -17,9 +17,7 @@ class TopicRegistry {
 
   async getTopic(topicID) {
     // Validate ABI
-    if (! this.topicRegistryInstance.methods.topics) {
-      return null;
-    }
+    if (! this.topicRegistryInstance.methods.topics) return;
 
     // Call
     return this.topicRegistryInstance.methods.topics(topicID).call();

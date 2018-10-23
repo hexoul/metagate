@@ -119,8 +119,8 @@ class Topic extends React.Component {
 
   onSearch(value) {
     // Reset search
-    if (value === '' || value == undefined) {
-      this.setState({data: storedData});
+    if (! value) {
+      this.setState({ data: storedData });
     } else {
       // Search with given value
       var searchData = [];

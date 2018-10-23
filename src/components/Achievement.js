@@ -24,7 +24,7 @@ function setTestData() {
     });
   }
 
-  for (var i=0; i<topicListArr.length; i++) {
+  for (i=0; i < topicListArr.length; i++) {
       children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
   }
 }
@@ -110,6 +110,18 @@ class Achievement extends React.Component {
     this.setState({ isTabChange: true });
   }
 
+  async topicDynamicLoading() {
+    // For test
+    this.props.contracts.achievementManager.getAllAchievements({
+      handler: (ret) => console.log('getAchievement result', ret, typeof(ret)),
+      cb: () => console.log('getAllAchievements done')
+    });
+  }
+
+  componentDidMount() {
+    this.topicDynamicLoading();
+  }
+
   showModal = (record, type) => {
     switch(type) {
       case 'add':
@@ -149,20 +161,20 @@ class Achievement extends React.Component {
   }
 
   onSearch(value) {
-    if (value == '' || value == undefined) {
+    if (! value) {
       this.data['infoData'] = storedData;
     } else {
-      var searchData = [];
+      var searchedData = [];
       storedData.forEach(function(element) {
         //Exist value
         Object.values(element).forEach(function(val) {
           if(val.toLowerCase().includes(value.toLowerCase()))
-            searchData.push(element);
+          searchedData.push(element);
         });
       });
-      this.data['infoData']=searchData;
+      this.data['infoData'] = searchedData;
     }
-    this.setState({isSearch: true});
+    this.setState({ isSearch: true });
   }
 
   onSearchInputChange = (e) => {
