@@ -1,4 +1,4 @@
-export function timeConverter(UNIX_timestamp) {
+function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp);
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var year = a.getFullYear();
@@ -6,4 +6,13 @@ export function timeConverter(UNIX_timestamp) {
     var date = a.getDate();
     var time = year + ' / ' + month + ' / ' + date;
     return time;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export {
+    timeConverter,
+    sleep
 }

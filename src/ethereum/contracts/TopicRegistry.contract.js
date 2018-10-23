@@ -2,6 +2,7 @@ import web3 from '../web3';
 import web3config from '../web3-config.json';
 import { getAddresses } from './addresses';
 import { getBranch, getABI } from './helpers';
+import { sleep } from '../../util';
 
 var _ = require('underscore');
 
@@ -16,20 +17,14 @@ class TopicRegistry {
 
   async getTopic(topicID) {
     // Validate ABI
-    if (! this.topicRegistryInstance.methods.topics) {
-      return null;
-    }
+    if (! this.topicRegistryInstance.methods.topics) return;
 
     // Call
     return this.topicRegistryInstance.methods.topics(topicID).call();
   }
 
-  sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   async test(id) {
-    await this.sleep(id*1000);
+    await sleep(id*1000);
     return {
       id: id,
       issuer: '0xA408FCD6B7f3847686Cb5f41e52A7f4E084FD3cc',
@@ -37,7 +32,7 @@ class TopicRegistry {
     };
   }
 
-  async getAllTopic(handler, cb) {
+  async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
     
     Promise.all(_.range(20).map(async (id) => {

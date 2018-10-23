@@ -15,15 +15,15 @@ class Topic extends React.Component {
     rowCount: 0,
   };
 
-  async itemDynamicLoading() {
-    // For test
-    this.props.contracts.topicRegistry.getAllTopic(
-      (ret) => this.handleAdd(ret)
-      ,() => this.state.originItems = this.state.items);
+  async topicDynamicLoading() {
+    this.props.contracts.topicRegistry.getAllTopic({
+      handler: (ret) => this.handleAdd(ret),
+      cb: () => this.state.originItems = this.state.items
+    });
   }
 
   componentDidMount() {
-    this.itemDynamicLoading();
+    this.topicDynamicLoading();
   }
 
   handleAdd = (result) => {

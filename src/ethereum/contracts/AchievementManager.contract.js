@@ -3,6 +3,8 @@ import web3config from '../web3-config.json';
 import { getAddresses } from './addresses';
 import { getBranch, getABI } from './helpers';
 
+var _ = require('underscore');
+
 class AchievementManager {
   async init() {
     const { ACHIEVEMENT_MANAGER_ADDRESS } = getAddresses(web3config.netid);
@@ -12,32 +14,44 @@ class AchievementManager {
     this.achievementManagerInstance = new web3.eth.Contract(achievementManagerAbi.abi, ACHIEVEMENT_MANAGER_ADDRESS);
   }
 
-  async getAchievement(achievementID) {
+  async getAchievementById(achievementID) {
     // Validate ABI
-    if (! this.achievementManagerInstance.methods.achievements) {
-      return null;
-    }
+    if (! this.achievementManagerInstance.methods.getAchievementById) return;
 
     // Call
-    return this.achievementManagerInstance.methods.achievements(achievementID).call();
+    return this.achievementManagerInstance.methods.getAchievementById(achievementID).call();
   }
 
-  async getAllAchievements() {
-    var achievements = [];
+  async getAllAchievements({handler, cb}) {
+    if (! handler || ! cb) return;
 
     // Validate ABI
-    if (! this.achievementManagerInstance.methods.allAchievements) {
-      return achievements;
-    }
+    if (! this.achievementManagerInstance.methods.getAllAchievementList) return;
 
     // Get achievement IDs
-    let achievementIDs = await this.achievementManagerInstance.methods.allAchievements().call();
+    var achievementIDs = await this.achievementManagerInstance.methods.getAllAchievementList().call();
+    
+    // Get achievement list by iterating IDs
+    Promise.all(achievementIDs.map(async (id) => {
+      await this.getAchievementById(id).then(achievement => handler(achievement));
+    })).then(() => cb());
+  }
 
-    // Make achievement list by iterating IDs
-    await Promise.all(achievementIDs.map(async (achievementID) => {
-      achievements.push(await this.getAchievement(achievementID));
-    }));
-    return achievements;
+  async getAllAchievementsByLength({handler, cb}) {
+    if (! handler || ! cb) return;
+
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.allAchievements
+      || ! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
+
+    // Get achievement list length
+    let length = await this.achievementManagerInstance.methods.getLengthOfAchievements().call();
+
+    // Get achievement list by iterating list indexes
+    Promise.all(_.range(length).map(async (idx) => {
+      let achievementID = await this.achievementManagerInstance.methods.allAchievements(idx).call();
+      await this.getAchievementById(achievementID).then(achievement => handler(achievement));
+    })).then(() => cb());
   }
 }
 
