@@ -4,46 +4,54 @@ import faqContents from './faqContent';
 
 class FAQ extends React.Component {
   data = {
-    children: [],
+    items: [],
+    originItems: [],
   }
+
   state = {
-    isSearch : false,
+    didSearch : false,
   }
 
   constructor(props) {
     super(props);
-    this.getFaqData();
+    this.initFaqData();
   }
 
-  getFaqData() {
-    this.data['children'].splice(0,this.data['children'].length);
-
+  initFaqData() {
     for (var i=0; i < faqContents.length; i++) {
-      this.data['children'].push(
+      this.data.originItems.push(
         <Collapse.Panel header={faqContents[i].title} key={i}>
           <p>{faqContents[i].content}</p>
         </Collapse.Panel>
       );
     }
+    this.getFaqOriginData();
+  }
+
+  getFaqOriginData() {
+    this.data.items = this.data.originItems;
   }
 
   onSearch(value) {
-    if (value == '' || value == undefined) {
-      this.getFaqData();
-    } else {
-      var searchData = [];
-      faqContents.forEach(function(element) {
-        //Exist value
-        if (element.title.toLowerCase().includes(value) || element.content.toLowerCase().includes(value)) {
-          searchData.push(
-            <Collapse.Panel header={element.title}>
-              <p>{element.content}</p>
-            </Collapse.Panel>);
-        }
-      });
-      this.data['children']=searchData;
+    if (! value) {
+      this.getFaqOriginData();
+      return this.setState({ didSearch: true });
     }
-    this.setState({isSearch: true});
+
+    var searchedData = [];
+    faqContents.forEach(function(element) {
+      if (! element.title.toLowerCase().includes(value)
+          && ! element.content.toLowerCase().includes(value)) {
+        return;
+      }
+      searchedData.push(
+        <Collapse.Panel header={element.title}>
+          <p>{element.content}</p>
+        </Collapse.Panel>);
+    });
+    this.data.items = searchedData;
+
+    this.setState({ didSearch: true });
   }
 
   onSearchInputChange = (e) => {
@@ -62,9 +70,11 @@ class FAQ extends React.Component {
           enterButton
           style={{ width: '80%', marginBottom: '20px' }}
         />
-        <Collapse accordion
-          style={{margin: '20px 0' }}>
-            {this.data['children']}
+        <Collapse
+          accordion
+          style={{margin: '20px 0' }}
+        >
+          {this.data.items}
         </Collapse>
       </div>
     );
