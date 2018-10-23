@@ -8,11 +8,20 @@ function timeConverter(UNIX_timestamp) {
     return time;
 }
 
+function convertHexToString(input) {
+    var hex = input.toString();//force conversion
+    var str = '';
+    for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+}
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export {
     timeConverter,
-    sleep
+    sleep,
+    convertHexToString
 }

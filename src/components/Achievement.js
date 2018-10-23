@@ -1,7 +1,8 @@
 import React from 'react';
 import { Table, Input, Modal, List, Button, Select, Form, Tabs } from 'antd';
 import * as util from '../util';
-import {columns} from './columns'
+import { columns } from './columns';
+import web3 from '../ethereum/web3';
 
 const tableColumns = columns.achievementColumns;
 
@@ -41,16 +42,12 @@ const listData = [
 
 class Achievement extends React.Component {
   data = {
-    infoData: [],
+    items: [],
+    originalItems: [],
     issuers: [],
     claimTopics: [],
-    metaId:'0x7304f14b0909640acc4f6a192381091eb1f37701',
+    metaId:'',
     achievementAddr: '0x7304f14b0909640acc4f6a192381091eb1f37702',
-    creator: '',
-    title: '',
-    reward: '',
-    explanation: '',
-    registerDate: '',
     panes: [],
     activeKey: '0',
     newTabIndex: 1,
@@ -58,6 +55,8 @@ class Achievement extends React.Component {
     newTopicId: '',
     newTitle: '',
     newExplanation: '',
+
+    rowCount: 0,
   };
 
   state = {
@@ -65,6 +64,7 @@ class Achievement extends React.Component {
     qrVisible: false,
     isTabChange: false,
     isSearch: false,
+    getTopicInfo: false,
   }
 
   constructor(props) {
@@ -73,25 +73,39 @@ class Achievement extends React.Component {
   }
 
   componentWillMount() {
-    this.data['infoData'] = storedData;
-    this.data['claimTopics'] = children;
-    this.data['panes'].push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey , closable: false});
+    this.data.items = this.data.originalItems;
+    this.data.claimTopics = children;
+    this.data.panes.push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey , closable: false});
     this.setState({ isTabChange: true });
+  }
+
+  componentDidMount() {
+    this.achievementDynamicLoading();
   }
 
   async achievementDynamicLoading() {
     // For test
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => {
-        let keys = Object.keys(ret).filter(key => !parseInt(key) && key != '0');
-        keys.forEach(key => console.log('getAchievement', key, ret[key]));
-      },
-      cb: () => console.log('getAllAchievements done')
+      handler: (ret) => { this.handleAdd(ret) },
+      cb: () => {this.data.originalItems = this.data.items; console.log('getAllAchievements done')}
     });
   }
 
-  componentDidMount() {
-    this.achievementDynamicLoading();
+  handleAdd = (result) => {
+    const newItem = {
+      metaId: result.id,
+      creator: result.creator,
+      issuers: result.issuers,
+      claimTopics: result.claimTopics,
+      title: util.convertHexToString(result.explanation),
+      explanation: util.convertHexToString(result.explanation),
+      reward: web3.utils.fromWei(result.reward, 'ether'),
+      registerDate: util.timeConverter(Date.now()),
+    };
+
+    this.data.items = [...this.data.items, newItem];
+    this.data.rowCount += 1;
+    this.setState({ getTopicInfo: true });
   }
 
   showModal = (record, type) => {
@@ -134,17 +148,17 @@ class Achievement extends React.Component {
 
   onSearch(value) {
     if (! value) {
-      this.data['infoData'] = storedData;
+      this.data.items = this.data.originalItems;
     } else {
       var searchedData = [];
-      storedData.forEach(function(element) {
+      this.data.originalItems.forEach(function(element) {
         //Exist value
         Object.values(element).forEach(function(val) {
           if(val.toLowerCase().includes(value.toLowerCase()))
           searchedData.push(element);
         });
       });
-      this.data['infoData'] = searchedData;
+      this.data.items = searchedData;
     }
     this.setState({ isSearch: true });
   }
@@ -251,13 +265,13 @@ class Achievement extends React.Component {
         <Form layout='inline'>
           <Form.Item label='Title'>
             <Input
-              onChange={this.handleInputChange} 
+              onChange={this.handleInputChange}
               id='title'
               placeholder='Input Title'/>
           </Form.Item>
           <Form.Item label='Reward' style={{ float: 'right'}}>
-            <Input 
-              onChange={this.handleInputChange} 
+            <Input
+              onChange={this.handleInputChange}
               id='reward'
               placeholder='Input Reward'
               addonAfter='META'/>
@@ -266,8 +280,8 @@ class Achievement extends React.Component {
         <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
         <Form layout='vertical' style={{ margin: '30px 0'}}>
           <Form.Item label='Explanation'>
-            <Input.TextArea 
-              onChange={this.handleInputChange} 
+            <Input.TextArea
+              onChange={this.handleInputChange}
               placeholder='Enter Explanation (max. 32 bytes)'
               autosize={{ minRows: 2, maxRows: 6 }}
               id='explanation'/>
@@ -297,7 +311,7 @@ class Achievement extends React.Component {
           rowKey="uid"
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
           columns={tableColumns}
-          dataSource={this.data.infoData}
+          dataSource={this.data.items}
         />
         {this.getModalAddTopic()}
       </div>
