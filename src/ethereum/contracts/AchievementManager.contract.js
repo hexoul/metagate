@@ -14,12 +14,12 @@ class AchievementManager {
     this.achievementManagerInstance = new web3.eth.Contract(achievementManagerAbi.abi, ACHIEVEMENT_MANAGER_ADDRESS);
   }
 
-  async getAchievement(achievementID) {
+  async getAchievementById(achievementID) {
     // Validate ABI
-    if (! this.achievementManagerInstance.methods.achievements) return;
+    if (! this.achievementManagerInstance.methods.getAchievementById) return;
 
     // Call
-    return this.achievementManagerInstance.methods.achievements(achievementID).call();
+    return this.achievementManagerInstance.methods.getAchievementById(achievementID).call();
   }
 
   async getAllAchievements({handler, cb}) {
@@ -30,10 +30,10 @@ class AchievementManager {
 
     // Get achievement IDs
     var achievementIDs = await this.achievementManagerInstance.methods.getAllAchievementList().call();
-
+    
     // Get achievement list by iterating IDs
     Promise.all(achievementIDs.map(async (id) => {
-      await this.getAchievement(id).then(achievement => handler(achievement));
+      await this.getAchievementById(id).then(achievement => handler(achievement));
     })).then(() => cb());
   }
 
@@ -42,15 +42,15 @@ class AchievementManager {
 
     // Validate ABI
     if (! this.achievementManagerInstance.methods.allAchievements
-      || ! this.achievementManagerInstance.methods.getAchievementLength) return;
+      || ! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
 
     // Get achievement list length
-    let length = await this.achievementManagerInstance.methods.getAchievementLength().call();
+    let length = await this.achievementManagerInstance.methods.getLengthOfAchievements().call();
 
     // Get achievement list by iterating list indexes
     Promise.all(_.range(length).map(async (idx) => {
       let achievementID = await this.achievementManagerInstance.methods.allAchievements(idx).call();
-      await this.getAchievement(achievementID).then(achievement => handler(achievement));
+      await this.getAchievementById(achievementID).then(achievement => handler(achievement));
     })).then(() => cb());
   }
 }

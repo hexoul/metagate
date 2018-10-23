@@ -110,16 +110,19 @@ class Achievement extends React.Component {
     this.setState({ isTabChange: true });
   }
 
-  async topicDynamicLoading() {
+  async achievementDynamicLoading() {
     // For test
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => console.log('getAchievement result', ret, typeof(ret)),
+      handler: (ret) => {
+        let keys = Object.keys(ret).filter(key => !parseInt(key) && key != '0');
+        keys.forEach(key => console.log('getAchievement', key, ret[key]));
+      },
       cb: () => console.log('getAllAchievements done')
     });
   }
 
   componentDidMount() {
-    this.topicDynamicLoading();
+    this.achievementDynamicLoading();
   }
 
   showModal = (record, type) => {
