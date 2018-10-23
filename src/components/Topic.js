@@ -1,112 +1,68 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 import * as util from '../util';
+import {columns} from './columns'
 
-
-// Test data
-var storedData = [];
+const tableColumns = columns.topicColumns;
 var newTopicData = [];
-var issuerArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
-var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
-
-function setTestData() {
-  for (var i=0; i < 20; i++) {
-    // Get data (hardcoding)
-    storedData.push({
-      topicID: Math.floor((Math.random() * 2000)+1),
-      issuer: issuerArr[Math.floor(Math.random() * 6)],
-      title: titleArr[Math.floor((Math.random() * 6))],
-      explanation: explanationArr[Math.floor(Math.random() * 6)],
-      registerDate: util.timeConverter(Date.now()),
-    });
-  }
-}
-
-const columns = [
-  {
-    title: 'Topic ID',
-    dataIndex: 'topicID',
-    key: 'topicID',
-    width: '10%',
-  },
-  {
-    title: 'Issuer',
-    dataIndex: 'issuer',
-    key: 'issuer',
-    width: '15%',
-  },
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
-    width: '25%',
-  },
-  {
-    title: 'Explanation',
-    dataIndex: 'explanation',
-    key: 'explanation',
-    width: '40%',
-  },
-  {
-    title: 'Registered on',
-    dataIndex: 'registerDate',
-    key: 'registerDate',
-    width: '10%',
-  }
-];
 
 class Topic extends React.Component {
   state = {
-    data: [],
+    items: [],
+    originItems: [],
     addModalVisible: false,
-    qrVisible: false
+    qrVisible: false,
+    rowCount: 0,
   };
 
-  constructor(props) {
-    super(props);
-    setTestData();
-  }
-
-  componentWillMount() {
-    this.setState({data: storedData});
-  }
-
-  async test() {
+  async itemDynamicLoading() {
     // For test
     this.props.contracts.topicRegistry.getAllTopic(
-      (ret) => console.log('getTopic result', ret)
-      ,() => console.log('getAllTopic done'));
+      (ret) => this.handleAdd(ret)
+      ,() => this.state.originItems = this.state.items);
   }
 
   componentDidMount() {
-    this.test();
+    this.itemDynamicLoading();
+  }
+
+  handleAdd = (result) => {
+    const newItem = {
+      key: this.state.rowCount,
+      topicID: result.id,
+      issuer: result.issuer,
+      title: new TextDecoder("utf-8").decode(result.explanation),
+      explanation: new TextDecoder("utf-8").decode(result.explanation),
+      registerDate: util.timeConverter(Date.now()),
+    };
+
+    this.setState({
+      items: [...this.state.items, newItem],
+      rowCount: this.state.rowCount+1,
+    });
   }
 
   handleSorting = (e) => {
-    var sortData=[];
+    let sortData=[];
     switch(e.target.value) {
-      case '1':
-        // All topic
-        this.setState({data: storedData});
+      case 'All':
+        this.setState({items: this.state.originItems});
         break;
-      case '2':
-        // Pre-fixed topic (1 ~ 1024)
-        storedData.forEach(function(element) {
+      case 'Pre-fixed':
+        this.state.originItems.forEach(function(element) {
           if(Object.values(element)[0]<1025) {
             sortData.push(element);
           }
         });
-        this.setState({data: sortData});
+        this.setState({items: sortData});
         break;
-      case '3':
-        // Added topic (1025 ~)
-        storedData.forEach(function(element) {
+      case 'Added':
+        this.state.originItems.forEach(function(element) {
           if(Object.values(element)[0]>1024) {
             sortData.push(element);
           }
         });
-        this.setState({data: sortData});
+        this.setState({items: sortData});
         break;
       default: break;
     }
@@ -117,21 +73,24 @@ class Topic extends React.Component {
   }
 
   onSearch(value) {
-    // Reset search
-    if (value === '' || value == undefined) {
-      this.setState({data: storedData});
-    } else {
-      // Search with given value
-      var searchData = [];
-      storedData.forEach(function(element) {
-        // Exact match
-        Object.values(element).forEach(function(val) {
-          if(val.toString().toLowerCase().includes(value.toString().toLowerCase()))
-            searchData.push(element);
-        });
-      });
-      this.setState({data: searchData});
+    let searchedData = [];
+    value = value.toString().toLowerCase();
+    
+    if (! value) {
+      this.setState({items: this.state.originItems});
+      return;
     }
+
+    this.state.originItems.forEach(function(element) {
+      let columns = Object.values(element);
+      for (var i=0; i < columns.length; i++) {
+        if (columns[i].toString().toLowerCase().includes(value)) {
+          searchedData.push(element);
+          return;
+        }
+      }
+    });
+    this.setState({ items: searchedData });
   }
 
   onSearchInputChange = (e) => {
@@ -169,28 +128,24 @@ class Topic extends React.Component {
           :
           <div>
             <Form layout='inline'>
-              <Form.Item
-                label="Title">
+              <Form.Item label="Title">
                 <Input
                   onChange={this.handleChange} 
                   id='title'
                   placeholder="Input Title"/>
               </Form.Item>
-              <Form.Item
-                style={{ float: 'right'}}
-                label="No">
+              <Form.Item style={{ float: 'right'}} label="No">
                 <Input 
                   onChange={this.handleChange} 
                   id='topic'
                   placeholder="Input Reward"/>
               </Form.Item>
             </Form>
+
             <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
-            <Form 
-              layout='vertical'
-              style={{ margin: '30px 0'}}>
-              <Form.Item
-                label="Explanation">
+
+            <Form layout='vertical'style={{ margin: '30px 0'}}>
+              <Form.Item label="Explanation">
                 <Input.TextArea 
                   onChange={this.handleChange} 
                   placeholder="Enter Explanation (max. 32 bytes)" 
@@ -220,18 +175,18 @@ class Topic extends React.Component {
           />
         </div>
         <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>
-          <Radio.Button value='1'>All</Radio.Button>
-          <Radio.Button value='2'>Pre-fixed</Radio.Button>
-          <Radio.Button value='3'>Added</Radio.Button>
+          <Radio.Button value='All'>All</Radio.Button>
+          <Radio.Button value='Pre-fixed'>Pre-fixed</Radio.Button>
+          <Radio.Button value='Added'>Added</Radio.Button>
         </Radio.Group>
         <br />
         <Table
-          rowKey={record => record.uid}
+          rowKey="uid"
           onRow={(record, index) => ({
             onClick: () => { this.getModalTopicDetail(record); }
           })}
-          columns={columns}
-          dataSource={this.state.data}
+          columns={tableColumns}
+          dataSource={this.state.items}
         />
         {this.getModalAddTopic()}
       </div>

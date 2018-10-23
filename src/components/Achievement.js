@@ -1,6 +1,9 @@
 import React from 'react';
 import { Table, Input, Modal, List, Button, Select, Form, Tabs } from 'antd';
 import * as util from '../util';
+import {columns} from './columns'
+
+const tableColumns = columns.achievementColumns;
 
 // Test data
 var storedData = [];
@@ -28,40 +31,6 @@ function setTestData() {
       children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
   }
 }
-
-const columns = [
-  {
-    title: 'creator',
-    dataIndex: 'creator',
-    key: 'creator',
-    width: '15%',
-  },
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
-    width: '20%',
-  },
-  {
-    title: 'Explanation',
-    dataIndex: 'explanation',
-    key: 'explanation',
-    width: '45%',
-  },
-  {
-    title: 'Reward',
-    dataIndex: 'reward',
-    key: 'reward',
-    width: '10%',
-  },
-  {
-    title: 'Registered on',
-    dataIndex: 'registerDate',
-    key: 'registerDate',
-    width: '10%',
-  }
-];
-
 const listData = [
   'Racing car sprays burning fuel into crowd.',
   'Japanese princess to wed commoner.',
@@ -310,9 +279,9 @@ class Achievement extends React.Component {
           />
         </div>
         <Table
-          rowKey={record => record.uid}
+          rowKey="uid"
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
-          columns={columns}
+          columns={tableColumns}
           dataSource={this.data.infoData}
         />
         {this.getModalAddTopic()}

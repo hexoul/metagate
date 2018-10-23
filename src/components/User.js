@@ -1,7 +1,9 @@
 import React from 'react';
 import { Table, Input, Modal, List } from 'antd';
 import * as util from '../util';
+import {columns} from './columns'
 
+const tableColumns = columns.userColumns;
 
 // Test data
 var storedData = [];
@@ -21,7 +23,6 @@ const listData = [
 
 function setTestData() {
   for (var i=0; i < 20; i++) {
-    // Get data (hardcoding)
     storedData.push({
       type: typeArr[Math.floor((Math.random() * 10)/9)],
       title: titleArr[Math.floor(Math.random() * 6)],
@@ -32,76 +33,41 @@ function setTestData() {
   }
 }
 
-const columns = [
-  {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    sorter: (a, b) => a.type.length - b.type.length,
-    width: '10%',
-  },
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
-    width: '25%',
-  },
-  {
-    title: 'Roll',
-    dataIndex: 'roll',
-    key: 'roll',
-    filters: [
-      { text: 'AA', value: 'Attestation Agency' },
-      { text: 'SP', value: 'Service Provider' },
-    ],
-    width: '20%',
-    filterMultiple: false,
-    onFilter: (value, record) => record.roll.indexOf(value) === 0,
-  },
-  {
-    title: 'Meta ID',
-    dataIndex: 'metaID',
-    key: 'metaID',
-    width: '35%',
-  },
-  {
-    title: 'Registered on',
-    dataIndex: 'registerDate',
-    key: 'registerDate',
-    width: '10%',
-  }
-];
-
 class User extends React.Component {
   state = {
-    data: []
+    items: [],
+    originItems: []
   };
 
   constructor() {
     super();
     setTestData();
+    this.state.originItems = storedData;
   }
 
   componentWillMount() {
-    this.setState({data: storedData});
+    this.setState({items: this.state.originItems});
   }
 
   onSearch(value) {
-    // Reset search
-    if (value === '') {
-      this.setState({data: storedData});
+    value = value.toString().toLowerCase();
+
+    if (! value) {
+      this.setState({items: this.state.originItems});
       return;
     }
+    let searchedData = [];
 
-    // Search with given value
-    var searchData = [];
-    storedData.forEach(function(element) {
-      // Exact match
-      Object.values(element).forEach(function(val) {
-        if(val.toLowerCase().includes(value.toLowerCase())) searchData.push(element);
-      });
+    this.state.originItems.forEach(function(element) {
+      let columns = Object.values(element);
+      for (var i=0; i < columns.length; i++) {
+        if (columns[i].toString().toLowerCase().includes(value)) {
+          searchedData.push(element);
+          return;
+        }
+      }
     });
-    this.setState({data: searchData});
+    this.setState({ items: searchedData });
   }
 
   onSearchInputChange = (e) => {
@@ -144,18 +110,18 @@ class User extends React.Component {
     return (
       <div>
         <Input.Search
+          enterButton
           placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
           onChange={this.onSearchInputChange}
-          enterButton
           style={{ width: '50%', float: 'right', marginBottom: '20px' }}
         />
         <br />
         <Table
-          rowKey={record => record.uid}
+          rowKey="uid"
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
-          columns={columns}
-          dataSource={this.state.data}
+          columns={tableColumns}
+          dataSource={this.state.items}
         />
       </div>
     );
