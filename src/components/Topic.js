@@ -74,9 +74,10 @@ class Topic extends React.Component {
 
   async test() {
     // For test
-    this.props.contracts.topicRegistry.getAllTopic(
-      (ret) => console.log('getTopic result', ret)
-      ,() => console.log('getAllTopic done'));
+    this.props.contracts.topicRegistry.getAllTopic({
+      handler: (ret) => console.log('getTopic result', ret),
+      cb: () => console.log('getAllTopic done')
+    });
   }
 
   componentDidMount() {

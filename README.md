@@ -3,7 +3,7 @@ To enter by registering topic and achievement.
 
 ## Web3
 
-Before compiling, `web3-config.json` should be provided following spec described in `web3.js`.
+Before compiling, `src/ethereum/web3-config.json` should be provided following spec described in `web3.js`.
 Here is example:
 ```
 {
