@@ -30,7 +30,11 @@ class TopicRegistry {
 
   async test(id) {
     await this.sleep(id*1000);
-    return id;
+    return {
+      id: id,
+      issuer: '0xA408FCD6B7f3847686Cb5f41e52A7f4E084FD3cc',
+      explanation: Buffer.from('explanation')
+    };
   }
 
   async getAllTopic(handler, cb) {
