@@ -149,21 +149,24 @@ class Achievement extends React.Component {
   }
 
   onSearch(value) {
-    console.log('onSearch value: ',value);
     if (value == '' || value == undefined) {
       this.data['infoData'] = storedData;
     } else {
       var searchData = [];
       storedData.forEach(function(element) {
         //Exist value
-        if(Object.values(element).indexOf(value) > -1) {
-          console.log('onSearch1: ',Object.values(element).indexOf(value));
-          searchData.push(element);
-        }
+        Object.values(element).forEach(function(val) {
+          if(val.toLowerCase().includes(value.toLowerCase()))
+            searchData.push(element);
+        });
       });
       this.data['infoData']=searchData;
     }
     this.setState({isSearch: true});
+  }
+
+  onSearchInputChange = (e) => {
+    this.onSearch(e.target.value);
   }
 
   onTabsChange = (activeKey) => {
@@ -300,6 +303,7 @@ class Achievement extends React.Component {
             onClick={() => this.showModal('none','add')}>Add New Achievement</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
+            onChange={this.onSearchInputChange}
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
