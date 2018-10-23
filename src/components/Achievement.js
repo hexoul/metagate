@@ -114,7 +114,7 @@ class Achievement extends React.Component {
     // For test
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => {
-        let keys = Object.keys(ret).filter(key => !parseInt(key) && key != '0');
+        let keys = Object.keys(ret).filter(key => !parseInt(key) && key !== '0');
         keys.forEach(key => console.log('getAchievement', key, ret[key]));
       },
       cb: () => console.log('getAllAchievements done')
