@@ -3,6 +3,8 @@ import web3config from '../web3-config.json';
 import { getAddresses } from './addresses';
 import { getBranch, getABI } from './helpers';
 
+var _ = require('underscore');
+
 class TopicRegistry {
   async init() {
     const { TOPIC_REGISTRY_ADDRESS } = getAddresses(web3config.netid);
@@ -22,9 +24,19 @@ class TopicRegistry {
     return this.topicRegistryInstance.methods.topics(topicID).call();
   }
 
-  // TODO
-  async getAllTopic() {
-    return;
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async test(id) {
+    await this.sleep(id*1000);
+    return id;
+  }
+
+  async getAllTopic(handler, cb) {
+    Promise.all(_.range(5).map(async (id) => {
+      await this.test(id).then(id => console.log('go', id));
+    })).then(() => cb());
   }
 }
 

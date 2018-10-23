@@ -63,13 +63,24 @@ class Topic extends React.Component {
     qrVisible: false
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     setTestData();
   }
 
   componentWillMount() {
     this.setState({data: storedData});
+  }
+
+  async test() {
+    // For test
+    this.props.contracts.topicRegistry.getAllTopic(
+      (ret) => console.log('getTopic result', ret)
+      ,() => console.log('getAllTopic done'));
+  }
+
+  componentDidMount() {
+    this.test();
   }
 
   handleSorting = (e) => {
