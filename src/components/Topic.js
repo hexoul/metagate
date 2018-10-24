@@ -1,7 +1,9 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 import * as util from '../util';
-import {columns} from './columns'
+import { columns } from './columns'
+import web3 from '../ethereum/web3';
+
 
 const tableColumns = columns.topicColumns;
 var newTopicData = [];
@@ -17,8 +19,8 @@ class Topic extends React.Component {
 
   async topicDynamicLoading() {
     this.props.contracts.topicRegistry.getAllTopic({
-      handler: (ret) => this.handleAdd(ret),
-      cb: () => this.state.originItems = this.state.items
+      handler: (ret) => { this.handleAdd(ret); console.log(ret); },
+      cb: () => { this.state.originItems = this.state.items }
     });
   }
 
@@ -27,15 +29,27 @@ class Topic extends React.Component {
   }
 
   handleAdd = (result) => {
-    const newItem = {
-      key: this.state.rowCount,
-      topicID: result.id,
-      issuer: result.issuer,
-      title: new TextDecoder("utf-8").decode(result.explanation),
-      explanation: new TextDecoder("utf-8").decode(result.explanation),
-      registerDate: util.timeConverter(Date.now()),
-    };
-
+    let newItem = {};
+    tableColumns.map(({ key }) => {
+      switch (key) {
+        // case 'title':
+        case 'explanation':
+          newItem[key] = util.convertHexToString(result[key]);
+          break;
+        case 'claimTopics':
+          break;
+        case 'reward': 
+          newItem[key] = web3.utils.fromWei(result[key], 'ether');
+          break;
+        case 'createdAt':
+          newItem[key] = util.timeConverter(Date(result[key]));
+          break;
+        default:
+          if (result[key]) newItem[key] = result[key];
+          else newItem[key] = '';
+          break;
+      }
+    });
     this.setState({
       items: [...this.state.items, newItem],
       rowCount: this.state.rowCount+1,
@@ -50,7 +64,7 @@ class Topic extends React.Component {
         break;
       case 'Pre-fixed':
         this.state.originItems.forEach(function(element) {
-          if(Object.values(element)[0]<1025) {
+          if(Object.values(element)[1]<1025) {
             sortData.push(element);
           }
         });
@@ -58,7 +72,7 @@ class Topic extends React.Component {
         break;
       case 'Added':
         this.state.originItems.forEach(function(element) {
-          if(Object.values(element)[0]>1024) {
+          if(Object.values(element)[1]>1024) {
             sortData.push(element);
           }
         });

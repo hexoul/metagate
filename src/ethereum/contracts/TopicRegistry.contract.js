@@ -2,7 +2,6 @@ import web3 from '../web3';
 import web3config from '../web3-config.json';
 import { getAddresses } from './addresses';
 import { getBranch, getABI } from './helpers';
-import { sleep } from '../../util';
 
 var _ = require('underscore');
 
@@ -15,28 +14,32 @@ class TopicRegistry {
     this.topicRegistryInstance = new web3.eth.Contract(topicRegistryAbi.abi, TOPIC_REGISTRY_ADDRESS);
   }
 
-  async getTopic(topicID) {
+  async isRegistered(topicID) {
     // Validate ABI
-    if (! this.topicRegistryInstance.methods.topics) return;
+    if (! this.topicRegistryInstance.methods.isRegistered) return;
 
     // Call
-    return this.topicRegistryInstance.methods.topics(topicID).call();
+    return this.topicRegistryInstance.methods.isRegistered(topicID).call();
   }
 
-  async test(id) {
-    await sleep(id*1000);
-    return {
-      id: id,
-      issuer: '0xA408FCD6B7f3847686Cb5f41e52A7f4E084FD3cc',
-      explanation: Buffer.from('explanation')
-    };
+  async getTopic(topicID) {
+    // Validate ABI
+    if (! this.topicRegistryInstance.methods.getTopic) return;
+
+    // Call
+    return this.topicRegistryInstance.methods.getTopic(topicID).call();
   }
 
   async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
     
+    // NOTE: range and topicID will be fixed after test
     Promise.all(_.range(20).map(async (id) => {
-      await this.test(id).then(id => handler(id));
+      let topicID = id + 1020;
+      // Execute handler from getTopic() when a topic was registered
+      if (await this.isRegistered(topicID)) {
+        await this.getTopic(topicID).then(ret => { ret['id'] = topicID; handler(ret); });
+      }
     })).then(() => cb());
   }
 }

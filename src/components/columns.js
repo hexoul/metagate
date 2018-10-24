@@ -3,8 +3,8 @@ let columns = {};
 columns.topicColumns = [
     {
       title: 'Topic ID',
-      dataIndex: 'topicID',
-      key: 'topicID',
+      dataIndex: 'id',
+      key: 'id',
       width: '10%',
     },
     {
@@ -27,8 +27,8 @@ columns.topicColumns = [
     },
     {
       title: 'Registered on',
-      dataIndex: 'registerDate',
-      key: 'registerDate',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       width: '10%',
     }
   ];
@@ -78,7 +78,7 @@ columns.topicColumns = [
       title: 'creator',
       dataIndex: 'creator',
       key: 'creator',
-      width: '15%',
+      width: '30%%',
     },
     {
       title: 'Title',
@@ -90,7 +90,7 @@ columns.topicColumns = [
       title: 'Explanation',
       dataIndex: 'explanation',
       key: 'explanation',
-      width: '45%',
+      width: '35%',
     },
     {
       title: 'Reward',
@@ -100,10 +100,46 @@ columns.topicColumns = [
     },
     {
       title: 'Registered on',
-      dataIndex: 'registerDate',
-      key: 'registerDate',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       width: '10%',
     }
   ];
+
+  columns.userDetailColumns = [
+    {
+      title: 'Topic Created',
+      dataIndex: 'topic',
+      key: 'topic',
+      width: '10%',
+    },
+    {
+      title: 'Achievement Created',
+      dataIndex: 'achievement',
+      key: 'achievement',
+      width: '10%',
+    }
+  ]
+
+  columns.achievementDetailColumns = [
+    {
+      title: 'Topic No',
+      dataIndex: 'id',
+      key: 'id',
+      width: '10%',
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      width: '20%',
+    },
+    {
+      title: 'Issuer',
+      dataIndex: 'issuer',
+      key: 'issuer',
+      width: '40%',
+    },
+  ]
 
   export {columns}

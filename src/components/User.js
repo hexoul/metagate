@@ -4,6 +4,7 @@ import * as util from '../util';
 import {columns} from './columns'
 
 const tableColumns = columns.userColumns;
+const detailColumns = columns.userDetailColumns;
 
 // Test data
 var storedData = [];
@@ -36,7 +37,7 @@ function setTestData() {
 class User extends React.Component {
   state = {
     items: [],
-    originItems: []
+    originItems: [],
   };
 
   constructor() {
@@ -85,20 +86,11 @@ class User extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
-          <List
-            size='small'
-            header={<div><h2>Topic Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
-          />
-          <br />
-          <List
-            size='small'
-            header={<div><h2>Achievement Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
+          <Table
+            rowKey="uid"
+            // columns 맞게 변경하기
+            columns={ detailColumns }
+            dataSource={ this.state.items }
           />
         </div>
       ),
