@@ -8,9 +8,7 @@ const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
 
 // Test data
-var newTopicData = [];
 var topicListArr = ['Legal Name', 'Phone Number', 'E-mail Address', 'Date of Birth', 'Nationality'];
-
 var children = [];
 
 function setTestData() {
@@ -22,20 +20,12 @@ function setTestData() {
 class Achievement extends React.Component {
   data = {
     items: [],
-    detailItems: [],
     originItems: [],
     originClaimTopics: [],
-    metaId:'',
-    achievementAddr: '0x7304f14b0909640acc4f6a192381091eb1f37702',
+    newAchievementItem: [],
     panes: [],
     activeKey: '0',
-    newTabIndex: 1,
-
-    newTopicId: '',
-    newTitle: '',
-    newExplanation: '',
-
-    rowCount: 0,
+    tabIndex: 1,
   };
 
   state = {
@@ -48,77 +38,24 @@ class Achievement extends React.Component {
 
   constructor(props) {
     super(props);
-    setTestData();
-  }
-
-  componentWillMount() {
-    this.data.items = this.data.originItems;
-    this.data.claimTopics = children;
-    this.data.panes.push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey , closable: false});
-    this.setState({ isTabChange: true });
+    setTestData(); // --> Need using getAllTopic for tabs
   }
 
   componentDidMount() {
     this.achievementDynamicLoading();
+
+    // Init tab value
+    this.data.originClaimTopics = children;
+    this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false});
+    this.setState({ isTabChange: true });
   }
 
   async achievementDynamicLoading() {
     // For test
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => { this.handleAdd(ret) },
+      handler: (ret) => { this.handleItemAdd(ret) },
       cb: () => {this.data.originItems = this.data.items; console.log('getAllAchievements done')}
     });
-  }
-
-  handleAdd = (result) => {
-    let newItem = {};
-    Object.keys(result).map(key => {
-      switch (key) {
-        // case 'title':
-        case 'explanation':
-          newItem[key] = util.convertHexToString(result[key]);
-          break;
-        case 'claimTopics':
-          newItem[key] = this.getClaimTopic(result[key]);
-          break;
-        case 'reward': 
-          newItem[key] = web3.utils.fromWei(result[key], 'ether') + 'META';
-          break;
-        case 'createdAt':
-          newItem[key] = util.timeConverter(Date(result[key]));
-          break;
-        default:
-          if (result[key]) {newItem[key] = result[key]}
-          else {newItem[key] = ''};
-          break;
-      }
-    });
-    //console.log('handleAdd: ', newItem);
-    this.data.items = [...this.data.items, newItem];
-    this.data.rowCount += 1;
-    this.setState({ getTopicInfo: true });
-  }
-
-  async getClaimTopic(claimTopics) {
-    var rtn = [];
-    await claimTopics.forEach(element => {
-      var claims = {};
-      this.props.contracts.topicRegistry.getTopic(element).then(ret => { 
-        claims['id'] = element; //ret를 log로 찍으면 id가 없음 그래서 임의로 넣어줌
-        Object.keys(ret).map(key => {
-          switch(key) {
-            case 'explanation': claims[key] = util.convertHexToString(ret[key]);
-            break;
-            case 'createdAt': claims[key] = util.timeConverter(Date(ret[key]));
-            break;
-            default: claims[key] = ret[key];
-            break;
-          }
-        });
-        rtn.push(claims); 
-      }); 
-    });    
-    return rtn;
   }
 
   showModal = (record, type) => {
@@ -130,9 +67,6 @@ class Achievement extends React.Component {
         });
         break;
       case 'qr':
-        this.data['newTopicId'] = newTopicData['topic'];
-        this.data['newTitle'] = newTopicData['title'];
-        this.data['newExplanation'] = newTopicData['explanation'];
         this.setState({
           addModalVisible: false,
           qrModalVisible: true,
@@ -140,6 +74,13 @@ class Achievement extends React.Component {
         break;
       default: break;
     }
+  }
+
+  handleItemAdd = (result) => {
+    let newItem = {};
+    newItem = this.getKeyValueObject(result);
+    this.data.items = [...this.data.items, newItem];
+    this.setState({ getTopicInfo: true });
   }
 
   handleClose = (e) => {
@@ -150,12 +91,13 @@ class Achievement extends React.Component {
   }
 
   handleSelectChange = (value) => {
-    this.data.panes[this.data.activeKey]['title'] = topicListArr[value];
+    this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
     this.setState({ isTabChange: true });
   }
 
   handleInputChange = (e) => {
-    newTopicData[e.target.id] = e.target.value;
+    // Add new achievement
+    this.data.newAchievementItem[e.target.id] = e.target.value;
   }
 
   onSearch(value) {
@@ -188,25 +130,31 @@ class Achievement extends React.Component {
     this[action](targetKey);
   }
 
-  add = () => {
-    this.data.activeKey = (++this.data.newTabIndex).toString();
-    this.data.panes.push({ title: 'New Tab', content: 'Content of new Tab', key: this.data.activeKey });
-    this.setState({ isTabChange: true });
+  async getClaimTopic(claimTopics) {
+    var rtn = [];
+    await claimTopics.forEach(element => {
+      var claims = {};
+      this.props.contracts.topicRegistry.getTopic(element).then(result => { 
+        claims = this.getKeyValueObject(result);
+        claims['id'] = element; //ret를 log로 찍으면 id가 없음 그래서 임의로 넣어줌
+        rtn.push(claims); 
+      }); 
+    });    
+    return rtn;
   }
-  
-  remove = (targetKey) => {
-    let activeKey = this.data.activeKey;
-    let lastIndex;
-    this.data.panes.forEach((pane, i) => {
-      if (pane.key === targetKey) lastIndex = i - 1;
-    });
-    const panes = this.data.panes.filter(pane => pane.key !== targetKey);
-    if (lastIndex >= 0 && activeKey === targetKey) {
-      activeKey = panes[lastIndex].key;
-    }
-    this.data['panes'] = panes;
-    this.data.activeKey = activeKey;
-    this.setState({ isTabChange: true });
+
+  getKeyValueObject(result) {
+    var rtn = {};
+    Object.keys(result).map(key => {
+      switch (key) {
+        // case 'title':
+        case 'explanation': { rtn[key] = util.convertHexToString(result[key]); } break;
+        case 'claimTopics': { rtn[key] = this.getClaimTopic(result[key]); } break;
+        case 'reward': { rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; } break;
+        case 'createdAt': { rtn[key] = util.timeConverter(Date(result[key])); } break;
+        default: { if (result[key]) {rtn[key] = result[key]} else {rtn[key] = ''}; } break;
+      }});
+    return rtn;
   }
 
   getModalTopicDetail(record, index) {
@@ -215,17 +163,16 @@ class Achievement extends React.Component {
         width: '50%',
         maskClosable: true,
         title: record.title,
-        content: (
-          <div>
-            <h5 style={{ float: 'right' }}>Registered on: {record.createdAt}</h5>
-            <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3>
-            <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
-            <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3>
-            <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.metaId}</h3>
+        content:
+        (<div>
+            <h5 style={{ float: 'right', marginBottom: '10px'}}>Registered on: {record.createdAt}</h5> 
+            <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3> <hr></hr>
+            <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3> <hr></hr>
+            <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr></hr>
+            <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.creator}</h3> <hr></hr>
             <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
             <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ result } />
-          </div>
-        ),
+          </div>),
         onOk() {}
       });      
     });
@@ -247,12 +194,12 @@ class Achievement extends React.Component {
                 optionFilterProp='children'
                 onChange={this.handleSelectChange}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
-                {this.data.claimTopics}
+                {this.data.originClaimTopics}
               </Select>
               <Input
                 onChange={this.handleInputChange} 
                 placeholder='Enter Meta ID of Issuer (Optional)'
-                id='explanation'
+                id='issuer'
               />
             </Tabs.TabPane>)
           }
@@ -297,6 +244,27 @@ class Achievement extends React.Component {
           {this.getTopicTabs()}
         </Form>
     </Modal>
+  }
+
+  add = () => {
+    this.data.activeKey = (++this.data.tabIndex).toString();
+    this.data.panes.push({ title: 'New Topic', content: 'Content of new Tab', key: this.data.activeKey });
+    this.setState({ isTabChange: true });
+  }
+  
+  remove = (targetKey) => {
+    let activeKey = this.data.activeKey;
+    let lastIndex;
+    this.data.panes.forEach((pane, i) => {
+      if (pane.key === targetKey) lastIndex = i - 1;
+    });
+    const panes = this.data.panes.filter(pane => pane.key !== targetKey);
+    if (lastIndex >= 0 && activeKey === targetKey) {
+      activeKey = panes[lastIndex].key;
+    }
+    this.data['panes'] = panes;
+    this.data.activeKey = activeKey;
+    this.setState({ isTabChange: true });
   }
 
   render() {

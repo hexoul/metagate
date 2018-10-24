@@ -42,6 +42,18 @@ class TopicRegistry {
       }
     })).then(() => cb());
   }
+
+  /**
+   * @param {byte32} title
+   * @param {byte32} explanation 
+   */
+  registerTopic(title, explanation) {
+    // Validate ABI
+    if (! this.topicRegistryInstance.methods.registerTopic) return;
+
+    // Return transaction param
+    return this.topicRegistryInstance.methods.registerTopic(title, explanation).send.request();
+  }
 }
 
 export {TopicRegistry}

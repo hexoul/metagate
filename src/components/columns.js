@@ -1,38 +1,5 @@
 let columns = {};
 
-columns.topicColumns = [
-    {
-      title: 'Topic ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: '10%',
-    },
-    {
-      title: 'Issuer',
-      dataIndex: 'issuer',
-      key: 'issuer',
-      width: '15%',
-    },
-    {
-      title: 'Title',
-      dataIndex: 'title',
-      key: 'title',
-      width: '25%',
-    },
-    {
-      title: 'Explanation',
-      dataIndex: 'explanation',
-      key: 'explanation',
-      width: '40%',
-    },
-    {
-      title: 'Registered on',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: '10%',
-    }
-  ];
-
   columns.userColumns = [
     {
       title: 'Type',
@@ -69,6 +36,39 @@ columns.topicColumns = [
       title: 'Registered on',
       dataIndex: 'registerDate',
       key: 'registerDate',
+      width: '10%',
+    }
+  ];
+
+  columns.topicColumns = [
+    {
+      title: 'Topic ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: '10%',
+    },
+    {
+      title: 'Issuer',
+      dataIndex: 'issuer',
+      key: 'issuer',
+      width: '30%',
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
+      width: '25%',
+    },
+    {
+      title: 'Explanation',
+      dataIndex: 'explanation',
+      key: 'explanation',
+      width: '25%',
+    },
+    {
+      title: 'Registered on',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       width: '10%',
     }
   ];
