@@ -170,33 +170,28 @@ class Topic extends React.Component {
           :
           <div>
             <Form layout='inline'>
-              <Form.Item
-                label="Title">
+              <Form.Item label='Title'>
                 <Input
-                  onChange={this.handleChange} 
+                  onChange={this.handleChange}
                   id='title'
-                  placeholder="Input Title"/>
+                  placeholder='Input Title' />
               </Form.Item>
-              <Form.Item
-                style={{ float: 'right'}}
-                label="No">
-                <Input 
-                  onChange={this.handleChange} 
+              <Form.Item style={{ float: 'right'}} label='No'>
+                <Input
+                  onChange={this.handleChange}
                   id='topic'
-                  placeholder="Input Reward"/>
+                  disabled={true}
+                  placeholder='Input Topic ID' />
               </Form.Item>
             </Form>
             <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
-            <Form 
-              layout='vertical'
-              style={{ margin: '30px 0'}}>
-              <Form.Item
-                label="Explanation">
-                <Input.TextArea 
-                  onChange={this.handleChange} 
-                  placeholder="Enter Explanation (max. 32 bytes)" 
+            <Form layout='vertical' style={{ margin: '30px 0'}}>
+              <Form.Item label='Explanation'>
+                <Input.TextArea
+                  onChange={this.handleChange}
+                  placeholder='Input Explanation (max. 32 bytes)'
                   autosize={{ minRows: 2, maxRows: 6 }}
-                  id='explanation'/>
+                  id='explanation' />
               </Form.Item>
             </Form>
           </div>
