@@ -35,31 +35,39 @@ function setTestData() {
 }
 
 class User extends React.Component {
+  data = {
+    items: [], 
+    originItems: [],
+  }
   state = {
     items: [],
     originItems: [],
+    getUserInfo: false,
+    infoModalvisible: false,
+    isSearch: false,
   };
 
   constructor() {
     super();
     setTestData();
-    this.state.originItems = storedData;
+    this.data.originItems = storedData;
   }
 
   componentWillMount() {
-    this.setState({items: this.state.originItems});
+    this.data.items = this.data.originItems;
+    this.setState({ getUserInfo: true });
   }
 
   onSearch(value) {
+    let searchedData = [];
     value = value.toString().toLowerCase();
 
     if (! value) {
-      this.setState({items: this.state.originItems});
+      this.data.items = this.data.originItems;
       return;
     }
-    let searchedData = [];
-
-    this.state.originItems.forEach(function(element) {
+    
+    this.data.originItems.forEach(function(element) {
       let columns = Object.values(element);
       for (var i=0; i < columns.length; i++) {
         if (columns[i].toString().toLowerCase().includes(value)) {
@@ -68,7 +76,8 @@ class User extends React.Component {
         }
       }
     });
-    this.setState({ items: searchedData });
+    this.data.items = searchedData;
+    this.setState({ isSearch: true });
   }
 
   onSearchInputChange = (e) => {
@@ -90,7 +99,7 @@ class User extends React.Component {
             rowKey="uid"
             // columns 맞게 변경하기
             columns={ detailColumns }
-            dataSource={ this.state.items }
+            dataSource={ this.data.items }
           />
         </div>
       ),
@@ -113,7 +122,7 @@ class User extends React.Component {
           rowKey="uid"
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={tableColumns}
-          dataSource={this.state.items}
+          dataSource={this.data.items}
         />
       </div>
     );

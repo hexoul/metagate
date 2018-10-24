@@ -8,18 +8,22 @@ const tableColumns = columns.topicColumns;
 var newTopicData = [];
 
 class Topic extends React.Component {
-  state = {
+  data= {
     items: [],
     originItems: [],
+  }
+  state = {
     addModalVisible: false,
     qrVisible: false,
-    rowCount: 0,
+    getTopicInfo: false,
+    isSort: false,
+    isSearch: false,
   };
 
   async topicDynamicLoading() {
     this.props.contracts.topicRegistry.getAllTopic({
       handler: (ret) => { this.handleAdd(ret); console.log(ret); },
-      cb: () => { this.state.originItems = this.state.items }
+      cb: () => { this.data.originItems = this.data.items }
     });
   }
 
@@ -49,36 +53,30 @@ class Topic extends React.Component {
           break;
       }
     });
-    this.setState({
-      items: [...this.state.items, newItem],
-      rowCount: this.state.rowCount+1,
-    });
+    this.data.items = [...this.data.items, newItem];
+    this.setState({ getTopicInfo: true });
   }
 
   handleSorting = (e) => {
     let sortData=[];
     switch(e.target.value) {
       case 'All':
-        this.setState({items: this.state.originItems});
+        sortData = this.data.originItems;
         break;
       case 'Pre-fixed':
-        this.state.originItems.forEach(function(element) {
-          if(Object.values(element)[1]<1025) {
-            sortData.push(element);
-          }
+        this.data.originItems.forEach(function(element) {
+          if(Object.values(element)[1]<1025) { sortData.push(element); }
         });
-        this.setState({items: sortData});
         break;
       case 'Added':
-        this.state.originItems.forEach(function(element) {
-          if(Object.values(element)[1]>1024) {
-            sortData.push(element);
-          }
+        this.data.originItems.forEach(function(element) {
+          if(Object.values(element)[1]>1024) { sortData.push(element); }
         });
-        this.setState({items: sortData});
         break;
       default: break;
     }
+    this.data.items = sortData;
+    this.setState({isSort: true});
   }
 
   handleChange = (e) => {
@@ -89,12 +87,9 @@ class Topic extends React.Component {
     let searchedData = [];
     value = value.toString().toLowerCase();
     
-    if (! value) {
-      this.setState({items: this.state.originItems});
-      return;
-    }
+    if (! value) { this.data.items = this.data.originItems; return; }
 
-    this.state.originItems.forEach(function(element) {
+    this.data.originItems.forEach(function(element) {
       let columns = Object.values(element);
       for (var i=0; i < columns.length; i++) {
         if (columns[i].toString().toLowerCase().includes(value)) {
@@ -103,7 +98,7 @@ class Topic extends React.Component {
         }
       }
     });
-    this.setState({ items: searchedData });
+    this.setState({ isSearch: true });
   }
 
   onSearchInputChange = (e) => {
@@ -117,7 +112,7 @@ class Topic extends React.Component {
       title: record.title,
       content: (
         <div>
-          <h5 style={{ float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h5 style={{ float: 'right' }}>Registered on: {record.createAt}</h5>
           <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
           <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
         </div>
@@ -144,25 +139,16 @@ class Topic extends React.Component {
           <div>
             <Form layout='inline'>
               <Form.Item label='Title'>
-                <Input
-                  onChange={this.handleChange}
-                  id='title'
-                  placeholder='Input Title' />
+                <Input id='title' onChange={this.handleChange} placeholder='Input Title' />
               </Form.Item>
               <Form.Item style={{ float: 'right'}} label='No'>
-                <Input
-                  onChange={this.handleChange}
-                  id='topic'
-                  disabled={true}
-                  placeholder='Input Topic ID' />
+                <Input id='topic' onChange={this.handleChange} placeholder='Input Topic ID' disabled={true}/>
               </Form.Item>
             </Form>
             <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0'}}>
               <Form.Item label='Explanation'>
-                <Input.TextArea
-                  onChange={this.handleChange}
-                  placeholder='Input Explanation (max. 32 bytes)'
+                <Input.TextArea onChange={this.handleChange} placeholder='Input Explanation (max. 32 bytes)'
                   autosize={{ minRows: 2, maxRows: 6 }}
                   id='explanation' />
               </Form.Item>
@@ -188,7 +174,7 @@ class Topic extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Radio.Group style={{margin: '10px 10px 0 0'}} onChange={this.handleSorting}>
+        <Radio.Group style={{margin: '10px 0'}} onChange={this.handleSorting}>
           <Radio.Button value='All'>All</Radio.Button>
           <Radio.Button value='Pre-fixed'>Pre-fixed</Radio.Button>
           <Radio.Button value='Added'>Added</Radio.Button>
@@ -200,7 +186,7 @@ class Topic extends React.Component {
             onClick: () => { this.getModalTopicDetail(record); }
           })}
           columns={tableColumns}
-          dataSource={this.state.items}
+          dataSource={this.data.items}
         />
         {this.getModalAddTopic()}
       </div>
