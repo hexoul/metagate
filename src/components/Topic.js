@@ -5,7 +5,7 @@ import * as util from '../util';
 
 // Test data
 var storedData = [];
-var newTopicData = [];
+var newTopicData = {};
 var issuerArr = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var titleArr = ['title1', 'title2', 'title3', 'title4','title5', 'title6'];
 var explanationArr = ['explanation1', 'explanation2','explanation3','explanation4', 'explanation5','explanation6'];
@@ -166,7 +166,9 @@ class Topic extends React.Component {
       closable={false}
       >
         {this.state.qrVisible ?
-          'will be QR'
+          <div>
+            {Object.keys(newTopicData).map(key => { return key + ':' + newTopicData[key] + ` // `; })}
+          </div>
           :
           <div>
             <Form layout='inline'>
