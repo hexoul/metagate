@@ -33,8 +33,10 @@ class TopicRegistry {
   async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
 
+    // Validate ABI
     if (! this.topicRegistryInstance.methods.getTotal) return;
 
+    // Search topics with the range from zero to total
     let total = await this.topicRegistryInstance.methods.getTotal().call();
     Promise.all(_.range(total).map(async (id) => {
       let topicID = id;
@@ -46,8 +48,9 @@ class TopicRegistry {
   }
 
   /**
-   * @param {byte32} title
-   * @param {byte32} explanation 
+   * 
+   * @param {bytes32} title 
+   * @param {bytes32} explanation 
    */
   registerTopic(title, explanation) {
     // Validate ABI

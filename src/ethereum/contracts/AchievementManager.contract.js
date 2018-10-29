@@ -53,6 +53,23 @@ class AchievementManager {
       await this.getAchievementById(achievementID).then(achievement => handler(achievement));
     })).then(() => cb());
   }
+
+  /**
+   * 
+   * @param {uint256[]} topics 
+   * @param {address[]} issuers 
+   * @param {bytes32} title 
+   * @param {bytes32} explanation 
+   * @param {uint256} reward 
+   * @param {string} uri 
+   */
+  createAchievement(topics, issuers, title, explanation, reward, uri) {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.createAchievement) return;
+
+    // Return transaction param
+    return this.achievementManagerInstance.methods.createAchievement(topics, issuers, title, explanation, reward, uri).send.request();
+  }
 }
 
 export {AchievementManager}
