@@ -33,19 +33,8 @@ class Topic extends React.Component {
   }
 
   handleAdd = async (result) => {
-    let newItem = {};
-    await Object.keys(result).map(async (key) => {
-      switch (key) {
-        case 'title': newItem[key] = util.convertHexToString(result[key]); return key;
-        case 'explanation': newItem[key] = util.convertHexToString(result[key]); return key;
-        case 'createdAt': newItem[key] = util.timeConverter(Date(result[key])); return key;
-        default:
-          if (result[key]) newItem[key] = result[key];
-          else newItem[key] = '';
-          return key;
-      }
-    });
-    this.data.items = [...this.data.items, newItem];
+    await util.refine(result);
+    this.data.items = [...this.data.items, result];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }

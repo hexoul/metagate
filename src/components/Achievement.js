@@ -43,6 +43,13 @@ class Achievement extends React.Component {
     setTestData();
   }
 
+  async achievementDynamicLoading() {
+    this.props.contracts.achievementManager.getAllAchievements({
+      handler: (ret) => this.handleItemAdd(ret),
+      cb: () => {}
+    });
+  }
+
   componentDidMount() {
     this.achievementDynamicLoading();
 
@@ -50,13 +57,6 @@ class Achievement extends React.Component {
     this.data.originClaimTopics = children;
     this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
     this.setState({ isTabChange: true });
-  }
-
-  async achievementDynamicLoading() {
-    this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => this.handleItemAdd(ret),
-      cb: () => {}
-    });
   }
 
   handleItemAdd = async (result) => {
@@ -67,7 +67,7 @@ class Achievement extends React.Component {
   }
 
   handleSelectChange = (value) => {
-    this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
+    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
     this.setState({ isTabChange: true });
   }
 
@@ -148,7 +148,7 @@ class Achievement extends React.Component {
           <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3><hr />
           <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3><hr />
           <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
-          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.creator}</h3> <hr />
+          <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
           <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ record.claimTopics } />
         </div>),

@@ -1,3 +1,5 @@
+import web3 from './ethereum/web3';
+
 function timeConverter(UNIX_timestamp) {
     var a = new Date(UNIX_timestamp);
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -26,9 +28,22 @@ async function asyncForEach(array, callback) {
   }
 }
 
+async function refine(m) {
+  await Object.keys(m).map(key => {
+    switch (key) {
+      case 'title': m[key] = convertHexToString(m[key]); return key;
+      case 'explanation': m[key] = convertHexToString(m[key]); return key;
+      case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; return key;
+      case 'createdAt': m[key] = timeConverter(Date(m[key])); return key;
+      default: if (! m[key]) m[key] = ''; return key;
+    }
+  });
+}
+
 export {
     timeConverter,
     sleep,
     convertHexToString,
-    asyncForEach
+    asyncForEach,
+    refine
 }
