@@ -1,8 +1,9 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
-import * as util from '../util';
+
 import { columns } from './columns'
 import web3 from '../ethereum/web3';
+import * as util from '../util';
 
 const tableColumns = columns.topicColumns;
 var newTopicData = [];
@@ -22,7 +23,7 @@ class Topic extends React.Component {
 
   async topicDynamicLoading() {
     this.props.contracts.topicRegistry.getAllTopic({
-      handler: (ret) => { this.handleAdd(ret); console.log(ret); },
+      handler: ret => this.handleAdd(ret),
       cb: () => { this.data.originItems = this.data.items }
     });
   }
@@ -31,11 +32,11 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = (result) => {
+  handleAdd = async (result) => {
     let newItem = {};
-    tableColumns.map(({ key }) => {
+    await Object.keys(result).map(async (key) => {
       switch (key) {
-        // case 'title':
+        case 'title': newItem[key] = util.convertHexToString(result[key]); return key;
         case 'explanation': newItem[key] = util.convertHexToString(result[key]); return key;
         case 'claimTopics': return key;
         case 'reward': newItem[key] = web3.utils.fromWei(result[key], 'ether'); return key;

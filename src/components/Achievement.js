@@ -38,7 +38,8 @@ class Achievement extends React.Component {
 
   constructor(props) {
     super(props);
-    setTestData(); // --> Need using getAllTopic for tabs
+    // TODO: init topic tabs of AddAchivModal
+    setTestData();
   }
 
   componentDidMount() {
@@ -52,13 +53,13 @@ class Achievement extends React.Component {
 
   async achievementDynamicLoading() {
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => { this.handleItemAdd(ret) },
-      cb: () => {this.data.originItems = this.data.items; console.log('getAllAchievements done')}
+      handler: (ret) => this.handleItemAdd(ret),
+      cb: () => { this.data.originItems = this.data.items }
     });
   }
 
   handleItemAdd = async (result) => {
-    let newItem = this.getAchievementFromMap(result);
+    let newItem = await this.getAchievementFromMap(result);
     this.data.items = [...this.data.items, newItem];
     this.setState({ getTopicInfo: true });
   }
@@ -79,10 +80,8 @@ class Achievement extends React.Component {
     } else {
       var searchedData = [];
       this.data.originItems.forEach(function(element) {
-        //Exist value
         Object.values(element).forEach(function(val) {
-          if(val.toLowerCase().includes(value.toLowerCase()))
-          searchedData.push(element);
+          if (val.toLowerCase().includes(value.toLowerCase())) searchedData.push(element);
         });
       });
       this.data.items = searchedData;
@@ -113,11 +112,11 @@ class Achievement extends React.Component {
     return rtn;
   }
 
-  getAchievementFromMap(result) {
+  async getAchievementFromMap(result) {
     var rtn = {};
-    Object.keys(result).map(async (key) => {
+    await Object.keys(result).map(async (key) => {
       switch (key) {
-        // case 'title':
+        case 'title': rtn[key] = util.convertHexToString(result[key]); return key;
         case 'explanation': rtn[key] = util.convertHexToString(result[key]); return key;
         case 'claimTopics': rtn[key] = await this.getClaimTopic(result[key]); return key;
         case 'reward': rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; return key;
