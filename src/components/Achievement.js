@@ -1,8 +1,9 @@
 import React from 'react';
-import { Table, Input, Modal, List, Button, Select, Form, Tabs } from 'antd';
-import * as util from '../util';
+import { Table, Input, Modal, Button, Select, Form, Tabs } from 'antd';
+
 import { columns } from './columns';
 import web3 from '../ethereum/web3';
+import * as util from '../util';
 
 const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
@@ -51,43 +52,16 @@ class Achievement extends React.Component {
   }
 
   async achievementDynamicLoading() {
-    // For test
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => { this.handleItemAdd(ret) },
       cb: () => {this.data.originItems = this.data.items; console.log('getAllAchievements done')}
     });
   }
 
-  showModal = (record, type) => {
-    switch(type) {
-      case 'add':
-        this.setState({
-          addModalVisible: true,
-          qrModalVisible: false,
-        });
-        break;
-      case 'qr':
-        this.setState({
-          addModalVisible: false,
-          qrModalVisible: true,
-        });
-        break;
-      default: break;
-    }
-  }
-
-  handleItemAdd = (result) => {
-    let newItem = {};
-    newItem = this.getKeyValueObject(result);
+  handleItemAdd = async (result) => {
+    let newItem = this.getAchievementFromMap(result);
     this.data.items = [...this.data.items, newItem];
     this.setState({ getTopicInfo: true });
-  }
-
-  handleClose = (e) => {
-    this.setState({
-      addModalVisible: false,
-      qrModalVisible: false,    
-    });
   }
 
   handleSelectChange = (value) => {
@@ -132,32 +106,33 @@ class Achievement extends React.Component {
 
   async getClaimTopic(claimTopics) {
     var rtn = [];
-    await claimTopics.forEach(element => {
-      var claims = {};
-      this.props.contracts.topicRegistry.getTopic(element).then(result => { 
-        claims = this.getKeyValueObject(result);
-        claims['id'] = element; //ret를 log로 찍으면 id가 없음 그래서 임의로 넣어줌
-        rtn.push(claims); 
-      }); 
-    });    
+    claimTopics.forEach(async (element) => {
+      var topic = await this.props.contracts.topicRegistry.getTopic(element);
+      topic['id'] = element;
+      rtn.push(topic);
+    });
     return rtn;
   }
 
-  getKeyValueObject(result) {
+  getAchievementFromMap(result) {
     var rtn = {};
-    Object.keys(result).map(key => {
+    Object.keys(result).map(async (key) => {
       switch (key) {
         // case 'title':
-        case 'explanation': { rtn[key] = util.convertHexToString(result[key]); } break;
-        case 'claimTopics': { rtn[key] = this.getClaimTopic(result[key]); } break;
-        case 'reward': { rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; } break;
-        case 'createdAt': { rtn[key] = util.timeConverter(Date(result[key])); } break;
-        default: { if (result[key]) {rtn[key] = result[key]} else {rtn[key] = ''}; } break;
-      }});
+        case 'explanation': rtn[key] = util.convertHexToString(result[key]); return key;
+        case 'claimTopics': rtn[key] = await this.getClaimTopic(result[key]); return key;
+        case 'reward': rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; return key;
+        case 'createdAt': rtn[key] = util.timeConverter(Date(result[key])); return key;
+        default:
+          if (result[key]) rtn[key] = result[key];
+          else rtn[key] = '';
+          return key;
+      }
+    });
     return rtn;
   }
 
-  getModalTopicDetail(record, index) {
+  getModalAchievementDetail(record, index) {
     this.data.items[index].claimTopics.then(result => {
       Modal.info({
         width: '50%',
@@ -207,7 +182,7 @@ class Achievement extends React.Component {
     </Form.Item>
   }
 
-  getModalAddTopic() {
+  getModalAddAchievement() {
     return <Modal
       width='50%'
       title={'Add New Achievement'}
@@ -247,8 +222,8 @@ class Achievement extends React.Component {
   }
 
   add = () => {
-    this.data.activeKey = (++this.data.tabIndex).toString();
-    this.data.panes.push({ title: 'New Topic', content: 'Content of new Tab', key: this.data.activeKey });
+    this.data.activeKey = (this.data.tabIndex++).toString();
+    this.data.panes.push({ title: 'New Topic', content: 'Content of new tab', key: this.data.activeKey });
     this.setState({ isTabChange: true });
   }
   
@@ -262,7 +237,7 @@ class Achievement extends React.Component {
     if (lastIndex >= 0 && activeKey === targetKey) {
       activeKey = panes[lastIndex].key;
     }
-    this.data['panes'] = panes;
+    this.data.panes = panes;
     this.data.activeKey = activeKey;
     this.setState({ isTabChange: true });
   }
@@ -274,7 +249,7 @@ class Achievement extends React.Component {
           <Button 
             type='primary'
             size='large'
-            onClick={() => this.showModal('none','add')}>Add New Achievement</Button>
+            onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
             onChange={this.onSearchInputChange}
@@ -285,11 +260,11 @@ class Achievement extends React.Component {
         </div>
         <Table
           rowKey="uid"
-          onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record, index) })}
+          onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
           columns={tableColumns}
           dataSource={ this.data.items }
         />
-        {this.getModalAddTopic()}
+        {this.getModalAddAchievement()}
       </div>
     );
   }
