@@ -48,20 +48,21 @@ class Achievement extends React.Component {
 
     // Init tab value
     this.data.originClaimTopics = children;
-    this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false});
+    this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
     this.setState({ isTabChange: true });
   }
 
   async achievementDynamicLoading() {
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => this.handleItemAdd(ret),
-      cb: () => { this.data.originItems = this.data.items }
+      cb: () => {}
     });
   }
 
   handleItemAdd = async (result) => {
     let newItem = await this.getAchievementFromMap(result);
     this.data.items = [...this.data.items, newItem];
+    this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 
-import { columns } from './columns'
+import { columns } from './columns';
 import web3 from '../ethereum/web3';
 import * as util from '../util';
 
@@ -24,7 +24,7 @@ class Topic extends React.Component {
   async topicDynamicLoading() {
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
-      cb: () => { this.data.originItems = this.data.items }
+      cb: () => {}
     });
   }
 
@@ -48,6 +48,7 @@ class Topic extends React.Component {
       }
     });
     this.data.items = [...this.data.items, newItem];
+    this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
 
@@ -59,12 +60,12 @@ class Topic extends React.Component {
         break;
       case 'Pre-fixed':
         this.data.originItems.forEach(function(element) {
-          if(Object.values(element)[1]<1025) { sortData.push(element); }
+          if (Object.values(element)[1] < 1025) sortData.push(element);
         });
         break;
       case 'Added':
         this.data.originItems.forEach(function(element) {
-          if(Object.values(element)[1]>1024) { sortData.push(element); }
+          if (Object.values(element)[1] > 1024) sortData.push(element);
         });
         break;
       default: break;
