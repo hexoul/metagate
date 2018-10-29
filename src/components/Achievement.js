@@ -199,7 +199,7 @@ class Achievement extends React.Component {
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label='Reward' style={{ float: 'right', marginTop: '2%', marginBottom: '0px'}}>
+            <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
               <Input
                 onChange={this.handleInputChange}
                 id='reward'
