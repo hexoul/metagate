@@ -133,23 +133,21 @@ class Achievement extends React.Component {
   }
 
   getModalAchievementDetail(record, index) {
-    this.data.items[index].claimTopics.then(result => {
-      Modal.info({
-        width: '50%',
-        maskClosable: true,
-        title: record.title,
-        content:
-        (<div>
-            <h5 style={{ float: 'right', marginBottom: '10px'}}>Registered on: {record.createdAt}</h5> 
-            <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3> <hr></hr>
-            <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3> <hr></hr>
-            <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr></hr>
-            <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.creator}</h3> <hr></hr>
-            <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
-            <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ result } />
-          </div>),
-        onOk() {}
-      });      
+    Modal.info({
+      width: '50%',
+      maskClosable: true,
+      title: record.title,
+      content:
+      (<div>
+          <h5 style={{ float: 'right', marginBottom: '10px'}}>Registered on: {record.createdAt}</h5> 
+          <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3><hr />
+          <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3><hr />
+          <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
+          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.creator}</h3> <hr />
+          <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
+          <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ record.claimTopics } />
+        </div>),
+      onOk() {}
     });
   }
 
