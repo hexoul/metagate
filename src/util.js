@@ -28,8 +28,8 @@ async function asyncForEach(array, callback) {
   }
 }
 
-async function refine(m) {
-  await Object.keys(m).map(key => {
+function refine(m) {
+  Object.keys(m).forEach(key => {
     switch (key) {
       case 'title': m[key] = convertHexToString(m[key]); return key;
       case 'explanation': m[key] = convertHexToString(m[key]); return key;
@@ -38,6 +38,7 @@ async function refine(m) {
       default: if (! m[key]) m[key] = ''; return key;
     }
   });
+  return m;
 }
 
 export {

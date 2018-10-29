@@ -32,9 +32,8 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = async (result) => {
-    await util.refine(result);
-    this.data.items = [...this.data.items, result];
+  handleAdd = async (m) => {
+    this.data.items = [...this.data.items, util.refine(m)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
