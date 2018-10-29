@@ -2,7 +2,6 @@ import React from 'react';
 import { Table, Input, Modal, Button, Select, Form, Tabs } from 'antd';
 
 import { columns } from './columns';
-import web3 from '../ethereum/web3';
 import * as util from '../util';
 
 const tableColumns = columns.achievementColumns;
@@ -119,22 +118,10 @@ class Achievement extends React.Component {
     return rtn;
   }
 
-  async getAchievementFromMap(result) {
-    var rtn = {};
-    await Object.keys(result).map(async (key) => {
-      switch (key) {
-        case 'title': rtn[key] = util.convertHexToString(result[key]); return key;
-        case 'explanation': rtn[key] = util.convertHexToString(result[key]); return key;
-        case 'claimTopics': rtn[key] = await this.getClaimTopic(result[key]); return key;
-        case 'reward': rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; return key;
-        case 'createdAt': rtn[key] = util.timeConverter(Date(result[key])); return key;
-        default:
-          if (result[key]) rtn[key] = result[key];
-          else rtn[key] = '';
-          return key;
-      }
-    });
-    return rtn;
+  async getAchievementFromMap(m) {
+    await util.refine(m);
+    if (m.claimTopics) m.claimTopics = await this.getClaimTopic(m.claimTopics);
+    return m;
   }
 
   getModalAchievementDetail(record, index) {
