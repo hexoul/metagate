@@ -35,7 +35,7 @@ class Achievement extends React.Component {
     isTabChange: false,
     isSearch: false,
     getTopicInfo: false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -188,39 +188,47 @@ class Achievement extends React.Component {
   getModalAddAchievement() {
     return <Modal
       width='50%'
-      title={'Add New Achievement'}
+      title='Add New Achievement'
       visible={this.state.addModalVisible}
-      onOk={() => this.setState({ qrVisible: true })}
       okText='Add'
+      onOk={() => this.setState({ qrVisible: true })}
       onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
       >
-        <Form layout='inline'>
-          <Form.Item label='Title'>
-            <Input
-              onChange={this.handleInputChange}
-              id='title'
-              placeholder='Input Title'/>
-          </Form.Item>
-          <Form.Item label='Reward' style={{ float: 'right'}}>
-            <Input
-              onChange={this.handleInputChange}
-              id='reward'
-              placeholder='Input Reward'
-              addonAfter='META'/>
-          </Form.Item>
-        </Form>
-        <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-        <Form layout='vertical' style={{ margin: '30px 0'}}>
-          <Form.Item label='Explanation'>
-            <Input.TextArea
-              onChange={this.handleInputChange}
-              placeholder='Enter Explanation (max. 32 bytes)'
-              autosize={{ minRows: 2, maxRows: 6 }}
-              id='explanation'/>
-          </Form.Item>
-          {this.getTopicTabs()}
-        </Form>
+        {this.state.qrVisible ?
+          <div>
+            {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
+          </div>
+          :
+          <div>
+            <Form layout='inline'>
+              <Form.Item label='Title'>
+                <Input
+                  onChange={this.handleInputChange}
+                  id='title'
+                  placeholder='Input Title'/>
+              </Form.Item>
+              <Form.Item label='Reward' style={{ float: 'right'}}>
+                <Input
+                  onChange={this.handleInputChange}
+                  id='reward'
+                  placeholder='Input Reward'
+                  addonAfter='META'/>
+              </Form.Item>
+            </Form>
+            <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
+            <Form layout='vertical' style={{ margin: '30px 0'}}>
+              <Form.Item label='Explanation'>
+                <Input.TextArea
+                  onChange={this.handleInputChange}
+                  placeholder='Enter Explanation (max. 32 bytes)'
+                  autosize={{ minRows: 2, maxRows: 6 }}
+                  id='explanation'/>
+              </Form.Item>
+              {this.getTopicTabs()}
+            </Form>
+          </div>
+        }
     </Modal>
   }
 

@@ -5,13 +5,14 @@ import { columns } from './columns';
 import * as util from '../util';
 
 const tableColumns = columns.topicColumns;
-var newTopicData = [];
 
 class Topic extends React.Component {
-  data= {
+  data = {
     items: [],
     originItems: [],
-  }
+    newTopicData: [],
+  };
+
   state = {
     addModalVisible: false,
     qrVisible: false,
@@ -72,7 +73,7 @@ class Topic extends React.Component {
   }
 
   handleChange = (e) => {
-    newTopicData[e.target.id] = e.target.value;
+    this.data.newTopicData[e.target.id] = e.target.value;
   }
 
   onSearch(value) {
@@ -108,7 +109,7 @@ class Topic extends React.Component {
         <div>
           <h5 style={{ float: 'right' }}>Registered on: {record.createAt}</h5>
           <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
-          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
+          <h3 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h3>
         </div>
       ),
       onOk() {}
@@ -127,7 +128,7 @@ class Topic extends React.Component {
       >
         {this.state.qrVisible ?
           <div>
-            {Object.keys(newTopicData).map(key => { return key + ':' + newTopicData[key] + ` // `; })}
+            {Object.keys(this.data.newTopicData).map(key => { return key + ':' + this.data.newTopicData[key] + ` // `; })}
           </div>
           :
           <div>
