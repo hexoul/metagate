@@ -23,5 +23,5 @@ function sleep(ms) {
 export {
     timeConverter,
     sleep,
-    convertHexToString
+    convertHexToString,
 }

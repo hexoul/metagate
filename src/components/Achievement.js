@@ -66,12 +66,12 @@ class Achievement extends React.Component {
   }
 
   handleSelectChange = (value) => {
-    // this.data.panes.map((pane) => {
-    //   if(pane.title == value) {
-    //     //message.error('Topic is duplicate');
-    //     return;
-    //   }
-    // });
+    for (var i=0; i<this.data.panes.length; i++) {
+      if(this.data.panes[i].title == topicListArr[value]) {
+        message.error('Selected duplicate topic.');
+        return;
+      }
+    }
     this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
     this.setState({ isTabChange: true });
   }
@@ -107,6 +107,33 @@ class Achievement extends React.Component {
 
   onTabsEdit = (targetKey, action) => {
     this[action](targetKey);
+  }
+
+  onAddClick = () => {
+    var addCheck = false;
+    Object.keys(this.data.newAchievementItem).map(async (key) => {
+      var data = this.data.newAchievementItem[key];
+      if (data) {
+        switch (key) {
+          case 'title':
+
+          return key;
+          case 'reward':
+            if (data < 5) {
+              //5보다 작을 때 처리
+            }
+            break
+          case 'explanation':
+            let strBytes = new TextEncoder('utf-8').encode(data).length;
+            if (strBytes > 32) {
+
+            }
+            break
+          default: break
+        }
+      }
+    });
+    this.setState({ qrVisible: true });
   }
 
   async getClaimTopic(claimTopics) {
@@ -190,7 +217,7 @@ class Achievement extends React.Component {
       width='40%'
       title={'Add New Achievement'}
       visible={this.state.addModalVisible}
-      onOk={() => this.setState({ qrVisible: true })}
+      onOk={ this.onAddClick }
       okText='Add'
       onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
