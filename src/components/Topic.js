@@ -2,7 +2,6 @@ import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 
 import { columns } from './columns';
-import web3 from '../ethereum/web3';
 import * as util from '../util';
 
 const tableColumns = columns.topicColumns;
@@ -38,8 +37,6 @@ class Topic extends React.Component {
       switch (key) {
         case 'title': newItem[key] = util.convertHexToString(result[key]); return key;
         case 'explanation': newItem[key] = util.convertHexToString(result[key]); return key;
-        case 'claimTopics': return key;
-        case 'reward': newItem[key] = web3.utils.fromWei(result[key], 'ether'); return key;
         case 'createdAt': newItem[key] = util.timeConverter(Date(result[key])); return key;
         default:
           if (result[key]) newItem[key] = result[key];
@@ -53,18 +50,18 @@ class Topic extends React.Component {
   }
 
   handleSorting = (e) => {
-    let sortData=[];
+    let sortData = [];
     switch(e.target.value) {
       case 'All':
         sortData = this.data.originItems;
         break;
       case 'Pre-fixed':
-        this.data.originItems.forEach(function(element) {
+        this.data.originItems.forEach(element => {
           if (Object.values(element)[1] < 1025) sortData.push(element);
         });
         break;
       case 'Added':
-        this.data.originItems.forEach(function(element) {
+        this.data.originItems.forEach(element => {
           if (Object.values(element)[1] > 1024) sortData.push(element);
         });
         break;
@@ -80,19 +77,23 @@ class Topic extends React.Component {
 
   onSearch(value) {
     let searchedData = [];
+    if (! value) {
+      this.data.items = this.data.originItems;
+      return this.setState({ isSearch: true });
+    }
     value = value.toString().toLowerCase();
-    
-    if (! value) { this.data.items = this.data.originItems; return; }
 
-    this.data.originItems.forEach(function(element) {
-      let columns = Object.values(element);
-      for (var i=0; i < columns.length; i++) {
-        if (columns[i].toString().toLowerCase().includes(value)) {
+    this.data.originItems.forEach(element => {
+      let found = false;
+      Object.values(element).forEach(val => {
+        if (found) return;
+        else if (val.toString().toLowerCase().includes(value)) {
+          found = true;
           searchedData.push(element);
-          return;
         }
-      }
+      });
     });
+    this.data.items = searchedData;
     this.setState({ isSearch: true });
   }
 
@@ -177,9 +178,7 @@ class Topic extends React.Component {
         <br />
         <Table
           rowKey="uid"
-          onRow={(record, index) => ({
-            onClick: () => { this.getModalTopicDetail(record); }
-          })}
+          onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}
         />

@@ -32,6 +32,7 @@ class User extends React.Component {
     items: [], 
     originItems: [],
   }
+  
   state = {
     items: [],
     originItems: [],
