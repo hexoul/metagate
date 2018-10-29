@@ -77,13 +77,18 @@ class Achievement extends React.Component {
   }
 
   onSearch(value) {
-    if (! value) {
-      this.data.items = this.data.originItems;
-    } else {
+    if (! value) this.data.items = this.data.originItems;
+    else {
       var searchedData = [];
+      value = value.toLowerCase();
       this.data.originItems.forEach(element => {
+        let found = false;
         Object.values(element).forEach(val => {
-          if (val.toLowerCase().includes(value.toLowerCase())) searchedData.push(element);
+          if (found) return;
+          else if (val.toString().toLowerCase().includes(value)) {
+            found = true;
+            searchedData.push(element);
+          }
         });
       });
       this.data.items = searchedData;
