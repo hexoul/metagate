@@ -32,7 +32,7 @@ class TopicRegistry {
 
   async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
-    
+
     // NOTE: range and topicID will be fixed after test
     Promise.all(_.range(20).map(async (id) => {
       let topicID = id + 1020;
