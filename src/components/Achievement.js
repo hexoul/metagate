@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, List, Button, Select, Form, Tabs } from 'antd';
+import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs } from 'antd';
 import * as util from '../util';
 import { columns } from './columns';
 import web3 from '../ethereum/web3';
@@ -209,7 +209,7 @@ class Achievement extends React.Component {
 
   getModalAddTopic() {
     return <Modal
-      width='50%'
+      width='40%'
       title={'Add New Achievement'}
       visible={this.state.addModalVisible}
       onOk={() => this.setState({ qrVisible: true })}
@@ -217,22 +217,28 @@ class Achievement extends React.Component {
       onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
       >
-        <Form layout='inline'>
-          <Form.Item label='Title'>
-            <Input
-              onChange={this.handleInputChange}
-              id='title'
-              placeholder='Input Title'/>
-          </Form.Item>
-          <Form.Item label='Reward' style={{ float: 'right'}}>
-            <Input
-              onChange={this.handleInputChange}
-              id='reward'
-              placeholder='Input Reward'
-              addonAfter='META'/>
-          </Form.Item>
-        </Form>
-        <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
+        <Row>
+          <Col span={12}>
+            <Form.Item label='Title' style={{ marginBottom: '0px'}}>
+              <Input
+                onChange={this.handleInputChange}
+                id='title'
+                placeholder='Input Title'/>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label='Reward' style={{ float: 'right', marginTop: '2%', marginBottom: '0px'}}>
+              <Input
+                onChange={this.handleInputChange}
+                id='reward'
+                placeholder='Input Reward'
+                addonAfter='META'/>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
+        </Row>
         <Form layout='vertical' style={{ margin: '30px 0'}}>
           <Form.Item label='Explanation'>
             <Input.TextArea
@@ -247,8 +253,9 @@ class Achievement extends React.Component {
   }
 
   add = () => {
-    this.data.activeKey = (++this.data.tabIndex).toString();
+    this.data.activeKey = (this.data.tabIndex++).toString();
     this.data.panes.push({ title: 'New Topic', content: 'Content of new Tab', key: this.data.activeKey });
+    console.log('Tab add: ',this.data.panes);
     this.setState({ isTabChange: true });
   }
   
