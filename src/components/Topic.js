@@ -36,21 +36,14 @@ class Topic extends React.Component {
     tableColumns.map(({ key }) => {
       switch (key) {
         // case 'title':
-        case 'explanation':
-          newItem[key] = util.convertHexToString(result[key]);
-          break;
-        case 'claimTopics':
-          break;
-        case 'reward': 
-          newItem[key] = web3.utils.fromWei(result[key], 'ether');
-          break;
-        case 'createdAt':
-          newItem[key] = util.timeConverter(Date(result[key]));
-          break;
+        case 'explanation': newItem[key] = util.convertHexToString(result[key]); return key;
+        case 'claimTopics': return key;
+        case 'reward': newItem[key] = web3.utils.fromWei(result[key], 'ether'); return key;
+        case 'createdAt': newItem[key] = util.timeConverter(Date(result[key])); return key;
         default:
           if (result[key]) newItem[key] = result[key];
           else newItem[key] = '';
-          break;
+          return key;
       }
     });
     this.data.items = [...this.data.items, newItem];

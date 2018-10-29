@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, List } from 'antd';
+import { Table, Input, Modal } from 'antd';
 import * as util from '../util';
 import {columns} from './columns'
 
@@ -14,13 +14,6 @@ var rollArr = ['Attestation Agency', 'Service Provider'];
 var metaidArr = ['0x7304f14b0909640acc4f6a192381091eb1f37701', '0x7304f14b0909640acc4f6a192381091eb1f37702',  
                  '0x7304f14b0909640acc4f6a192381091eb1f37703', '0x7304f14b0909640acc4f6a192381091eb1f37704',
                  '0x7304f14b0909640acc4f6a192381091eb1f37705', '0x7304f14b0909640acc4f6a192381091eb1f37706'];
-const listData = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-];
 
 function setTestData() {
   for (var i=0; i < 20; i++) {
