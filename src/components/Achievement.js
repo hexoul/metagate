@@ -111,7 +111,7 @@ class Achievement extends React.Component {
 
   async getClaimTopic(claimTopics) {
     var rtn = [];
-    claimTopics.forEach(async (element) => {
+    await util.asyncForEach(claimTopics, async (element) => {
       var topic = await this.props.contracts.topicRegistry.getTopic(element);
       topic['id'] = element;
       rtn.push(topic);
