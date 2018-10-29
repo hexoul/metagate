@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs } from 'antd';
+import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message } from 'antd';
 import * as util from '../util';
 import { columns } from './columns';
 import web3 from '../ethereum/web3';
@@ -65,6 +65,12 @@ class Achievement extends React.Component {
   }
 
   handleSelectChange = (value) => {
+    // this.data.panes.map((pane) => {
+    //   if(pane.title == value) {
+    //     //message.error('Topic is duplicate');
+    //     return;
+    //   }
+    // });
     this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
     this.setState({ isTabChange: true });
   }
