@@ -3,12 +3,12 @@ constants.organization = 'hexoul';
 constants.repoName = 'poa-chain-spec';
 constants.addressesSourceFile = 'contracts.json';
 constants.ABIsSources = {
-  Identity: 'Identity.abi.json',
-  IdentityManager: 'IdentityManager.abi.json',
-  AttestationAgencyRegistry: 'AttestationAgencyRegistry.abi.json',
-  TopicRegistry: 'TopicRegistry.abi.json',
-  Achievement: 'Achievement.abi.json',
-  AchievementManager: 'AchievementManager.abi.json',
+  Identity: 'Identity.json',
+  IdentityManager: 'IdentityManager.json',
+  AttestationAgencyRegistry: 'AttestationAgencyRegistry.json',
+  TopicRegistry: 'TopicRegistry.json',
+  Achievement: 'Achievement.json',
+  AchievementManager: 'AchievementManager.json',
 };
 constants.NETID_TESTNET = '101';
 
