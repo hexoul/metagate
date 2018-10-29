@@ -18,6 +18,7 @@ function setTestData() {
 }
 
 class Achievement extends React.Component {
+
   data = {
     items: [],
     originItems: [],

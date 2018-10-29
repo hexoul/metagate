@@ -33,9 +33,11 @@ class TopicRegistry {
   async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
 
-    // NOTE: range and topicID will be fixed after test
-    Promise.all(_.range(20).map(async (id) => {
-      let topicID = id + 1020;
+    if (! this.topicRegistryInstance.methods.getTotal) return;
+
+    let total = await this.topicRegistryInstance.methods.getTotal().call();
+    Promise.all(_.range(total).map(async (id) => {
+      let topicID = id;
       // Execute handler from getTopic() when a topic was registered
       if (await this.isRegistered(topicID)) {
         await this.getTopic(topicID).then(ret => { ret['id'] = topicID; handler(ret); });
