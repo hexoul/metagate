@@ -1,7 +1,10 @@
 import React from 'react';
 import { Table, Input, Modal, List } from 'antd';
 import * as util from '../util';
+import {columns} from './columns'
 
+const tableColumns = columns.userColumns;
+const detailColumns = columns.userDetailColumns;
 
 // Test data
 var storedData = [];
@@ -21,7 +24,6 @@ const listData = [
 
 function setTestData() {
   for (var i=0; i < 20; i++) {
-    // Get data (hardcoding)
     storedData.push({
       type: typeArr[Math.floor((Math.random() * 10)/9)],
       title: titleArr[Math.floor(Math.random() * 6)],
@@ -32,76 +34,50 @@ function setTestData() {
   }
 }
 
-const columns = [
-  {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    sorter: (a, b) => a.type.length - b.type.length,
-    width: '10%',
-  },
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title',
-    width: '25%',
-  },
-  {
-    title: 'Roll',
-    dataIndex: 'roll',
-    key: 'roll',
-    filters: [
-      { text: 'AA', value: 'Attestation Agency' },
-      { text: 'SP', value: 'Service Provider' },
-    ],
-    width: '20%',
-    filterMultiple: false,
-    onFilter: (value, record) => record.roll.indexOf(value) === 0,
-  },
-  {
-    title: 'Meta ID',
-    dataIndex: 'metaID',
-    key: 'metaID',
-    width: '35%',
-  },
-  {
-    title: 'Registered on',
-    dataIndex: 'registerDate',
-    key: 'registerDate',
-    width: '10%',
-  }
-];
-
 class User extends React.Component {
+  data = {
+    items: [], 
+    originItems: [],
+  }
   state = {
-    data: []
+    items: [],
+    originItems: [],
+    getUserInfo: false,
+    infoModalvisible: false,
+    isSearch: false,
   };
 
   constructor() {
     super();
     setTestData();
+    this.data.originItems = storedData;
   }
 
   componentWillMount() {
-    this.setState({data: storedData});
+    this.data.items = this.data.originItems;
+    this.setState({ getUserInfo: true });
   }
 
   onSearch(value) {
-    // Reset search
-    if (value === '') {
-      this.setState({data: storedData});
+    let searchedData = [];
+    value = value.toString().toLowerCase();
+
+    if (! value) {
+      this.data.items = this.data.originItems;
       return;
     }
-
-    // Search with given value
-    var searchData = [];
-    storedData.forEach(function(element) {
-      // Exact match
-      Object.values(element).forEach(function(val) {
-        if(val.toLowerCase().includes(value.toLowerCase())) searchData.push(element);
-      });
+    
+    this.data.originItems.forEach(function(element) {
+      let columns = Object.values(element);
+      for (var i=0; i < columns.length; i++) {
+        if (columns[i].toString().toLowerCase().includes(value)) {
+          searchedData.push(element);
+          return;
+        }
+      }
     });
-    this.setState({data: searchData});
+    this.data.items = searchedData;
+    this.setState({ isSearch: true });
   }
 
   onSearchInputChange = (e) => {
@@ -119,20 +95,11 @@ class User extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
-          <List
-            size='small'
-            header={<div><h2>Topic Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
-          />
-          <br />
-          <List
-            size='small'
-            header={<div><h2>Achievement Created</h2></div>}
-            bordered
-            dataSource={listData}
-            renderItem={item => (<List.Item>{item}</List.Item>)}
+          <Table
+            rowKey="uid"
+            // columns 맞게 변경하기
+            columns={ detailColumns }
+            dataSource={ this.data.items }
           />
         </div>
       ),
@@ -144,18 +111,18 @@ class User extends React.Component {
     return (
       <div>
         <Input.Search
+          enterButton
           placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
           onChange={this.onSearchInputChange}
-          enterButton
           style={{ width: '50%', float: 'right', marginBottom: '20px' }}
         />
         <br />
         <Table
-          rowKey={record => record.uid}
+          rowKey="uid"
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
-          columns={columns}
-          dataSource={this.state.data}
+          columns={tableColumns}
+          dataSource={this.data.items}
         />
       </div>
     );
