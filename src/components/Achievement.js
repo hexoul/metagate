@@ -29,8 +29,9 @@ class Achievement extends React.Component {
     items: [],
     originItems: [],
     originClaimTopics: [],
-    newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
+    newAchievementItem: { title: '', topic: [], explanation: '', reward: '', issuer: '' },
     inputValidData: [],
+    topicIssuerMap: [],
     panes: [],
     activeKey: '0',
     tabIndex: 1,
@@ -79,7 +80,7 @@ class Achievement extends React.Component {
     this.setState({ getTopicInfo: true });
   }
 
-  updateAchieveNewInfo = (e) => {
+  updateNewAchieveInfo = (e) => {
     switch (e.target.id) {
       case 'title':
       case 'explanation':
@@ -99,9 +100,20 @@ class Achievement extends React.Component {
           this.data.newAchievementItem[e.target.id] = e.target.value;
         }
         break;
+      case 'issuer':
+        if( !e.target.value || !web3.utils.isAddress(e.target.value)) {
+          e.target.style.borderColor = 'red';
+          message.error('Input correct address!');
+        } else {
+          e.target.style.borderColor = '#3db389'; 
+          Object.values(this.data.panes).forEach((element, i) => {
+            if (element.key === this.data.activeKey) {this.data.panes[i].issuer = e.target.value}
+          });
+          this.data.newAchievementItem[e.target.id] = e.target.value;
+        }
+        break;
       default: break;
     }
-    console.log(this.data.newAchievementItem);
   }
 
   onSearch(value) {
@@ -119,14 +131,13 @@ class Achievement extends React.Component {
     this[action](targetKey);
   }
 
-  onTabsClick = (value) => {
-    for (var i=0; i < this.data.panes.length; i++) {
-      if (this.data.panes[i].title === topicListArr[value].title) {
-        message.error('Selected duplicate topic.');
-        return;
-      }
+  onTopicClick = (value) => {
+    if (this.data.panes.filter(element => element.title === topicListArr[value].title).length > 0) {
+      return message.error('Selected duplicate topic.');
     }
-    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
+    Object.values(this.data.panes).forEach((element, i) => {
+      if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
+    });
     this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
     this.setState({ isTabChange: true });
   }
@@ -137,13 +148,12 @@ class Achievement extends React.Component {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
-    console.log(this.data.newAchievementItem);
     if (formCheck) this.setState({ qrVisible: true });
     else message.error('Failed cause red box or Select at least one topic!');
   }
 
   onCancelClick = () => {
-    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' };
+    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '', issuer: '' };
     this.setState({ addModalVisible: false, qrVisible: false });
   }
 
@@ -197,13 +207,13 @@ class Achievement extends React.Component {
                 style={{ width: '100%' }}
                 placeholder='Select a Topic'
                 optionFilterProp='children'
-                onChange={this.onTabsClick}
+                onChange={this.onTopicClick}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                 {this.data.originClaimTopics}
               </Select>
               <Input
-                onChange={this.updateAchieveNewInfo} 
-                placeholder='Enter Meta ID of Issuer (Optional)'
+                onChange={this.updateNewAchieveInfo} 
+                placeholder='Enter Meta ID of Issuer'
                 id='issuer'
               />
             </Tabs.TabPane>)
@@ -239,7 +249,7 @@ class Achievement extends React.Component {
             <Col span={12}>
               <Form.Item label='Title' style={{ marginBottom: '0px'}}>
                 <Input
-                  onChange={this.updateAchieveNewInfo}
+                  onChange={this.updateNewAchieveInfo}
                   id='title'
                   placeholder='Input Title'/>
               </Form.Item>
@@ -248,7 +258,7 @@ class Achievement extends React.Component {
               <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
                 <Input
                   type='number'
-                  onChange={this.updateAchieveNewInfo}
+                  onChange={this.updateNewAchieveInfo}
                   id='reward'
                   placeholder='Input Reward'
                   addonAfter='META'/>
@@ -261,7 +271,7 @@ class Achievement extends React.Component {
           <Form layout='vertical' style={{ margin: '30px 0'}}>
             <Form.Item label='Explanation'>
               <Input.TextArea
-                onChange={this.updateAchieveNewInfo}
+                onChange={this.updateNewAchieveInfo}
                 placeholder='Enter Explanation (max. 32 bytes)'
                 autosize={{ minRows: 1, maxRows: 1 }}
                 id='explanation'/>
