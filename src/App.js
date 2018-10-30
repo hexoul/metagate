@@ -12,6 +12,7 @@ import web3config from './ethereum/web3-config.json';
 import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager } from './ethereum/contracts';
 
 class App extends React.Component {
+
   state = {
     nav: 'splash',
     contractReady: false,
@@ -47,7 +48,7 @@ class App extends React.Component {
       case '1': return <User contracts={this.contracts} />;
       case '2': return <Topic contracts={this.contracts} />;
       case '3': return <Achievement contracts={this.contracts} />;
-      case 'splash': return <Splash />;
+      case 'splash': return <Splash onClick={() => this.setState({ nav: 'faq' })}/>;
       case 'faq': return <FAQ />;
       default: return;
     }
