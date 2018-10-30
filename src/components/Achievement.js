@@ -79,20 +79,7 @@ class Achievement extends React.Component {
     this.setState({ getTopicInfo: true });
   }
 
-  handleSelectChange = (value) => {
-    for (var i=0; i < this.data.panes.length; i++) {
-      if (this.data.panes[i].title === topicListArr[value].title) {
-        message.error('Selected duplicate topic.');
-        return;
-      }
-    }
-    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
-    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
-    
-    this.setState({ isTabChange: true });
-  }
-
-  handleInputChange = (e) => {
+  updateAchieveNewInfo = (e) => {
     switch (e.target.id) {
       case 'title':
       case 'explanation':
@@ -130,6 +117,18 @@ class Achievement extends React.Component {
 
   onTabsEdit = (targetKey, action) => {
     this[action](targetKey);
+  }
+
+  onTabsClick = (value) => {
+    for (var i=0; i < this.data.panes.length; i++) {
+      if (this.data.panes[i].title === topicListArr[value].title) {
+        message.error('Selected duplicate topic.');
+        return;
+      }
+    }
+    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
+    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
+    this.setState({ isTabChange: true });
   }
 
   onAddClick = () => {
@@ -198,12 +197,12 @@ class Achievement extends React.Component {
                 style={{ width: '100%' }}
                 placeholder='Select a Topic'
                 optionFilterProp='children'
-                onChange={this.handleSelectChange}
+                onChange={this.onTabsClick}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                 {this.data.originClaimTopics}
               </Select>
               <Input
-                onChange={this.handleInputChange} 
+                onChange={this.updateAchieveNewInfo} 
                 placeholder='Enter Meta ID of Issuer (Optional)'
                 id='issuer'
               />
@@ -240,7 +239,7 @@ class Achievement extends React.Component {
             <Col span={12}>
               <Form.Item label='Title' style={{ marginBottom: '0px'}}>
                 <Input
-                  onChange={this.handleInputChange}
+                  onChange={this.updateAchieveNewInfo}
                   id='title'
                   placeholder='Input Title'/>
               </Form.Item>
@@ -249,7 +248,7 @@ class Achievement extends React.Component {
               <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
                 <Input
                   type='number'
-                  onChange={this.handleInputChange}
+                  onChange={this.updateAchieveNewInfo}
                   id='reward'
                   placeholder='Input Reward'
                   addonAfter='META'/>
@@ -262,9 +261,9 @@ class Achievement extends React.Component {
           <Form layout='vertical' style={{ margin: '30px 0'}}>
             <Form.Item label='Explanation'>
               <Input.TextArea
-                onChange={this.handleInputChange}
+                onChange={this.updateAchieveNewInfo}
                 placeholder='Enter Explanation (max. 32 bytes)'
-                autosize={{ minRows: 1, maxRows: 3 }}
+                autosize={{ minRows: 1, maxRows: 1 }}
                 id='explanation'/>
             </Form.Item>
             {this.getTopicTabs()}

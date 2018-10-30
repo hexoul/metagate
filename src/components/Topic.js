@@ -49,12 +49,12 @@ class Topic extends React.Component {
         break;
       case 'Pre-fixed':
         this.data.originItems.forEach(element => {
-          if (Object.values(element)[1] < 1025) sortData.push(element);
+          if (Object.values(element)[4] < 1025) sortData.push(element);
         });
         break;
       case 'Added':
         this.data.originItems.forEach(element => {
-          if (Object.values(element)[1] > 1024) sortData.push(element);
+          if (Object.values(element)[4] > 1024) sortData.push(element);
         });
         break;
       default: break;
@@ -63,7 +63,7 @@ class Topic extends React.Component {
     this.setState({ isSort: true });
   }
 
-  handleInputChange = (e) => {
+  updateNewTopicInfo = (e) => {
     switch (e.target.id) {
       case 'title':
       case 'explanation':
@@ -142,20 +142,20 @@ class Topic extends React.Component {
             <Row>
               <Col span={12}>
                 <Form.Item label='Title' style={{ marginBottom: '0px'}}>
-                  <Input id='title' onChange={this.handleInputChange} placeholder='Input Title' />
+                  <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item label='No' style={{ float: 'right', marginBottom: '0px'}}>
-                  <Input id='topic' onChange={this.handleInputChange} placeholder='Input Topic ID' disabled={true}/>
+                  <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true}/>
                 </Form.Item>
               </Col>
             </Row>
             <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0'}}>
               <Form.Item label='Explanation'>
-                <Input.TextArea onChange={this.handleInputChange} placeholder='Input Explanation (max. 32 bytes)'
-                  autosize={{ minRows: 1, maxRows: 2 }}
+                <Input.TextArea onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)'
+                  autosize={{ minRows: 1, maxRows: 1 }}
                   id='explanation' />
               </Form.Item>
             </Form>
