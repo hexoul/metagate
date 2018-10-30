@@ -68,21 +68,7 @@ class Topic extends React.Component {
 
   onSearch(value) {
     if (! value) this.data.items = this.data.originItems;
-    else {
-      let searchedData = [];
-      value = value.toString().toLowerCase();
-      this.data.originItems.forEach(element => {
-        let found = false;
-        Object.values(element).forEach(val => {
-          if (found) return;
-          else if (val.toString().toLowerCase().includes(value)) {
-            found = true;
-            searchedData.push(element);
-          }
-        });
-      });
-      this.data.items = searchedData;
-    }
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
     this.setState({ isSearch: true });
   }
 
