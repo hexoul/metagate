@@ -95,18 +95,19 @@ class Achievement extends React.Component {
           message.error('Input exceeds maximum range!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
-        } else { e.target.style.borderColor = '#3db389'; }
+        } else e.target.style.borderColor = '#3db389';
+
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newAchievementItem[e.target.id] = e.target.value;
-        break
+        break;
       case 'reward':
         if (e.target.value < 5) e.target.style.borderColor = 'red'; // 아예 5미만이면 저장을 안해서 에러발생 하도록
         else { 
           e.target.style.borderColor = '#3db389'; 
           this.data.newAchievementItem[e.target.id] = e.target.value;
         }
-        break
-      default: break
+        break;
+      default: break;
     }
   }
 
@@ -211,7 +212,7 @@ class Achievement extends React.Component {
   getModalAddAchievement() {
     return <Modal
       width='40%'
-      title={'Add New Achievement'}
+      title='Add New Achievement'
       visible={this.state.addModalVisible}
       onOk={this.onAddClick}
       okText='Add'

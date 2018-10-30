@@ -42,8 +42,9 @@ function refine(m) {
   return m;
 }
 
+var encoder = new TextEncoder('utf-8');
+
 function isValidLength(str) {
-  var encoder = new TextEncoder('utf-8');
   return encoder.encode(str).length;
 }
 
