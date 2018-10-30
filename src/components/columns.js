@@ -22,7 +22,7 @@ columns.userColumns = [
       { text: 'AA', value: 'Attestation Agency' },
       { text: 'SP', value: 'Service Provider' },
     ],
-    width: '20%',
+    width: '10%',
     filterMultiple: false,
     onFilter: (value, record) => record.roll.indexOf(value) === 0,
   },
@@ -36,6 +36,21 @@ columns.userColumns = [
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
+    width: '20%',
+  }
+];
+
+columns.userDetailColumns = [
+  {
+    title: 'Topic Created',
+    dataIndex: 'topic',
+    key: 'topic',
+    width: '10%',
+  },
+  {
+    title: 'Achievement Created',
+    dataIndex: 'achievement',
+    key: 'achievement',
     width: '10%',
   }
 ];
@@ -51,7 +66,7 @@ columns.topicColumns = [
     title: 'Issuer',
     dataIndex: 'issuer',
     key: 'issuer',
-    width: '30%',
+    width: '20%',
   },
   {
     title: 'Title',
@@ -69,7 +84,7 @@ columns.topicColumns = [
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
-    width: '10%',
+    width: '20%',
   }
 ];
 
@@ -78,7 +93,7 @@ columns.achievementColumns = [
     title: 'Creator',
     dataIndex: 'creator',
     key: 'creator',
-    width: '30%%',
+    width: '20%',
   },
   {
     title: 'Title',
@@ -102,24 +117,9 @@ columns.achievementColumns = [
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
-    width: '10%',
+    width: '20%',
   }
 ];
-
-columns.userDetailColumns = [
-  {
-    title: 'Topic Created',
-    dataIndex: 'topic',
-    key: 'topic',
-    width: '10%',
-  },
-  {
-    title: 'Achievement Created',
-    dataIndex: 'achievement',
-    key: 'achievement',
-    width: '10%',
-  }
-]
 
 columns.achievementDetailColumns = [
   {
@@ -140,6 +140,6 @@ columns.achievementDetailColumns = [
     key: 'issuer',
     width: '40%',
   },
-]
+];
 
 export {columns}

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Table, Input, Modal } from 'antd';
+
+import {columns} from './columns';
 import * as util from '../util';
-import {columns} from './columns'
 
 const tableColumns = columns.userColumns;
 const detailColumns = columns.userDetailColumns;
@@ -42,8 +43,8 @@ class User extends React.Component {
     isSearch: false,
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     setTestData();
     this.data.originItems = storedData;
   }
@@ -54,24 +55,9 @@ class User extends React.Component {
   }
 
   onSearch(value) {
-    let searchedData = [];
-    value = value.toString().toLowerCase();
-
-    if (! value) {
-      this.data.items = this.data.originItems;
-      return;
-    }
-    
-    this.data.originItems.forEach(function(element) {
-      let columns = Object.values(element);
-      for (var i=0; i < columns.length; i++) {
-        if (columns[i].toString().toLowerCase().includes(value)) {
-          searchedData.push(element);
-          return;
-        }
-      }
-    });
-    this.data.items = searchedData;
+    var regex = new RegExp(value, 'i');
+    if (! value) this.data.items = this.data.originItems;
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
     this.setState({ isSearch: true });
   }
 
@@ -91,10 +77,9 @@ class User extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
           <Table
-            rowKey="uid"
-            // columns 맞게 변경하기
-            columns={ detailColumns }
-            dataSource={ this.data.items }
+            rowKey={record => record.uid}
+            columns={detailColumns}
+            dataSource={this.data.items}
           />
         </div>
       ),
@@ -114,7 +99,7 @@ class User extends React.Component {
         />
         <br />
         <Table
-          rowKey={record => record.uid}
+          // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}

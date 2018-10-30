@@ -178,7 +178,7 @@ class Topic extends React.Component {
         </Radio.Group>
         <br />
         <Table
-          rowKey={record => record.uid}
+          rowKey='id'
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}
