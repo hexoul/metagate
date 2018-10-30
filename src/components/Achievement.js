@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message } from 'antd';
+import { SendTransaction } from 'metasdk-react';
 
 import web3 from '../ethereum/web3';
 import { columns } from './columns';
@@ -140,7 +141,7 @@ class Achievement extends React.Component {
 
   onCancelClick = () => {
     this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' };
-    this.setState({ addModalVisible: false, qrVisible: false })
+    this.setState({ addModalVisible: false, qrVisible: false });
   }
 
   async getClaimTopic(claimTopics) {
@@ -221,6 +222,13 @@ class Achievement extends React.Component {
       {this.state.qrVisible ?
         <div>
           {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
+          <SendTransaction
+              id='sendTransaction'
+              request={this.props.contracts.achievementManager.createAchievement()}
+              usage='createAchievement'
+              service='metagate'
+              callbackUrl='none'
+            />
         </div>
         :
         <div>
