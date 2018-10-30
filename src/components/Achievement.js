@@ -113,8 +113,9 @@ class Achievement extends React.Component {
   }
 
   onSearch(value) {
+    var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
-    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
     this.setState({ isSearch: true });
   }
 
