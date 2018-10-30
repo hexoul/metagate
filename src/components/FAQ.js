@@ -1,16 +1,18 @@
 import React from 'react';
 import { Input, Collapse } from 'antd';
+
 import faqContents from './faqContent';
 
 class FAQ extends React.Component {
+
   data = {
     items: [],
     originItems: [],
-  }
+  };
 
   state = {
     didSearch : false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -19,11 +21,7 @@ class FAQ extends React.Component {
 
   initFaqData() {
     for (var i=0; i < faqContents.length; i++) {
-      this.data.originItems.push(
-        <Collapse.Panel header={faqContents[i].title} key={i}>
-          <p>{faqContents[i].content}</p>
-        </Collapse.Panel>
-      );
+      this.data.originItems.push(<Collapse.Panel header={faqContents[i].title} key={i}>{faqContents[i].content}</Collapse.Panel>);
     }
     this.getFaqOriginData();
   }
@@ -33,24 +31,14 @@ class FAQ extends React.Component {
   }
 
   onSearch(value) {
-    if (! value) {
-      this.getFaqOriginData();
-      return this.setState({ didSearch: true });
+    var regex = new RegExp(value, 'i');
+    if (! value) this.getFaqOriginData();
+    else {
+      var searchedData = [];
+      faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
+        .forEach(ret => { searchedData.push(<Collapse.Panel header={ret.title} key={ret.title}>{ret.content}</Collapse.Panel>) });
+      this.data.items = searchedData;
     }
-
-    var searchedData = [];
-    faqContents.forEach(function(element) {
-      if (! element.title.toLowerCase().includes(value)
-          && ! element.content.toLowerCase().includes(value)) {
-        return;
-      }
-      searchedData.push(
-        <Collapse.Panel header={element.title}>
-          <p>{element.content}</p>
-        </Collapse.Panel>);
-    });
-    this.data.items = searchedData;
-
     this.setState({ didSearch: true });
   }
 
@@ -61,8 +49,7 @@ class FAQ extends React.Component {
   render() {
     return (
       <div>
-        <h1><b>FAQ</b></h1>
-        <br />
+        <h1><b>FAQ</b></h1><br />
         <Input.Search
           placeholder='Search by Topic, Keywords or Phrase'
           onChange={this.onSearchInputChange}

@@ -117,8 +117,9 @@ class Achievement extends React.Component {
   }
 
   onSearch(value) {
+    var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
-    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
     this.setState({ isSearch: true });
   }
 
@@ -186,7 +187,7 @@ class Achievement extends React.Component {
           <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
           <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
-          <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ record.claimTopics } />
+          <Table size='small' rowKey='id' columns={ detailColumns } dataSource={ record.claimTopics } />
         </div>
       ),
       onOk() {}
@@ -321,7 +322,7 @@ class Achievement extends React.Component {
           />
         </div>
         <Table
-          rowKey={record => record.uid}
+          // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
           columns={tableColumns}
           dataSource={ this.data.items }

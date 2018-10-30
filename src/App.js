@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { User, Topic, Achievement, FAQ } from './components';
+import { User, Topic, Achievement, FAQ, Splash } from './components';
 
 // Styles.
 import './App.css';
@@ -12,8 +12,9 @@ import web3config from './ethereum/web3-config.json';
 import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager } from './ethereum/contracts';
 
 class App extends React.Component {
+
   state = {
-    nav: '1',
+    nav: 'splash',
     contractReady: false,
   };
 
@@ -27,18 +28,18 @@ class App extends React.Component {
   async initContracts() {
     await getContractsAddresses(web3config.netid);
     Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
-      .then(() => { this.setState({contractReady: true}) });
+      .then(() => this.setState({ contractReady: true }));
   }
 
   constructor(props) {
     super(props);
-    this.prevNav = '1';
+    this.prevNav = 'splash';
     this.initContracts();
   }
 
-  onMenuClick = ({key}) => {
+  onMenuClick = ({ key }) => {
     this.prevNav = key;
-    this.setState({nav: key});
+    this.setState({ nav: key });
   }
 
   getContent() {
@@ -47,6 +48,7 @@ class App extends React.Component {
       case '1': return <User contracts={this.contracts} />;
       case '2': return <Topic contracts={this.contracts} />;
       case '3': return <Achievement contracts={this.contracts} />;
+      case 'splash': return <Splash onClick={() => this.setState({ nav: 'faq' })}/>;
       case 'faq': return <FAQ />;
       default: return;
     }
@@ -67,7 +69,7 @@ class App extends React.Component {
           <Menu
             theme='dark'
             mode='horizontal'
-            defaultSelectedKeys={['1']}
+            // defaultSelectedKeys={['1']}
             style={{ lineHeight: '64px' }}
             onClick={this.onMenuClick}
           >
