@@ -61,10 +61,6 @@ class User extends React.Component {
     this.setState({ isSearch: true });
   }
 
-  onSearchInputChange = (e) => {
-    this.onSearch(e.target.value);
-  }
-
   getModalUserDetail(record) {
     Modal.info({
       width: '70%',
@@ -94,7 +90,7 @@ class User extends React.Component {
           enterButton
           placeholder='Search by Type, Meta ID, Title'
           onSearch={value => this.onSearch(value)}
-          onChange={this.onSearchInputChange}
+          onChange={e => this.onSearch(e.target.value)}
           style={{ width: '50%', float: 'right', marginBottom: '20px' }}
         />
         <br />

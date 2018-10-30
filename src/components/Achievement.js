@@ -10,12 +10,16 @@ const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
 
 // Test data
-var topicListArr = ['Legal Name', 'Phone Number', 'E-mail Address', 'Date of Birth', 'Nationality'];
+var topicListArr = [
+  {title: 'Legal Name', id: 1030}, 
+  {title: 'Phone Number', id: 1031}, 
+  {title: 'E-mail Address', id: 1032}, 
+];
 var children = [];
 
 function setTestData() {
   for (var i=0; i < topicListArr.length; i++) {
-    children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
+    children.push(<Select.Option key={i}>{topicListArr[i].title}</Select.Option>);
   }
 }
 
@@ -25,8 +29,9 @@ class Achievement extends React.Component {
     items: [],
     originItems: [],
     originClaimTopics: [],
-    newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
+    newAchievementItem: { title: '', topic: [], explanation: '', reward: '', issuer: '' },
     inputValidData: [],
+    topicIssuerMap: [],
     panes: [],
     activeKey: '0',
     tabIndex: 1,
@@ -75,20 +80,7 @@ class Achievement extends React.Component {
     this.setState({ getTopicInfo: true });
   }
 
-  handleSelectChange = (value) => {
-    for (var i=0; i < this.data.panes.length; i++) {
-      if (this.data.panes[i].title === topicListArr[value]) {
-        message.error('Selected duplicate topic.');
-        return;
-      }
-    }
-    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
-    this.data.newAchievementItem.topic.push({value: topicListArr[value]});
-    
-    this.setState({ isTabChange: true });
-  }
-
-  handleInputChange = (e) => {
+  updateNewAchieveInfo = (e) => {
     switch (e.target.id) {
       case 'title':
       case 'explanation':
@@ -108,6 +100,18 @@ class Achievement extends React.Component {
           this.data.newAchievementItem[e.target.id] = e.target.value;
         }
         break;
+      case 'issuer':
+        if( !e.target.value || !web3.utils.isAddress(e.target.value)) {
+          e.target.style.borderColor = 'red';
+          message.error('Input correct address!');
+        } else {
+          e.target.style.borderColor = '#3db389'; 
+          Object.values(this.data.panes).forEach((element, i) => {
+            if (element.key === this.data.activeKey) {this.data.panes[i].issuer = e.target.value}
+          });
+          this.data.newAchievementItem[e.target.id] = e.target.value;
+        }
+        break;
       default: break;
     }
   }
@@ -119,10 +123,6 @@ class Achievement extends React.Component {
     this.setState({ isSearch: true });
   }
 
-  onSearchInputChange = (e) => {
-    this.onSearch(e.target.value);
-  }
-
   onTabsChange = (activeKey) => {
     this.data.activeKey = activeKey;
     this.setState({ isTabChange: true });
@@ -132,19 +132,29 @@ class Achievement extends React.Component {
     this[action](targetKey);
   }
 
+  onTopicClick = (value) => {
+    if (this.data.panes.filter(element => element.title === topicListArr[value].title).length > 0) {
+      return message.error('Selected duplicate topic.');
+    }
+    Object.values(this.data.panes).forEach((element, i) => {
+      if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
+    });
+    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
+    this.setState({ isTabChange: true });
+  }
+
   onAddClick = () => {
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
-    console.log(this.data.newAchievementItem);
     if (formCheck) this.setState({ qrVisible: true });
     else message.error('Failed cause red box or Select at least one topic!');
   }
 
   onCancelClick = () => {
-    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' };
+    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '', issuer: '' };
     this.setState({ addModalVisible: false, qrVisible: false });
   }
 
@@ -198,13 +208,13 @@ class Achievement extends React.Component {
                 style={{ width: '100%' }}
                 placeholder='Select a Topic'
                 optionFilterProp='children'
-                onChange={this.handleSelectChange}
+                onChange={this.onTopicClick}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
                 {this.data.originClaimTopics}
               </Select>
               <Input
-                onChange={this.handleInputChange} 
-                placeholder='Enter Meta ID of Issuer (Optional)'
+                onChange={this.updateNewAchieveInfo} 
+                placeholder='Enter Meta ID of Issuer'
                 id='issuer'
               />
             </Tabs.TabPane>)
@@ -225,14 +235,19 @@ class Achievement extends React.Component {
       >
       {this.state.qrVisible ?
         <div>
-          {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
-          <SendTransaction
-              id='sendTransaction'
-              request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
-              usage='createAchievement'
-              service='metagate'
-              callbackUrl='none'
-            />
+          <center><h1>Scan QR Code to Add New Topic</h1></center>
+            <center><div style={{marginTop: '10%'}}>
+              <SendTransaction
+                id='sendTransaction'
+                request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
+                usage='createAchievement'
+                service='metagate'
+                callbackUrl='none'
+                qrsize={256}
+              />
+              <h2 style={{marginTop: '6%'}} >Title: {this.data.newAchievementItem['title']}</h2>
+              <h2>No.: {this.data.newAchievementItem['reward']}</h2>
+          </div></center>
         </div>
         :
         <div>
@@ -240,7 +255,7 @@ class Achievement extends React.Component {
             <Col span={12}>
               <Form.Item label='Title' style={{ marginBottom: '0px'}}>
                 <Input
-                  onChange={this.handleInputChange}
+                  onChange={this.updateNewAchieveInfo}
                   id='title'
                   placeholder='Input Title'/>
               </Form.Item>
@@ -249,7 +264,7 @@ class Achievement extends React.Component {
               <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
                 <Input
                   type='number'
-                  onChange={this.handleInputChange}
+                  onChange={this.updateNewAchieveInfo}
                   id='reward'
                   placeholder='Input Reward'
                   addonAfter='META'/>
@@ -262,9 +277,9 @@ class Achievement extends React.Component {
           <Form layout='vertical' style={{ margin: '30px 0'}}>
             <Form.Item label='Explanation'>
               <Input.TextArea
-                onChange={this.handleInputChange}
+                onChange={this.updateNewAchieveInfo}
                 placeholder='Enter Explanation (max. 32 bytes)'
-                autosize={{ minRows: 1, maxRows: 3 }}
+                autosize={{ minRows: 1, maxRows: 1 }}
                 id='explanation'/>
             </Form.Item>
             {this.getTopicTabs()}
@@ -305,7 +320,7 @@ class Achievement extends React.Component {
             onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
-            onChange={this.onSearchInputChange}
+            onChange={e => this.onSearch(e.target.value)}
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
