@@ -66,9 +66,10 @@ class Achievement extends React.Component {
     this.setState({ isTabChange: true });
 
     // test
-    let topics = [1025,1026,1027];
-    let issuers = ['0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701'];
-    console.log(this.props.contracts.achievementManager.createAchievement(topics, issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri'));
+    this.test = {
+      topics: [1025,1026,1027],
+      issuers: ['0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701'],
+    };
   }
 
   handleItemAdd = async (result) => {
@@ -134,8 +135,10 @@ class Achievement extends React.Component {
   onAddClick = () => {
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
-      if (! this.data.newAchievementItem[key]) formCheck = false;
+      if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
+      else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
+    console.log(this.data.newAchievementItem);
     if (formCheck) this.setState({ qrVisible: true });
     else message.error('Failed cause red box or Select at least one topic!');
   }
@@ -225,7 +228,7 @@ class Achievement extends React.Component {
           {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
           <SendTransaction
               id='sendTransaction'
-              request={this.props.contracts.achievementManager.createAchievement()}
+              request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
               usage='createAchievement'
               service='metagate'
               callbackUrl='none'
