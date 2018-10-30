@@ -86,10 +86,6 @@ class Topic extends React.Component {
     this.setState({ isSearch: true });
   }
 
-  onSearchInputChange = (e) => {
-    this.onSearch(e.target.value);
-  }
-
   onAddClick = () => {
     var formCheck = true;
     Object.keys(this.data.newTopicItem).map(async (key) => {
@@ -178,7 +174,7 @@ class Topic extends React.Component {
             onClick={() => this.setState({ addModalVisible: true })}>Add New Topic</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
-            onChange={this.onSearchInputChange}
+            onChange={ (e) => this.onSearch(e.target.value) }
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}

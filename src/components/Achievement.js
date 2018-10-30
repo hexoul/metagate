@@ -10,12 +10,16 @@ const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
 
 // Test data
-var topicListArr = ['Legal Name', 'Phone Number', 'E-mail Address', 'Date of Birth', 'Nationality'];
+var topicListArr = [
+  {title: 'Legal Name', id: 1030}, 
+  {title: 'Phone Number', id: 1031}, 
+  {title: 'E-mail Address', id: 1032}, 
+];
 var children = [];
 
 function setTestData() {
   for (var i=0; i < topicListArr.length; i++) {
-    children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
+    children.push(<Select.Option key={i}>{topicListArr[i].title}</Select.Option>);
   }
 }
 
@@ -76,13 +80,13 @@ class Achievement extends React.Component {
 
   handleSelectChange = (value) => {
     for (var i=0; i < this.data.panes.length; i++) {
-      if (this.data.panes[i].title === topicListArr[value]) {
+      if (this.data.panes[i].title === topicListArr[value].title) {
         message.error('Selected duplicate topic.');
         return;
       }
     }
     this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
-    this.data.newAchievementItem.topic.push({value: topicListArr[value]});
+    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
     
     this.setState({ isTabChange: true });
   }
@@ -109,16 +113,13 @@ class Achievement extends React.Component {
         break;
       default: break;
     }
+    console.log(this.data.newAchievementItem);
   }
 
   onSearch(value) {
     if (! value) this.data.items = this.data.originItems;
     else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
     this.setState({ isSearch: true });
-  }
-
-  onSearchInputChange = (e) => {
-    this.onSearch(e.target.value);
   }
 
   onTabsChange = (activeKey) => {
@@ -301,7 +302,7 @@ class Achievement extends React.Component {
             onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
-            onChange={this.onSearchInputChange}
+            onChange={ (e) => this.onSearch(e.target.value) }
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
