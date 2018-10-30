@@ -60,7 +60,7 @@ class Topic extends React.Component {
       default: break;
     }
     this.data.items = sortData;
-    this.setState({isSort: true});
+    this.setState({ isSort: true });
   }
 
   handleInputChange = (e) => {
@@ -71,11 +71,12 @@ class Topic extends React.Component {
           message.error('Input exceeds maximum range!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
-        } else { e.target.style.borderColor = '#3db389'; }
+        } else e.target.style.borderColor = '#3db389';
+
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newTopicItem[e.target.id] = e.target.value;
-        break
-      default: break
+        break;
+      default: break;
     }
   }
 
@@ -135,7 +136,7 @@ class Topic extends React.Component {
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item style={{ float: 'right'}} label='No' style={{ float: 'right', marginBottom: '0px'}}>
+                <Form.Item label='No' style={{ float: 'right', marginBottom: '0px'}}>
                   <Input id='topic' onChange={this.handleInputChange} placeholder='Input Topic ID' disabled={true}/>
                 </Form.Item>
               </Col>
