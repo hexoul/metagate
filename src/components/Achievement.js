@@ -1,8 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message } from 'antd';
-import * as util from '../util';
 import { columns } from './columns';
-import web3 from '../ethereum/web3';
+import * as util from '../util';
 
 const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
@@ -22,7 +21,8 @@ class Achievement extends React.Component {
     items: [],
     originItems: [],
     originClaimTopics: [],
-    newAchievementItem: [],
+    newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
+    inputValidData: [],
     panes: [],
     activeKey: '0',
     tabIndex: 1,
@@ -34,12 +34,19 @@ class Achievement extends React.Component {
     isTabChange: false,
     isSearch: false,
     getTopicInfo: false,
-  }
+  };
 
   constructor(props) {
     super(props);
     // TODO: init topic tabs of AddAchivModal
     setTestData();
+  }
+
+  async achievementDynamicLoading() {
+    this.props.contracts.achievementManager.getAllAchievements({
+      handler: (ret) => this.handleItemAdd(ret),
+      cb: () => {}
+    });
   }
 
   componentDidMount() {
@@ -49,13 +56,6 @@ class Achievement extends React.Component {
     this.data.originClaimTopics = children;
     this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
     this.setState({ isTabChange: true });
-  }
-
-  async achievementDynamicLoading() {
-    this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => this.handleItemAdd(ret),
-      cb: () => {}
-    });
   }
 
   handleItemAdd = async (result) => {
@@ -73,22 +73,48 @@ class Achievement extends React.Component {
       }
     }
     this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
+    this.data.newAchievementItem['topic'].push({value: topicListArr[value]});
+    
     this.setState({ isTabChange: true });
   }
 
   handleInputChange = (e) => {
     // Add new achievement
-    this.data.newAchievementItem[e.target.id] = e.target.value;
+    switch (e.target.id) {
+      case 'title':
+      case 'explanation':
+        if (new TextEncoder('utf-8').encode(e.target.value).length > 32) {
+          message.error('Input exceeds maximum range!');
+          e.target.style.borderColor = 'red';
+          e.target.value = this.data.inputValidData[e.target.id];
+        } else { e.target.style.borderColor = '#3db389'; }
+
+        this.data.newAchievementItem[e.target.id] = e.target.value;
+        break
+      case 'reward':
+        if ( e.target.value < 5) { e.target.style.borderColor = 'red' } //아예 5미만이면 저장을 안해서 에러발생 하도록
+        else { 
+          e.target.style.borderColor = '#3db389'; 
+          this.data.newAchievementItem[e.target.id] = e.target.value;
+        }
+        break
+      default: break
+    }
   }
 
   onSearch(value) {
-    if (! value) {
-      this.data.items = this.data.originItems;
-    } else {
+    if (! value) this.data.items = this.data.originItems;
+    else {
       var searchedData = [];
-      this.data.originItems.forEach(function(element) {
-        Object.values(element).forEach(function(val) {
-          if (val.toLowerCase().includes(value.toLowerCase())) searchedData.push(element);
+      value = value.toLowerCase();
+      this.data.originItems.forEach(element => {
+        let found = false;
+        Object.values(element).forEach(val => {
+          if (found) return;
+          else if (val.toString().toLowerCase().includes(value)) {
+            found = true;
+            searchedData.push(element);
+          }
         });
       });
       this.data.items = searchedData;
@@ -110,58 +136,40 @@ class Achievement extends React.Component {
   }
 
   onAddClick = () => {
-    var addCheck = false;
+    var formCheck = true;
+    console.log('onAddClick: ', this.data.newAchievementItem);
     Object.keys(this.data.newAchievementItem).map(async (key) => {
-      var data = this.data.newAchievementItem[key];
-      if (data) {
-        switch (key) {
-          case 'title':
-
-          return key;
-          case 'reward':
-            if (data < 5) {
-              //5보다 작을 때 처리
-            }
-            break
-          case 'explanation':
-            let strBytes = new TextEncoder('utf-8').encode(data).length;
-            if (strBytes > 32) {
-
-            }
-            break
-          default: break
-        }
+      if (!this.data.newAchievementItem[key]){
+        console.log('onAddClick: ', key, 'no data');
+        formCheck = false;
       }
     });
-    this.setState({ qrVisible: true });
+    if (formCheck) {
+      this.setState({ qrVisible: true });
+    } else {
+      message.error('Failed cause red box or Select at least one topic!');
+    }
+  }
+
+  onCancelClick = () => {
+    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' };
+    this.setState({ addModalVisible: false, qrVisible: false })
   }
 
   async getClaimTopic(claimTopics) {
     var rtn = [];
-    claimTopics.forEach(async (element) => {
+    await util.asyncForEach(claimTopics, async (element) => {
       var topic = await this.props.contracts.topicRegistry.getTopic(element);
       topic['id'] = element;
-      rtn.push(topic);
+      rtn.push(util.refine(topic));
     });
     return rtn;
   }
 
-  async getAchievementFromMap(result) {
-    var rtn = {};
-    await Object.keys(result).map(async (key) => {
-      switch (key) {
-        case 'title': rtn[key] = util.convertHexToString(result[key]); return key;
-        case 'explanation': rtn[key] = util.convertHexToString(result[key]); return key;
-        case 'claimTopics': rtn[key] = await this.getClaimTopic(result[key]); return key;
-        case 'reward': rtn[key] = web3.utils.fromWei(result[key], 'ether') + 'META'; return key;
-        case 'createdAt': rtn[key] = util.timeConverter(Date(result[key])); return key;
-        default:
-          if (result[key]) rtn[key] = result[key];
-          else rtn[key] = '';
-          return key;
-      }
-    });
-    return rtn;
+  async getAchievementFromMap(m) {
+    util.refine(m);
+    if (m.claimTopics) m.claimTopics = await this.getClaimTopic(m.claimTopics);
+    return m;
   }
 
   getModalAchievementDetail(record, index) {
@@ -175,7 +183,7 @@ class Achievement extends React.Component {
           <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3><hr />
           <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3><hr />
           <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
-          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID): {record.title} / {record.creator}</h3> <hr />
+          <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
           <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ record.claimTopics } />
         </div>),
@@ -217,43 +225,52 @@ class Achievement extends React.Component {
       width='40%'
       title={'Add New Achievement'}
       visible={this.state.addModalVisible}
-      onOk={ this.onAddClick }
+      onOk={this.onAddClick}
       okText='Add'
-      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
+      onCancel={this.onCancelClick}
       closable={false}
       >
-        <Row>
-          <Col span={12}>
-            <Form.Item label='Title' style={{ marginBottom: '0px'}}>
-              <Input
+      {this.state.qrVisible ?
+        <div>
+          {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
+        </div>
+        :
+        <div>
+          <Row>
+            <Col span={12}>
+              <Form.Item label='Title' style={{ marginBottom: '0px'}}>
+                <Input
+                  onChange={this.handleInputChange}
+                  id='title'
+                  placeholder='Input Title'/>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
+                <Input
+                  type='number'
+                  onChange={this.handleInputChange}
+                  id='reward'
+                  placeholder='Input Reward'
+                  addonAfter='META'/>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
+          </Row>
+          <Form layout='vertical' style={{ margin: '30px 0'}}>
+            <Form.Item label='Explanation'>
+              <Input.TextArea
                 onChange={this.handleInputChange}
-                id='title'
-                placeholder='Input Title'/>
+                placeholder='Enter Explanation (max. 32 bytes)'
+                autosize={{ minRows: 1, maxRows: 3 }}
+                id='explanation'/>
             </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
-              <Input
-                onChange={this.handleInputChange}
-                id='reward'
-                placeholder='Input Reward'
-                addonAfter='META'/>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-        </Row>
-        <Form layout='vertical' style={{ margin: '30px 0'}}>
-          <Form.Item label='Explanation'>
-            <Input.TextArea
-              onChange={this.handleInputChange}
-              placeholder='Enter Explanation (max. 32 bytes)'
-              autosize={{ minRows: 2, maxRows: 6 }}
-              id='explanation'/>
-          </Form.Item>
-          {this.getTopicTabs()}
-        </Form>
+            {this.getTopicTabs()}
+          </Form>
+        </div>
+        }
     </Modal>
   }
 
@@ -295,7 +312,7 @@ class Achievement extends React.Component {
           />
         </div>
         <Table
-          rowKey="uid"
+          rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
           columns={tableColumns}
           dataSource={ this.data.items }

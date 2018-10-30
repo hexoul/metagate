@@ -32,6 +32,7 @@ class User extends React.Component {
     items: [], 
     originItems: [],
   }
+  
   state = {
     items: [],
     originItems: [],
@@ -112,7 +113,7 @@ class User extends React.Component {
         />
         <br />
         <Table
-          rowKey="uid"
+          rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}

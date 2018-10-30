@@ -2,17 +2,17 @@ import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
 
 import { columns } from './columns';
-import web3 from '../ethereum/web3';
 import * as util from '../util';
 
 const tableColumns = columns.topicColumns;
-var newTopicData = [];
 
 class Topic extends React.Component {
-  data= {
+  data = {
     items: [],
     originItems: [],
-  }
+    newTopicData: [],
+  };
+
   state = {
     addModalVisible: false,
     qrVisible: false,
@@ -32,39 +32,25 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = async (result) => {
-    let newItem = {};
-    await Object.keys(result).map(async (key) => {
-      switch (key) {
-        case 'title': newItem[key] = util.convertHexToString(result[key]); return key;
-        case 'explanation': newItem[key] = util.convertHexToString(result[key]); return key;
-        case 'claimTopics': return key;
-        case 'reward': newItem[key] = web3.utils.fromWei(result[key], 'ether'); return key;
-        case 'createdAt': newItem[key] = util.timeConverter(Date(result[key])); return key;
-        default:
-          if (result[key]) newItem[key] = result[key];
-          else newItem[key] = '';
-          return key;
-      }
-    });
-    this.data.items = [...this.data.items, newItem];
+  handleAdd = async (m) => {
+    this.data.items = [...this.data.items, util.refine(m)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
 
   handleSorting = (e) => {
-    let sortData=[];
+    let sortData = [];
     switch(e.target.value) {
       case 'All':
         sortData = this.data.originItems;
         break;
       case 'Pre-fixed':
-        this.data.originItems.forEach(function(element) {
+        this.data.originItems.forEach(element => {
           if (Object.values(element)[1] < 1025) sortData.push(element);
         });
         break;
       case 'Added':
-        this.data.originItems.forEach(function(element) {
+        this.data.originItems.forEach(element => {
           if (Object.values(element)[1] > 1024) sortData.push(element);
         });
         break;
@@ -75,24 +61,26 @@ class Topic extends React.Component {
   }
 
   handleChange = (e) => {
-    newTopicData[e.target.id] = e.target.value;
+    this.data.newTopicData[e.target.id] = e.target.value;
   }
 
   onSearch(value) {
-    let searchedData = [];
-    value = value.toString().toLowerCase();
-    
-    if (! value) { this.data.items = this.data.originItems; return; }
-
-    this.data.originItems.forEach(function(element) {
-      let columns = Object.values(element);
-      for (var i=0; i < columns.length; i++) {
-        if (columns[i].toString().toLowerCase().includes(value)) {
-          searchedData.push(element);
-          return;
-        }
-      }
-    });
+    if (! value) this.data.items = this.data.originItems;
+    else {
+      let searchedData = [];
+      value = value.toString().toLowerCase();
+      this.data.originItems.forEach(element => {
+        let found = false;
+        Object.values(element).forEach(val => {
+          if (found) return;
+          else if (val.toString().toLowerCase().includes(value)) {
+            found = true;
+            searchedData.push(element);
+          }
+        });
+      });
+      this.data.items = searchedData;
+    }
     this.setState({ isSearch: true });
   }
 
@@ -109,7 +97,7 @@ class Topic extends React.Component {
         <div>
           <h5 style={{ float: 'right' }}>Registered on: {record.createAt}</h5>
           <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
-          <h3 style={{ margin: '10px 0' }}>Creator(Title / MetaID) : {record.issuer} / 0x7304f14b0909640acc4f6a192381091eb1f37701</h3>
+          <h3 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h3>
         </div>
       ),
       onOk() {}
@@ -128,7 +116,7 @@ class Topic extends React.Component {
       >
         {this.state.qrVisible ?
           <div>
-            {Object.keys(newTopicData).map(key => { return key + ':' + newTopicData[key] + ` // `; })}
+            {Object.keys(this.data.newTopicData).map(key => { return key + ':' + this.data.newTopicData[key] + ` // `; })}
           </div>
           :
           <div>
@@ -176,10 +164,8 @@ class Topic extends React.Component {
         </Radio.Group>
         <br />
         <Table
-          rowKey="uid"
-          onRow={(record, index) => ({
-            onClick: () => { this.getModalTopicDetail(record); }
-          })}
+          rowKey={record => record.uid}
+          onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}
         />
