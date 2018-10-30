@@ -89,6 +89,20 @@ class Topic extends React.Component {
     this.onSearch(e.target.value);
   }
 
+  onAddClick = () => {
+    var formCheck = true;
+    Object.keys(this.data.newTopicItem).map(async (key) => {
+      if (! this.data.newTopicItem[key]) formCheck = false;
+    });
+    if (formCheck) this.setState({ qrVisible: true });
+    else message.error('Failed cause red box or Select at least one topic!');
+  }
+
+  onCancelClick = () => {
+    this.data.newTopicItem = { title: '', explanation: '' };
+    this.setState({ addModalVisible: false, qrVisible: false });
+  }
+
   getModalTopicDetail(record) {
     Modal.info({
       width: '40%',
@@ -111,8 +125,8 @@ class Topic extends React.Component {
       title='Add New Topic'
       visible={this.state.addModalVisible}
       okText='Add'
-      onOk={() => this.setState({ qrVisible: true })}
-      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
+      onOk={this.onAddClick}
+      onCancel={this.onCancelClick}
       closable={false}
       >
         {this.state.qrVisible ?
