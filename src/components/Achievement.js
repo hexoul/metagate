@@ -74,14 +74,14 @@ class Achievement extends React.Component {
   }
 
   handleSelectChange = (value) => {
-    for (var i=0; i<this.data.panes.length; i++) {
-      if(this.data.panes[i].title == topicListArr[value]) {
+    for (var i=0; i < this.data.panes.length; i++) {
+      if (this.data.panes[i].title === topicListArr[value]) {
         message.error('Selected duplicate topic.');
         return;
       }
     }
-    this.data.panes[this.data.activeKey]['title'] = this.data.originClaimTopics[value].props['children'];
-    this.data.newAchievementItem['topic'].push({value: topicListArr[value]});
+    this.data.panes[this.data.activeKey].title = this.data.originClaimTopics[value].props.children;
+    this.data.newAchievementItem.topic.push({value: topicListArr[value]});
     
     this.setState({ isTabChange: true });
   }
@@ -95,12 +95,12 @@ class Achievement extends React.Component {
           message.error('Input exceeds maximum range!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
-        } else { e.target.style.borderColor = '#3db389'; }
+        } else e.target.style.borderColor = '#3db389';
 
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break
       case 'reward':
-        if ( e.target.value < 5) { e.target.style.borderColor = 'red' } //아예 5미만이면 저장을 안해서 에러발생 하도록
+        if (e.target.value < 5) e.target.style.borderColor = 'red'; // 아예 5미만이면 저장을 안해서 에러발생 하도록
         else { 
           e.target.style.borderColor = '#3db389'; 
           this.data.newAchievementItem[e.target.id] = e.target.value;
@@ -131,18 +131,11 @@ class Achievement extends React.Component {
 
   onAddClick = () => {
     var formCheck = true;
-    console.log('onAddClick: ', this.data.newAchievementItem);
     Object.keys(this.data.newAchievementItem).map(async (key) => {
-      if (!this.data.newAchievementItem[key]){
-        console.log('onAddClick: ', key, 'no data');
-        formCheck = false;
-      }
+      if (! this.data.newAchievementItem[key]) formCheck = false;
     });
-    if (formCheck) {
-      this.setState({ qrVisible: true });
-    } else {
-      message.error('Failed cause red box or Select at least one topic!');
-    }
+    if (formCheck) this.setState({ qrVisible: true });
+    else message.error('Failed cause red box or Select at least one topic!');
   }
 
   onCancelClick = () => {
