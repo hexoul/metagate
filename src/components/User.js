@@ -22,7 +22,7 @@ function setTestData() {
       title: titleArr[Math.floor(Math.random() * 6)],
       roll: rollArr[Math.floor((Math.random() * 10)/9)],
       metaID: metaidArr[Math.floor(Math.random() * 6)],
-      registerDate: util.timeConverter(Date.now()),
+      createdAt: util.timeConverter(Date.now()),
     });
   }
 }
@@ -86,7 +86,7 @@ class User extends React.Component {
       title: record.title,
       content: (
         <div>
-          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.registerDate}</h5>
+          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5>
           <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>

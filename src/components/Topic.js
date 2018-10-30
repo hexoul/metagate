@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Button, Radio, Form } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form, Row, Col, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import { columns } from './columns';
@@ -12,7 +12,8 @@ class Topic extends React.Component {
   data = {
     items: [],
     originItems: [],
-    newTopicData: [],
+    newTopicItem: { title: '', explanation: '' },
+    inputValidData: [],
   };
 
   state = {
@@ -62,8 +63,20 @@ class Topic extends React.Component {
     this.setState({isSort: true});
   }
 
-  handleChange = (e) => {
-    this.data.newTopicData[e.target.id] = e.target.value;
+  handleInputChange = (e) => {
+    switch (e.target.id) {
+      case 'title':
+      case 'explanation':
+        if (util.isValidLength(e.target.value) > 32) {
+          message.error('Input exceeds maximum range!');
+          e.target.style.borderColor = 'red';
+          e.target.value = this.data.inputValidData[e.target.id];
+        } else { e.target.style.borderColor = '#3db389'; }
+        this.data.inputValidData[e.target.id] = e.target.value;
+        this.data.newTopicItem[e.target.id] = e.target.value;
+        break
+      default: break
+    }
   }
 
   onSearch(value) {
@@ -78,14 +91,14 @@ class Topic extends React.Component {
 
   getModalTopicDetail(record) {
     Modal.info({
-      width: '70%',
+      width: '40%',
       maskClosable: true,
-      title: record.title,
+      title: 'No.' + record.id + ' - ' + record.title,
       content: (
-        <div>
-          <h5 style={{ float: 'right' }}>Registered on: {record.createAt}</h5>
-          <h3 style={{ margin: '10px 0 0 0' }}>{record.explanation}</h3>
-          <h3 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h3>
+        <div style={{ marginTop: '5%', width: '90%' }}>
+          <h4 style={{ margin: '10px 0' }}>Registered on: {record.createdAt}</h4><hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
+          <h4 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h4><hr />
         </div>
       ),
       onOk() {}
@@ -94,7 +107,7 @@ class Topic extends React.Component {
 
   getModalAddTopic() {
     return <Modal
-      width='50%'
+      width='40%'
       title='Add New Topic'
       visible={this.state.addModalVisible}
       okText='Add'
@@ -104,10 +117,10 @@ class Topic extends React.Component {
       >
         {this.state.qrVisible ?
           <div>
-            {Object.keys(this.data.newTopicData).map(key => { return key + ':' + this.data.newTopicData[key] + ` // `; })}
+            {Object.keys(this.data.newTopicItem).map(key => { return key + ':' + this.data.newTopicItem[key] + ` // `; })}
             <SendTransaction
               id='sendTransaction'
-              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicData.title), Buffer.from(this.data.newTopicData.explanation))}
+              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
               usage='registerTopic'
               service='metagate'
               callbackUrl='none'
@@ -115,19 +128,23 @@ class Topic extends React.Component {
           </div>
           :
           <div>
-            <Form layout='inline'>
-              <Form.Item label='Title'>
-                <Input id='title' onChange={this.handleChange} placeholder='Input Title' />
-              </Form.Item>
-              <Form.Item style={{ float: 'right'}} label='No'>
-                <Input id='topic' onChange={this.handleChange} placeholder='Input Topic ID' disabled={true}/>
-              </Form.Item>
-            </Form>
+            <Row>
+              <Col span={12}>
+                <Form.Item label='Title' style={{ marginBottom: '0px'}}>
+                  <Input id='title' onChange={this.handleInputChange} placeholder='Input Title' />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item style={{ float: 'right'}} label='No' style={{ float: 'right', marginBottom: '0px'}}>
+                  <Input id='topic' onChange={this.handleInputChange} placeholder='Input Topic ID' disabled={true}/>
+                </Form.Item>
+              </Col>
+            </Row>
             <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0'}}>
               <Form.Item label='Explanation'>
-                <Input.TextArea onChange={this.handleChange} placeholder='Input Explanation (max. 32 bytes)'
-                  autosize={{ minRows: 2, maxRows: 6 }}
+                <Input.TextArea onChange={this.handleInputChange} placeholder='Input Explanation (max. 32 bytes)'
+                  autosize={{ minRows: 1, maxRows: 2 }}
                   id='explanation' />
               </Form.Item>
             </Form>

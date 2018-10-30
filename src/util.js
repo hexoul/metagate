@@ -42,10 +42,16 @@ function refine(m) {
   return m;
 }
 
+function isValidLength(str) {
+  var encoder = new TextEncoder('utf-8');
+  return encoder.encode(str).length;
+}
+
 export {
     timeConverter,
     sleep,
     convertHexToString,
     asyncForEach,
-    refine
+    refine,
+    isValidLength
 }

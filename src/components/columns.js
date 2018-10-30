@@ -34,8 +34,8 @@ columns.userColumns = [
   },
   {
     title: 'Registered on',
-    dataIndex: 'registerDate',
-    key: 'registerDate',
+    dataIndex: 'createdAt',
+    key: 'createdAt',
     width: '10%',
   }
 ];

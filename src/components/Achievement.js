@@ -88,16 +88,15 @@ class Achievement extends React.Component {
   }
 
   handleInputChange = (e) => {
-    // Add new achievement
     switch (e.target.id) {
       case 'title':
       case 'explanation':
-        if (new TextEncoder('utf-8').encode(e.target.value).length > 32) {
+        if (util.isValidLength(e.target.value) > 32) {
           message.error('Input exceeds maximum range!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
-        } else e.target.style.borderColor = '#3db389';
-
+        } else { e.target.style.borderColor = '#3db389'; }
+        this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break
       case 'reward':
