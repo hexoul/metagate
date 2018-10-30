@@ -235,14 +235,19 @@ class Achievement extends React.Component {
       >
       {this.state.qrVisible ?
         <div>
-          {Object.keys(this.data.newAchievementItem).map(key => { return key + ':' + this.data.newAchievementItem[key] + ` // `; })}
-          <SendTransaction
-              id='sendTransaction'
-              request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
-              usage='createAchievement'
-              service='metagate'
-              callbackUrl='none'
-            />
+          <center><h1>Scan QR Code to Add New Topic</h1></center>
+            <center><div style={{marginTop: '10%'}}>
+              <SendTransaction
+                id='sendTransaction'
+                request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
+                usage='createAchievement'
+                service='metagate'
+                callbackUrl='none'
+                qrsize={256}
+              />
+              <h2 style={{marginTop: '6%'}} >Title: {this.data.newAchievementItem['title']}</h2>
+              <h2>No.: {this.data.newAchievementItem['reward']}</h2>
+          </div></center>
         </div>
         :
         <div>
@@ -315,7 +320,7 @@ class Achievement extends React.Component {
             onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
-            onChange={ (e) => this.onSearch(e.target.value) }
+            onChange={e => this.onSearch(e.target.value)}
             onSearch={value => this.onSearch(value)}
             enterButton
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
