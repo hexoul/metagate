@@ -30,12 +30,13 @@ async function asyncForEach(array, callback) {
 
 function refine(m) {
   Object.keys(m).forEach(key => {
+    if (! isNaN(key)) return delete m[key];
     switch (key) {
-      case 'title': m[key] = convertHexToString(m[key]); return key;
-      case 'explanation': m[key] = convertHexToString(m[key]); return key;
-      case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; return key;
-      case 'createdAt': m[key] = timeConverter(Date(m[key])); return key;
-      default: if (! m[key]) m[key] = ''; return key;
+      case 'title': m[key] = convertHexToString(m[key]); break;
+      case 'explanation': m[key] = convertHexToString(m[key]); break;
+      case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
+      case 'createdAt': m[key] = timeConverter(Date(m[key])); break;
+      default: if (! m[key]) m[key] = ''; break;
     }
   });
   return m;

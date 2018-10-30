@@ -1,5 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message } from 'antd';
+
+import web3 from '../ethereum/web3';
 import { columns } from './columns';
 import * as util from '../util';
 
@@ -12,11 +14,12 @@ var children = [];
 
 function setTestData() {
   for (var i=0; i < topicListArr.length; i++) {
-      children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
+    children.push(<Select.Option key={i}>{topicListArr[i]}</Select.Option>);
   }
 }
 
 class Achievement extends React.Component {
+
   data = {
     items: [],
     originItems: [],
@@ -56,6 +59,11 @@ class Achievement extends React.Component {
     this.data.originClaimTopics = children;
     this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
     this.setState({ isTabChange: true });
+
+    // test
+    let topics = [1025,1026,1027];
+    let issuers = ['0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701'];
+    console.log(this.props.contracts.achievementManager.createAchievement(topics, issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri'));
   }
 
   handleItemAdd = async (result) => {
@@ -104,21 +112,7 @@ class Achievement extends React.Component {
 
   onSearch(value) {
     if (! value) this.data.items = this.data.originItems;
-    else {
-      var searchedData = [];
-      value = value.toLowerCase();
-      this.data.originItems.forEach(element => {
-        let found = false;
-        Object.values(element).forEach(val => {
-          if (found) return;
-          else if (val.toString().toLowerCase().includes(value)) {
-            found = true;
-            searchedData.push(element);
-          }
-        });
-      });
-      this.data.items = searchedData;
-    }
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
     this.setState({ isSearch: true });
   }
 
@@ -177,8 +171,8 @@ class Achievement extends React.Component {
       width: '50%',
       maskClosable: true,
       title: record.title,
-      content:
-      (<div>
+      content: (
+        <div>
           <h5 style={{ float: 'right', marginBottom: '10px'}}>Registered on: {record.createdAt}</h5> 
           <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3><hr />
           <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3><hr />
@@ -186,7 +180,8 @@ class Achievement extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
           <Table size="small" rowKey="uid" columns={ detailColumns } dataSource={ record.claimTopics } />
-        </div>),
+        </div>
+      ),
       onOk() {}
     });
   }

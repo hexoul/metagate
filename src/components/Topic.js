@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form } from 'antd';
+import { SendTransaction } from 'metasdk-react';
 
 import { columns } from './columns';
 import * as util from '../util';
@@ -7,6 +8,7 @@ import * as util from '../util';
 const tableColumns = columns.topicColumns;
 
 class Topic extends React.Component {
+
   data = {
     items: [],
     originItems: [],
@@ -66,21 +68,7 @@ class Topic extends React.Component {
 
   onSearch(value) {
     if (! value) this.data.items = this.data.originItems;
-    else {
-      let searchedData = [];
-      value = value.toString().toLowerCase();
-      this.data.originItems.forEach(element => {
-        let found = false;
-        Object.values(element).forEach(val => {
-          if (found) return;
-          else if (val.toString().toLowerCase().includes(value)) {
-            found = true;
-            searchedData.push(element);
-          }
-        });
-      });
-      this.data.items = searchedData;
-    }
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().toLowerCase().includes(value.toLowerCase())).length > 0);
     this.setState({ isSearch: true });
   }
 
@@ -117,6 +105,13 @@ class Topic extends React.Component {
         {this.state.qrVisible ?
           <div>
             {Object.keys(this.data.newTopicData).map(key => { return key + ':' + this.data.newTopicData[key] + ` // `; })}
+            <SendTransaction
+              id='sendTransaction'
+              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicData.title), Buffer.from(this.data.newTopicData.explanation))}
+              usage='registerTopic'
+              service='metagate'
+              callbackUrl='none'
+            />
           </div>
           :
           <div>

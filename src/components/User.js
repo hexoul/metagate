@@ -28,11 +28,12 @@ function setTestData() {
 }
 
 class User extends React.Component {
+
   data = {
-    items: [], 
+    items: [],
     originItems: [],
-  }
-  
+  };
+
   state = {
     items: [],
     originItems: [],

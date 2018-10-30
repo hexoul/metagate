@@ -33,9 +33,13 @@ class TopicRegistry {
   async getAllTopic({handler, cb}) {
     if (! handler || ! cb) return;
 
-    // NOTE: range and topicID will be fixed after test
-    Promise.all(_.range(20).map(async (id) => {
-      let topicID = id + 1020;
+    // Validate ABI
+    if (! this.topicRegistryInstance.methods.getTotal) return;
+
+    // Search topics with the range from zero to total
+    let total = await this.topicRegistryInstance.methods.getTotal().call();
+    Promise.all(_.range(total).map(async (id) => {
+      let topicID = id;
       // Execute handler from getTopic() when a topic was registered
       if (await this.isRegistered(topicID)) {
         await this.getTopic(topicID).then(ret => { ret['id'] = topicID; handler(ret); });
@@ -44,8 +48,9 @@ class TopicRegistry {
   }
 
   /**
-   * @param {byte32} title
-   * @param {byte32} explanation 
+   * 
+   * @param {bytes32} title 
+   * @param {bytes32} explanation 
    */
   registerTopic(title, explanation) {
     // Validate ABI
