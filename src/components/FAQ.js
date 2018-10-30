@@ -1,16 +1,18 @@
 import React from 'react';
 import { Input, Collapse } from 'antd';
+
 import faqContents from './faqContent';
 
 class FAQ extends React.Component {
+
   data = {
     items: [],
     originItems: [],
-  }
+  };
 
   state = {
     didSearch : false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -39,7 +41,7 @@ class FAQ extends React.Component {
     }
 
     var searchedData = [];
-    faqContents.forEach(function(element) {
+    faqContents.forEach(element => {
       if (! element.title.toLowerCase().includes(value)
           && ! element.content.toLowerCase().includes(value)) {
         return;
