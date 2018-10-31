@@ -30,7 +30,7 @@ class Achievement extends React.Component {
     localStorageItem: [],
     originItems: [],
     originClaimTopics: [],
-    newAchievementItem: { title: '', topic: [], explanation: '', reward: ''},
+    newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -73,15 +73,13 @@ class Achievement extends React.Component {
 
     // test
     this.test = {
-      topics: [1025,1026,1027],
       issuers: ['0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701'],
     };
   }
 
   addAchievement = async (ret) => {
     ++this.data.loadedAchieveCnt;
-    if (!ret) return;
-
+    if (! ret) return;
     let newItem = await this.getAchievementFromMap(ret);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
@@ -133,7 +131,6 @@ class Achievement extends React.Component {
           Object.values(this.data.panes).forEach((element, i) => {
             if (element.key === this.data.activeKey) { this.data.newAchievementItem['topic'][i].issuer = e.target.value; }
           });
-          console.log(this.data.newAchievementItem);
         }
         break;
       default: break;
@@ -163,7 +160,6 @@ class Achievement extends React.Component {
     Object.values(this.data.panes).forEach((element, i) => {
       if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
     });
-    console.log(this.data.activeKey);
     this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id, issuer: '', key: this.data.activeKey});
     this.setState({ didTabChange: true });
   }
@@ -314,7 +310,9 @@ class Achievement extends React.Component {
           <Button
             type='primary'
             size='large'
-            onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
+            onClick={() => this.setState({ addModalVisible: true })}>
+            Add New Achievement
+          </Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
             onChange={e => this.onSearch(e.target.value)}

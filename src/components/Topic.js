@@ -29,9 +29,8 @@ class Topic extends React.Component {
 
   async topicDynamicLoading() {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
-
     this.props.contracts.topicRegistry.getAllTopic({
-      handler: ret => this.handleAdd(ret),
+      handler: ret => this.addTopic(ret),
       cb: () => { this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({ loading: true }); }
     });
   }
@@ -40,10 +39,9 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = async (ret) => {
+  addTopic = async (ret) => {
     ++this.data.loadedTopicCnt;
     if (! ret) return;
-
     this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -51,13 +49,10 @@ class Topic extends React.Component {
 
   handleSorting = (e) => {
     let sortData = [];
-    switch(e.target.value) {
-      case 'All':
-        sortData = this.data.originItems;  break;
-      case 'Pre-fixed':
-        this.data.originItems.forEach(element => { if (element.id < 1025) sortData.push(element) }); break;
-      case 'Added':
-        this.data.originItems.forEach(element => { if (element.id > 1024) sortData.push(element) }); break;
+    switch (e.target.value) {
+      case 'All': sortData = this.data.originItems; break;
+      case 'Pre-fixed': this.data.originItems.forEach(element => { if (element.id < 1025) sortData.push(element) }); break;
+      case 'Added': this.data.originItems.forEach(element => { if (element.id > 1024) sortData.push(element) }); break;
       default: break;
     }
     this.data.items = sortData;
@@ -169,7 +164,9 @@ class Topic extends React.Component {
           <Button
             type='primary'
             size='large'
-            onClick={() => this.setState({ addModalVisible: true })}>Add New Topic</Button>
+            onClick={() => this.setState({ addModalVisible: true })}>
+            Add New Topic
+          </Button>
           <Input.Search
             placeholder='Search by Creator, No., Keyword'
             onChange={e => this.onSearch(e.target.value)}
