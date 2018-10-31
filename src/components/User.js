@@ -68,10 +68,10 @@ class User extends React.Component {
       title: record.title,
       content: (
         <div>
-          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5>
-          <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
-          <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
-          <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
+          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
+          <h4 style={{ margin: '10px 0' }}>Roll: {record.roll}</h4>
+          <h4 style={{ margin: '10px 0' }}>Getting Explanation</h4>
+          <h4 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h4>
           <Row>
             <Col span={11}>
               <Table

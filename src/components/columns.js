@@ -42,7 +42,7 @@ columns.userColumns = [
 
 columns.userDetailColumns = [
   {
-    title: 'Topic No',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '20%',
@@ -57,7 +57,7 @@ columns.userDetailColumns = [
 
 columns.topicColumns = [
   {
-    title: 'Topic ID',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '10%',
@@ -124,7 +124,7 @@ columns.achievementColumns = [
 
 columns.achievementDetailColumns = [
   {
-    title: 'Topic No',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '10%',
