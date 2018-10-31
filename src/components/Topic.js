@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Button, Radio, Form, Row, Col, message, Progress } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import { columns } from './columns';
@@ -109,7 +109,7 @@ class Topic extends React.Component {
       title: 'No.' + record.id + ' - ' + record.title,
       content: (
         <div style={{ marginTop: '5%', width: '90%' }}>
-          <h4 style={{ margin: '10px 0' }}>Registered on: {record.createdAt}</h4><hr />
+          <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h4><hr />
         </div>
@@ -140,7 +140,6 @@ class Topic extends React.Component {
               qrsize={256}
             />
             <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-            <h2>No.: {this.data.newTopicItem.id}</h2>
           </center></div>
           :
           <div>
@@ -156,14 +155,7 @@ class Topic extends React.Component {
             </Row>
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0' }}>
-              <Form.Item label='Explanation'>
-                <Input.TextArea
-                  onChange={this.updateNewTopicInfo}
-                  placeholder='Input Explanation (max. 32 bytes)'
-                  autosize={{ minRows: 1, maxRows: 1 }}
-                  id='explanation'
-                />
-              </Form.Item>
+              <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)' />
             </Form>
           </div>
         }

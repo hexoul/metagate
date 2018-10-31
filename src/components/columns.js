@@ -15,18 +15,6 @@ columns.userColumns = [
     width: '25%',
   },
   {
-    title: 'Roll',
-    dataIndex: 'roll',
-    key: 'roll',
-    filters: [
-      { text: 'AA', value: 'Attestation Agency' },
-      { text: 'SP', value: 'Service Provider' },
-    ],
-    width: '10%',
-    filterMultiple: false,
-    onFilter: (value, record) => record.roll.indexOf(value) === 0,
-  },
-  {
     title: 'Meta ID',
     dataIndex: 'metaID',
     key: 'metaID',
@@ -42,7 +30,7 @@ columns.userColumns = [
 
 columns.userDetailColumns = [
   {
-    title: 'Topic No',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '20%',
@@ -57,7 +45,7 @@ columns.userDetailColumns = [
 
 columns.topicColumns = [
   {
-    title: 'Topic ID',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '10%',
@@ -124,7 +112,7 @@ columns.achievementColumns = [
 
 columns.achievementDetailColumns = [
   {
-    title: 'Topic No',
+    title: 'Topic No.',
     dataIndex: 'id',
     key: 'id',
     width: '10%',

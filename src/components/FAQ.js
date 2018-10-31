@@ -36,7 +36,7 @@ class FAQ extends React.Component {
     else {
       var searchedData = [];
       faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
-        .forEach(ret => { searchedData.push(<Collapse.Panel header={ret.title} key={ret.title}>{ret.content}</Collapse.Panel>) });
+        .forEach(ret => searchedData.push(<Collapse.Panel header={ret.title} key={ret.title}>{ret.content}</Collapse.Panel>));
       this.data.items = searchedData;
     }
     this.setState({ didSearch: true });
@@ -57,10 +57,7 @@ class FAQ extends React.Component {
           enterButton
           style={{ width: '80%', marginBottom: '20px' }}
         />
-        <Collapse
-          accordion
-          style={{margin: '20px 0' }}
-        >
+        <Collapse accordion style={{ margin: '20px 0' }}>
           {this.data.items}
         </Collapse>
       </div>

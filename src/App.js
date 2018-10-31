@@ -9,7 +9,7 @@ import './App.css';
 import web3config from './ethereum/web3-config.json';
 
 // Contracts.
-import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager } from './ethereum/contracts';
+import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager, AttestationAgencyRegistry } from './ethereum/contracts';
 
 class App extends React.Component {
 
@@ -22,7 +22,8 @@ class App extends React.Component {
     identity: new Identity(),
     identityManager: new IdentityManager(),
     topicRegistry: new TopicRegistry(),
-    achievementManager: new AchievementManager()
+    achievementManager: new AchievementManager(),
+    aaRegistry: new AttestationAgencyRegistry(),
   };
 
   async initContracts() {

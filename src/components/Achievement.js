@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message, Progress } from 'antd';
+import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import web3 from '../ethereum/web3';
@@ -190,12 +190,12 @@ class Achievement extends React.Component {
       title: record.title,
       content: (
         <div>
-          <h5 style={{ float: 'right', marginBottom: '10px'}}>Registered on: {record.createdAt}</h5> 
-          <h3 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h3><hr />
-          <h3 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h3><hr />
-          <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
-          <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
-          <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
+          <h5 style={{ marginBottom: '10px', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
+          <h4 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h4><hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h4> <hr />
+          <h4 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h4> <hr />
+          <center><h3 style={{ marginTop: '30px' }}>Required Topics</h3></center>
           <Table size='small' rowKey='id' columns={detailColumns} dataSource={record.claimTopics} />
         </div>
       ),
@@ -222,11 +222,7 @@ class Achievement extends React.Component {
               >
                 {this.data.originClaimTopics}
               </Select>
-              <Input
-                onChange={this.updateNewAchieveInfo} 
-                placeholder='Enter Meta ID of Issuer'
-                id='issuer'
-              />
+              <Input id='issuer' onChange={this.updateNewAchieveInfo} placeholder='Enter Meta ID of Issuer' />
             </Tabs.TabPane>)
           }
       </Tabs>
@@ -249,10 +245,10 @@ class Achievement extends React.Component {
           <SendTransaction
             id='sendTransaction'
             request={this.props.contracts.achievementManager.createAchievement(
-              this.test.topics,
+              this.data.newAchievementItem.topic.map(val => val.id),
               this.test.issuers,
-              Buffer.from('title'),
-              Buffer.from('explan'),
+              Buffer.from(this.data.newAchievementItem.title),
+              Buffer.from(this.data.newAchievementItem.explanation),
               web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
               'uri')}
             usage='createAchievement'
@@ -268,23 +264,18 @@ class Achievement extends React.Component {
           <Row>
             <Col span={12}>
               Title<br />
-              <Input onChange={this.updateNewAchieveInfo} id='title' placeholder='Input Title' />
+              <Input id='title' onChange={this.updateNewAchieveInfo} placeholder='Input Title' />
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
-              <Input type='number' onChange={this.updateNewAchieveInfo} id='reward' placeholder='Input Reward' addonAfter='META' />
+              <Input id='reward' type='number' onChange={this.updateNewAchieveInfo} placeholder='Input Reward' addonAfter='META' />
             </Col>
           </Row>
           <p style={{ float: 'right', color: 'red' }}>* Reward needs to be higher than 5</p>
           <Form layout='vertical' style={{ margin: '30px 0' }}>
-            <Form.Item label='Explanation'>
-              <Input.TextArea
-                onChange={this.updateNewAchieveInfo}
-                placeholder='Enter Explanation (max. 32 bytes)'
-                autosize={{ minRows: 1, maxRows: 1 }}
-                id='explanation'
-              />
-            </Form.Item>
+            Explanation<br />
+            <Input id='explanation' onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes)' />
+            <p /><hr />Required Claim Topics<p />
             {this.getTopicTabs()}
           </Form>
         </div>
