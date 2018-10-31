@@ -87,7 +87,7 @@ class User extends React.Component {
                 size='small'
                 header={<div>Achievement created</div>}
                 bordered
-                dataSource={[4, 5, 6]}
+                dataSource={record.achivements}
                 renderItem={item => (<List.Item>{item}</List.Item>)}
               />
             </Col>

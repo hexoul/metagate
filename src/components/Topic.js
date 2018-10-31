@@ -130,33 +130,29 @@ class Topic extends React.Component {
       closable={false}
       >
         {this.state.qrVisible ?
-          <div>
-            <center><h1>Scan QR Code to Add New Topic</h1></center>
-            <center><div style={{ marginTop: '10%' }}>
-              <SendTransaction
-                id='sendTransaction'
-                request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
-                usage='registerTopic'
-                service='metagate'
-                callbackUrl='none'
-                qrsize={256}
-              />
-              <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-              <h2>No.: {this.data.newTopicItem['id']}</h2>
-            </div></center>
-          </div>
+          <div><center>
+            <h1>Scan QR Code to Add New Topic</h1>
+            <SendTransaction
+              id='sendTransaction'
+              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
+              usage='registerTopic'
+              service='metagate'
+              callbackUrl='none'
+              qrsize={256}
+            />
+            <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
+            <h2>No.: {this.data.newTopicItem['id']}</h2>
+          </center></div>
           :
           <div>
             <Row>
               <Col span={12}>
-                <Form.Item label='Title' style={{ marginBottom: '0px' }}>
-                  <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
-                </Form.Item>
+                Title<br />
+                <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
               </Col>
-              <Col span={12}>
-                <Form.Item label='No' style={{ float: 'right', marginBottom: '0px' }}>
-                  <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
-                </Form.Item>
+              <Col span={11} offset={1}>
+                No.<br />
+                <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
               </Col>
             </Row>
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>

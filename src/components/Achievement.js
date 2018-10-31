@@ -149,6 +149,7 @@ class Achievement extends React.Component {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
+    console.log('newAchive', this.data.newAchievementItem);
     if (formCheck) this.setState({ qrVisible: true });
     else message.error('Failed cause red box or Select at least one topic!');
   }
@@ -235,25 +236,29 @@ class Achievement extends React.Component {
       closable={false}
       >
       {this.state.qrVisible ?
-        <div>
-          <center><h1>Scan QR Code to Add New Topic</h1></center>
-            <center><div style={{marginTop: '10%'}}>
-              <SendTransaction
-                id='sendTransaction'
-                request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
-                usage='createAchievement'
-                service='metagate'
-                callbackUrl='none'
-                qrsize={256}
-              />
-              <h2 style={{marginTop: '6%'}} >Title: {this.data.newAchievementItem['title']}</h2>
-              <h2>No.: {this.data.newAchievementItem['reward']}</h2>
-          </div></center>
-        </div>
+        <div><center>
+          <h1>Scan QR Code to Add New Achievement</h1>
+          <SendTransaction
+            id='sendTransaction'
+            request={this.props.contracts.achievementManager.createAchievement(
+              this.test.topics,
+              this.test.issuers,
+              Buffer.from('title'),
+              Buffer.from('explan'),
+              web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
+              'uri')}
+            usage='createAchievement'
+            service='metagate'
+            callbackUrl='none'
+            qrsize={256}
+          />
+          <h2 style={{ marginTop: '6%' }} >Title: {this.data.newAchievementItem.title}</h2>
+          <h2>Reward: {this.data.newAchievementItem.reward} META</h2>
+        </center></div>
         :
         <div>
           <Row>
-            <Col span={11}>
+            <Col span={12}>
               Title<br />
               <Input
                 onChange={this.updateNewAchieveInfo}
