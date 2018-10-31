@@ -29,6 +29,7 @@ class Topic extends React.Component {
 
   async topicDynamicLoading() {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
+
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
       cb: () => { this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({ loading: true }); }
@@ -42,6 +43,7 @@ class Topic extends React.Component {
   handleAdd = async (ret) => {
     ++this.data.loadedTopicCnt;
     if (! ret) return;
+
     this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -67,7 +69,7 @@ class Topic extends React.Component {
       case 'title':
       case 'explanation':
         if (util.isValidLength(e.target.value) > 32) {
-          message.error('Input exceeds maximum range!');
+          message.error('Please fill up all red box!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
         } else e.target.style.borderColor = '#3db389';
