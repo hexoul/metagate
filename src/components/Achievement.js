@@ -57,7 +57,7 @@ class Achievement extends React.Component {
   async achievementDynamicLoading() {
     this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: ret => this.handleItemAdd(ret),
+      handler: ret => this.addAchievement(ret),
       cb: () => { this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({ loading: true }); }
     });
   }
@@ -77,13 +77,29 @@ class Achievement extends React.Component {
     };
   }
 
-  handleItemAdd = async (ret) => {
+  addAchievement = async (ret) => {
     ++this.data.loadedAchieveCnt;
     if (! ret) return;
     let newItem = await this.getAchievementFromMap(ret);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
+  }
+
+  async getClaimTopic(claimTopics) {
+    var rtn = [];
+    await util.asyncForEach(claimTopics, async (element) => {
+      var topic = await this.props.contracts.topicRegistry.getTopic(element);
+      topic['id'] = element;
+      rtn.push(util.refine(topic));
+    });
+    return rtn;
+  }
+
+  async getAchievementFromMap(m) {
+    util.refine(m);
+    if (m.claimTopics) m.claimTopics = await this.getClaimTopic(m.claimTopics);
+    return m;
   }
 
   updateNewAchieveInfo = (e) => {
@@ -162,22 +178,6 @@ class Achievement extends React.Component {
   onCancelClick = () => {
     this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '', issuer: '' };
     this.setState({ addModalVisible: false, qrVisible: false });
-  }
-
-  async getClaimTopic(claimTopics) {
-    var rtn = [];
-    await util.asyncForEach(claimTopics, async (element) => {
-      var topic = await this.props.contracts.topicRegistry.getTopic(element);
-      topic['id'] = element;
-      rtn.push(util.refine(topic));
-    });
-    return rtn;
-  }
-
-  async getAchievementFromMap(m) {
-    util.refine(m);
-    if (m.claimTopics) m.claimTopics = await this.getClaimTopic(m.claimTopics);
-    return m;
   }
 
   getModalAchievementDetail(record, index) {

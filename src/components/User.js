@@ -58,13 +58,27 @@ class User extends React.Component {
   async userDynamicLoading() {
     this.data.totalUserCnt = await this.props.contracts.aaRegistry.getAttestationAgencyNum();
     this.props.contracts.aaRegistry.getAllAttestationAgencies({
-      handler: ret => console.log(ret),
+      handler: ret => this.addUser(ret),
       cb: () => { this.data.loadedUserCnt = this.data.totalUserCnt; this.setState({ loading: true }); }
     });
   }
 
   componentDidMount() {
     this.userDynamicLoading();
+  }
+
+  addUser = async (ret) => {
+    ++this.data.loadedUserCnt;
+    if (! ret) return;
+    let newItem = await this.getUserFromMap(ret);
+    console.log(newItem);
+    this.data.items = [...this.data.items, newItem];
+    this.data.originItems = this.data.items;
+    this.setState({ getUserInfo: true });
+  }
+
+  async getUserFromMap(m) {
+    return util.refine(m);
   }
 
   onSearch(value) {
