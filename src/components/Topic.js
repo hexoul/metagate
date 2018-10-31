@@ -24,14 +24,14 @@ class Topic extends React.Component {
     getTopicInfo: false,
     didSort: false,
     didSearch: false,
-    didLoad: false,
+    loading: false,
   };
 
   async topicDynamicLoading() {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
-      cb: () => {this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({didLoad: true});}
+      cb: () => { this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({ loading: true }); }
     });
   }
 
@@ -39,11 +39,10 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = async (m) => {
+  handleAdd = async (ret) => {
     ++this.data.loadedTopicCnt;
-    if (! m) return;
-
-    this.data.items = [...this.data.items, util.refine(m)];
+    if (! ret) return;
+    this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
@@ -147,7 +146,7 @@ class Topic extends React.Component {
               qrsize={256}
             />
             <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-            <h2>No.: {this.data.newTopicItem['id']}</h2>
+            <h2>No.: {this.data.newTopicItem.id}</h2>
           </center></div>
           :
           <div>
