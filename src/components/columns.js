@@ -15,18 +15,6 @@ columns.userColumns = [
     width: '25%',
   },
   {
-    title: 'Roll',
-    dataIndex: 'roll',
-    key: 'roll',
-    filters: [
-      { text: 'AA', value: 'Attestation Agency' },
-      { text: 'SP', value: 'Service Provider' },
-    ],
-    width: '10%',
-    filterMultiple: false,
-    onFilter: (value, record) => record.roll.indexOf(value) === 0,
-  },
-  {
     title: 'Meta ID',
     dataIndex: 'metaID',
     key: 'metaID',

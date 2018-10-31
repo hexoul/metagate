@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Button, Radio, Form, Row, Col, message, Progress } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import { columns } from './columns';
@@ -146,7 +146,6 @@ class Topic extends React.Component {
               qrsize={256}
             />
             <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-            <h2>No.: {this.data.newTopicItem.id}</h2>
           </center></div>
           :
           <div>

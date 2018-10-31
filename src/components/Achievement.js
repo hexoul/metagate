@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message, Progress } from 'antd';
+import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import web3 from '../ethereum/web3';
