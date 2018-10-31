@@ -120,4 +120,4 @@ class User extends React.Component {
   }
 }
 
-export {User};
+export {User}

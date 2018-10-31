@@ -184,7 +184,7 @@ class Topic extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Radio.Group style={{ margin: '10px 0' }} onChange={this.handleSorting}>
+        <Radio.Group style={{ margin: '10px 0' }} defaultValue='All' onChange={this.handleSorting}>
           <Radio.Button value='All'>All</Radio.Button>
           <Radio.Button value='Pre-fixed'>Pre-fixed</Radio.Button>
           <Radio.Button value='Added'>Added</Radio.Button>
@@ -203,4 +203,4 @@ class Topic extends React.Component {
   }
 }
 
-export {Topic};
+export {Topic}
