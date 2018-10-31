@@ -16,4 +16,4 @@ class Splash extends React.Component {
   }
 }
 
-export {Splash};
+export {Splash}

@@ -61,6 +61,7 @@ columns.topicColumns = [
     dataIndex: 'id',
     key: 'id',
     width: '10%',
+    sorter: (a, b) => a.id - b.id,
   },
   {
     title: 'Issuer',

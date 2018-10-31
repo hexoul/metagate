@@ -68,4 +68,4 @@ class FAQ extends React.Component {
   }
 }
 
-export {FAQ};
+export {FAQ}

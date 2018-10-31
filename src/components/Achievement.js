@@ -327,7 +327,7 @@ class Achievement extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Progress type='line' percent={ Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
+        <Progress type='line' percent={ +Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
         <Table
           // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
@@ -340,4 +340,4 @@ class Achievement extends React.Component {
   }
 }
 
-export {Achievement};
+export {Achievement}
