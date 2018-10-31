@@ -40,21 +40,6 @@ columns.userColumns = [
   }
 ];
 
-columns.userDetailColumns = [
-  {
-    title: 'Topic Created',
-    dataIndex: 'topic',
-    key: 'topic',
-    width: '10%',
-  },
-  {
-    title: 'Achievement Created',
-    dataIndex: 'achievement',
-    key: 'achievement',
-    width: '10%',
-  }
-];
-
 columns.topicColumns = [
   {
     title: 'Topic ID',

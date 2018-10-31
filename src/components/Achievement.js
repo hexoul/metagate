@@ -40,8 +40,8 @@ class Achievement extends React.Component {
   state = {
     addModalVisible: false,
     qrVisible: false,
-    isTabChange: false,
-    isSearch: false,
+    didTabChange: false,
+    didSearch: false,
     getTopicInfo: false,
   };
 
@@ -64,7 +64,7 @@ class Achievement extends React.Component {
     // Init tab value
     this.data.originClaimTopics = children;
     this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
-    this.setState({ isTabChange: true });
+    this.setState({ didTabChange: true });
 
     // test
     this.test = {
@@ -120,12 +120,12 @@ class Achievement extends React.Component {
     var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
     else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
-    this.setState({ isSearch: true });
+    this.setState({ didSearch: true });
   }
 
   onTabsChange = (activeKey) => {
     this.data.activeKey = activeKey;
-    this.setState({ isTabChange: true });
+    this.setState({ didTabChange: true });
   }
 
   onTabsEdit = (targetKey, action) => {
@@ -140,7 +140,7 @@ class Achievement extends React.Component {
       if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
     });
     this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
-    this.setState({ isTabChange: true });
+    this.setState({ didTabChange: true });
   }
 
   onAddClick = () => {
@@ -201,7 +201,7 @@ class Achievement extends React.Component {
         activeKey={this.data.activeKey}
         type='editable-card'
         onEdit={this.onTabsEdit}>
-          {this.state.isTabChange && this.data.panes.map(pane =>
+          {this.state.didTabChange && this.data.panes.map(pane =>
             <Tabs.TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
               <Select
                 showSearch
@@ -292,7 +292,7 @@ class Achievement extends React.Component {
   add = () => {
     this.data.activeKey = (this.data.tabIndex++).toString();
     this.data.panes.push({ title: 'New Topic', content: 'Content of new tab', key: this.data.activeKey });
-    this.setState({ isTabChange: true });
+    this.setState({ didTabChange: true });
   }
   
   remove = (targetKey) => {
@@ -307,7 +307,7 @@ class Achievement extends React.Component {
     }
     this.data.panes = panes;
     this.data.activeKey = activeKey;
-    this.setState({ isTabChange: true });
+    this.setState({ didTabChange: true });
   }
 
   render() {

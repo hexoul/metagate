@@ -20,8 +20,8 @@ class Topic extends React.Component {
     addModalVisible: false,
     qrVisible: false,
     getTopicInfo: false,
-    isSort: false,
-    isSearch: false,
+    didSort: false,
+    didSearch: false,
   };
 
   async topicDynamicLoading() {
@@ -61,7 +61,7 @@ class Topic extends React.Component {
       default: break;
     }
     this.data.items = sortData;
-    this.setState({ isSort: true });
+    this.setState({ didSort: true });
   }
 
   updateNewTopicInfo = (e) => {
@@ -85,7 +85,7 @@ class Topic extends React.Component {
     var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
     else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
-    this.setState({ isSearch: true });
+    this.setState({ didSearch: true });
   }
 
   onAddClick = () => {
@@ -131,7 +131,7 @@ class Topic extends React.Component {
         {this.state.qrVisible ?
           <div>
             <center><h1>Scan QR Code to Add New Topic</h1></center>
-            <center><div style={{marginTop: '10%'}}>
+            <center><div style={{ marginTop: '10%' }}>
               <SendTransaction
                 id='sendTransaction'
                 request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
@@ -140,7 +140,7 @@ class Topic extends React.Component {
                 callbackUrl='none'
                 qrsize={256}
               />
-              <h2 style={{marginTop: '6%'}} >Title: {this.data.newTopicItem['title']}</h2>
+              <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem['title']}</h2>
               <h2>No.: {this.data.newTopicItem['id']}</h2>
             </div></center>
           </div>
@@ -148,18 +148,18 @@ class Topic extends React.Component {
           <div>
             <Row>
               <Col span={12}>
-                <Form.Item label='Title' style={{ marginBottom: '0px'}}>
+                <Form.Item label='Title' style={{ marginBottom: '0px' }}>
                   <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label='No' style={{ float: 'right', marginBottom: '0px'}}>
+                <Form.Item label='No' style={{ float: 'right', marginBottom: '0px' }}>
                   <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true}/>
                 </Form.Item>
               </Col>
             </Row>
-            <p style={{ float: 'right', color: 'red'}}>* No. in user / choose different No</p>
-            <Form layout='vertical' style={{ margin: '30px 0'}}>
+            <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
+            <Form layout='vertical' style={{ margin: '30px 0' }}>
               <Form.Item label='Explanation'>
                 <Input.TextArea onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)'
                   autosize={{ minRows: 1, maxRows: 1 }}
@@ -187,7 +187,7 @@ class Topic extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Radio.Group style={{margin: '10px 0'}} onChange={this.handleSorting}>
+        <Radio.Group style={{ margin: '10px 0' }} onChange={this.handleSorting}>
           <Radio.Button value='All'>All</Radio.Button>
           <Radio.Button value='Pre-fixed'>Pre-fixed</Radio.Button>
           <Radio.Button value='Added'>Added</Radio.Button>

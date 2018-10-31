@@ -1,11 +1,10 @@
 import React from 'react';
-import { Table, Input, Modal } from 'antd';
+import { Table, List, Input, Modal, Row, Col } from 'antd';
 
 import {columns} from './columns';
 import * as util from '../util';
 
 const tableColumns = columns.userColumns;
-const detailColumns = columns.userDetailColumns;
 
 // Test data
 var storedData = [];
@@ -40,7 +39,7 @@ class User extends React.Component {
     originItems: [],
     getUserInfo: false,
     infoModalvisible: false,
-    isSearch: false,
+    didSearch: false,
   };
 
   constructor(props) {
@@ -58,7 +57,7 @@ class User extends React.Component {
     var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
     else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
-    this.setState({ isSearch: true });
+    this.setState({ didSearch: true });
   }
 
   getModalUserDetail(record) {
@@ -72,11 +71,26 @@ class User extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Roll: {record.roll}</h3>
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
-          <Table
-            rowKey={record => record.uid}
-            columns={detailColumns}
-            dataSource={this.data.items}
-          />
+          <Row>
+            <Col span={12}>
+              <List
+                size='small'
+                header={<div>Topic created</div>}
+                bordered
+                dataSource={[1, 2, 3]}
+                renderItem={item => (<List.Item>{item}</List.Item>)}
+              />
+            </Col>
+            <Col span={12}>
+              <List
+                size='small'
+                header={<div>Achievement created</div>}
+                bordered
+                dataSource={[4, 5, 6]}
+                renderItem={item => (<List.Item>{item}</List.Item>)}
+              />
+            </Col>
+          </Row>
         </div>
       ),
       onOk() {}
