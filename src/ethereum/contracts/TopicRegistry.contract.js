@@ -6,6 +6,7 @@ import { getBranch, getABI } from './helpers';
 var _ = require('underscore');
 
 class TopicRegistry {
+
   async init() {
     const { TOPIC_REGISTRY_ADDRESS } = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
@@ -42,13 +43,13 @@ class TopicRegistry {
     if (! handler || ! cb) return;
 
     // Search topics with the range from zero to total
-    let total = await this.getTotal().call();
+    let total = await this.getTotal();
     Promise.all(_.range(total).map(async (id) => {
       let topicID = id;
       // Execute handler from getTopic() when a topic was registered
       if (await this.isRegistered(topicID)) {
         await this.getTopic(topicID).then(ret => { ret['id'] = topicID; handler(ret); });
-      }
+      } else handler();
     })).then(() => cb());
   }
 
