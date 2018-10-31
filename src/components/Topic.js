@@ -36,6 +36,7 @@ class Topic extends React.Component {
   }
 
   handleAdd = async (m) => {
+    if (! m) return;
     this.data.items = [...this.data.items, util.refine(m)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -140,7 +141,7 @@ class Topic extends React.Component {
                 callbackUrl='none'
                 qrsize={256}
               />
-              <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem['title']}</h2>
+              <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
               <h2>No.: {this.data.newTopicItem['id']}</h2>
             </div></center>
           </div>
@@ -154,16 +155,19 @@ class Topic extends React.Component {
               </Col>
               <Col span={12}>
                 <Form.Item label='No' style={{ float: 'right', marginBottom: '0px' }}>
-                  <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true}/>
+                  <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
                 </Form.Item>
               </Col>
             </Row>
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0' }}>
               <Form.Item label='Explanation'>
-                <Input.TextArea onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)'
+                <Input.TextArea
+                  onChange={this.updateNewTopicInfo}
+                  placeholder='Input Explanation (max. 32 bytes)'
                   autosize={{ minRows: 1, maxRows: 1 }}
-                  id='explanation' />
+                  id='explanation'
+                />
               </Form.Item>
             </Form>
           </div>

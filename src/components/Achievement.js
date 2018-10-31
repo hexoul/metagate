@@ -187,7 +187,7 @@ class Achievement extends React.Component {
           <h3 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h3> <hr />
           <h3 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h3> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topic</h3></center>
-          <Table size='small' rowKey='id' columns={ detailColumns } dataSource={ record.claimTopics } />
+          <Table size='small' rowKey='id' columns={detailColumns} dataSource={record.claimTopics} />
         </div>
       ),
       onOk() {}
@@ -209,7 +209,8 @@ class Achievement extends React.Component {
                 placeholder='Select a Topic'
                 optionFilterProp='children'
                 onChange={this.onTopicClick}
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}>
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              >
                 {this.data.originClaimTopics}
               </Select>
               <Input
@@ -252,23 +253,24 @@ class Achievement extends React.Component {
         :
         <div>
           <Row>
-            <Col span={12}>
-              <Form.Item label='Title' style={{ marginBottom: '0px'}}>
-                <Input
-                  onChange={this.updateNewAchieveInfo}
-                  id='title'
-                  placeholder='Input Title'/>
-              </Form.Item>
+            <Col span={11}>
+              Title<br />
+              <Input
+                onChange={this.updateNewAchieveInfo}
+                id='title'
+                placeholder='Input Title'
+              />
+              {/* </Form.Item> */}
             </Col>
-            <Col span={12}>
-              <Form.Item label='Reward' style={{ float: 'right', marginTop: '0.7%', marginBottom: '0px'}}>
-                <Input
-                  type='number'
-                  onChange={this.updateNewAchieveInfo}
+            <Col span={11} offset={1}>
+              Reward<br />
+              <Input
+                type='number'
+                onChange={this.updateNewAchieveInfo}
                   id='reward'
                   placeholder='Input Reward'
-                  addonAfter='META'/>
-              </Form.Item>
+                  addonAfter='META'
+                />
             </Col>
           </Row>
           <Row>
@@ -280,7 +282,8 @@ class Achievement extends React.Component {
                 onChange={this.updateNewAchieveInfo}
                 placeholder='Enter Explanation (max. 32 bytes)'
                 autosize={{ minRows: 1, maxRows: 1 }}
-                id='explanation'/>
+                id='explanation'
+              />
             </Form.Item>
             {this.getTopicTabs()}
           </Form>

@@ -5,6 +5,7 @@ import {columns} from './columns';
 import * as util from '../util';
 
 const tableColumns = columns.userColumns;
+const detailColumns = columns.userDetailColumns;
 
 // Test data
 var storedData = [];
@@ -72,16 +73,16 @@ class User extends React.Component {
           <h3 style={{ margin: '10px 0' }}>Getting Explanation</h3>
           <h3 style={{ margin: '10px 0' }}>Meta ID: {record.metaID}</h3>
           <Row>
-            <Col span={12}>
-              <List
+            <Col span={11}>
+              <Table
                 size='small'
-                header={<div>Topic created</div>}
-                bordered
-                dataSource={[1, 2, 3]}
-                renderItem={item => (<List.Item>{item}</List.Item>)}
+                rowKey='id'
+                title={() => 'Topic created'}
+                columns={detailColumns}
+                dataSource={record.topics}
               />
             </Col>
-            <Col span={12}>
+            <Col span={11} offset={1}>
               <List
                 size='small'
                 header={<div>Achievement created</div>}
