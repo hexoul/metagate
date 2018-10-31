@@ -44,7 +44,7 @@ class Achievement extends React.Component {
     qrVisible: false,
     didTabChange: false,
     didSearch: false,
-    didLoad: false,
+    loading: false,
     getTopicInfo: false,
   };
 
@@ -58,7 +58,7 @@ class Achievement extends React.Component {
     this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => this.handleItemAdd(ret),
-      cb: () => {this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({didLoad: true});}
+      cb: () => {this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({loading: true});}
     });
   }
 
@@ -78,6 +78,7 @@ class Achievement extends React.Component {
   }
 
   handleItemAdd = async (result) => {
+    if (!result) return;
     ++this.data.loadedAchieveCnt;
 
     let newItem = await this.getAchievementFromMap(result);

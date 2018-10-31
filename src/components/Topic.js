@@ -24,14 +24,14 @@ class Topic extends React.Component {
     getTopicInfo: false,
     didSort: false,
     didSearch: false,
-    didLoad: false,
+    loading: false,
   };
 
   async topicDynamicLoading() {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
-      cb: () => {this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({didLoad: true});}
+      cb: () => {this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({loading: true});}
     });
   }
 
@@ -52,19 +52,11 @@ class Topic extends React.Component {
     let sortData = [];
     switch(e.target.value) {
       case 'All':
-        sortData = this.data.originItems;
-        break;
+        sortData = this.data.originItems;  break;
       case 'Pre-fixed':
-        this.data.originItems.forEach(element => {
-          if (Object.values(element)[4] < 1025) sortData.push(element);
-        });
-        break;
+        this.data.originItems.forEach(element => { if (element.id < 1025) sortData.push(element) }); break;
       case 'Added':
-        this.data.originItems.forEach(element => {
-          console.log(Object.values(element));
-          if (Object.values(element)[4] > 1024) sortData.push(element);
-        });
-        break;
+        this.data.originItems.forEach(element => { if (element.id > 1024) sortData.push(element) }); break;
       default: break;
     }
     this.data.items = sortData;
