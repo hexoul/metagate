@@ -27,9 +27,10 @@ class Achievement extends React.Component {
 
   data = {
     items: [],
+    localStorageItem: [],
     originItems: [],
     originClaimTopics: [],
-    newAchievementItem: { title: '', topic: [], explanation: '', reward: '', issuer: '' },
+    newAchievementItem: { title: '', topic: [], explanation: '', reward: ''},
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -79,7 +80,8 @@ class Achievement extends React.Component {
 
   addAchievement = async (ret) => {
     ++this.data.loadedAchieveCnt;
-    if (! ret) return;
+    if (!ret) return;
+
     let newItem = await this.getAchievementFromMap(ret);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
@@ -107,7 +109,7 @@ class Achievement extends React.Component {
       case 'title':
       case 'explanation':
         if (util.isValidLength(e.target.value) > 32) {
-          message.error('Input exceeds maximum range!');
+          message.error('Please fill up all red box!');
           e.target.style.borderColor = 'red';
           e.target.value = this.data.inputValidData[e.target.id];
         } else e.target.style.borderColor = '#3db389';
@@ -125,13 +127,13 @@ class Achievement extends React.Component {
       case 'issuer':
         if( ! e.target.value || ! web3.utils.isAddress(e.target.value)) {
           e.target.style.borderColor = 'red';
-          message.error('Input correct address!');
+          message.error('Please fill up correct address!');
         } else {
           e.target.style.borderColor = '#3db389'; 
           Object.values(this.data.panes).forEach((element, i) => {
-            if (element.key === this.data.activeKey) {this.data.panes[i].issuer = e.target.value}
+            if (element.key === this.data.activeKey) { this.data.newAchievementItem['topic'][i].issuer = e.target.value; }
           });
-          this.data.newAchievementItem[e.target.id] = e.target.value;
+          console.log(this.data.newAchievementItem);
         }
         break;
       default: break;
@@ -156,12 +158,13 @@ class Achievement extends React.Component {
 
   onTopicClick = (value) => {
     if (this.data.panes.filter(element => element.title === topicListArr[value].title).length > 0) {
-      return message.error('Selected duplicate topic.');
+      return message.error('Duplicated topic.');
     }
     Object.values(this.data.panes).forEach((element, i) => {
       if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
     });
-    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id});
+    console.log(this.data.activeKey);
+    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id, issuer: '', key: this.data.activeKey});
     this.setState({ didTabChange: true });
   }
 
@@ -172,11 +175,11 @@ class Achievement extends React.Component {
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
     if (formCheck) this.setState({ qrVisible: true });
-    else message.error('Failed cause red box or Select at least one topic!');
+    else message.error('Select at least 1 topic');
   }
 
   onCancelClick = () => {
-    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '', issuer: '' };
+    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: ''};
     this.setState({ addModalVisible: false, qrVisible: false });
   }
 
@@ -292,10 +295,13 @@ class Achievement extends React.Component {
     this.data.panes.forEach((pane, i) => {
       if (pane.key === targetKey) lastIndex = i - 1;
     });
+
+    const newTopicItems = this.data.newAchievementItem.topic.filter(element => element.key !== targetKey);
     const panes = this.data.panes.filter(pane => pane.key !== targetKey);
     if (lastIndex >= 0 && activeKey === targetKey) {
       activeKey = panes[lastIndex].key;
     }
+    this.data.newAchievementItem.topic = newTopicItems;
     this.data.panes = panes;
     this.data.activeKey = activeKey;
     this.setState({ didTabChange: true });
@@ -305,7 +311,7 @@ class Achievement extends React.Component {
     return (
       <div>
         <div>
-          <Button 
+          <Button
             type='primary'
             size='large'
             onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
