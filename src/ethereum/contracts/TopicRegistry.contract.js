@@ -30,14 +30,19 @@ class TopicRegistry {
     return this.topicRegistryInstance.methods.getTopic(topicID).call();
   }
 
-  async getAllTopic({handler, cb}) {
-    if (! handler || ! cb) return;
-
+  async getTotal() {
     // Validate ABI
     if (! this.topicRegistryInstance.methods.getTotal) return;
 
+    // Call
+    return this.topicRegistryInstance.methods.getTotal().call();
+  }
+
+  async getAllTopic({handler, cb}) {
+    if (! handler || ! cb) return;
+
     // Search topics with the range from zero to total
-    let total = await this.topicRegistryInstance.methods.getTotal().call();
+    let total = await this.getTotal().call();
     Promise.all(_.range(total).map(async (id) => {
       let topicID = id;
       // Execute handler from getTopic() when a topic was registered
