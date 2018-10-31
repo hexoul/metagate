@@ -6,6 +6,7 @@ import { getBranch, getABI } from './helpers';
 var _ = require('underscore');
 
 class TopicRegistry {
+
   async init() {
     const { TOPIC_REGISTRY_ADDRESS } = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
@@ -48,7 +49,7 @@ class TopicRegistry {
       // Execute handler from getTopic() when a topic was registered
       if (await this.isRegistered(topicID)) {
         await this.getTopic(topicID).then(ret => { ret['id'] = topicID; handler(ret); });
-      }
+      } else handler();
     })).then(() => cb());
   }
 

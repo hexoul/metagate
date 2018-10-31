@@ -6,6 +6,7 @@ import { getBranch, getABI } from './helpers';
 var _ = require('underscore');
 
 class AchievementManager {
+
   async init() {
     const { ACHIEVEMENT_MANAGER_ADDRESS } = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
@@ -37,15 +38,22 @@ class AchievementManager {
     })).then(() => cb());
   }
 
+  async getLengthOfAchievements() {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
+
+    // Call
+    return this.achievementManagerInstance.methods.getLengthOfAchievements().call();
+  }
+
   async getAllAchievementsByLength({handler, cb}) {
     if (! handler || ! cb) return;
 
     // Validate ABI
-    if (! this.achievementManagerInstance.methods.allAchievements
-      || ! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
+    if (! this.achievementManagerInstance.methods.allAchievements) return;
 
     // Get achievement list length
-    let length = await this.achievementManagerInstance.methods.getLengthOfAchievements().call();
+    let length = await this.getLengthOfAchievements();
 
     // Get achievement list by iterating list indexes
     Promise.all(_.range(length).map(async (idx) => {

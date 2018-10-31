@@ -40,6 +40,21 @@ columns.userColumns = [
   }
 ];
 
+columns.userDetailColumns = [
+  {
+    title: 'Topic No',
+    dataIndex: 'id',
+    key: 'id',
+    width: '20%',
+  },
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    key: 'title',
+    width: '80%',
+  },
+];
+
 columns.topicColumns = [
   {
     title: 'Topic ID',
