@@ -41,6 +41,7 @@ class User extends React.Component {
     getUserInfo: false,
     infoModalvisible: false,
     didSearch: false,
+    loading: false,
   };
 
   constructor(props) {
@@ -55,6 +56,11 @@ class User extends React.Component {
   }
 
   async userDynamicLoading() {
+    this.data.totalUserCnt = await this.props.contracts.aaRegistry.getAttestationAgencyNum();
+    this.props.contracts.aaRegistry.getAllAttestationAgencies({
+      handler: ret => console.log(ret),
+      cb: () => { this.data.loadedUserCnt = this.data.totalUserCnt; this.setState({ loading: true }); }
+    });
   }
 
   componentDidMount() {

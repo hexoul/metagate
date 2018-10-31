@@ -57,7 +57,7 @@ class Achievement extends React.Component {
   async achievementDynamicLoading() {
     this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
-      handler: (ret) => this.handleItemAdd(ret),
+      handler: ret => this.handleItemAdd(ret),
       cb: () => { this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({ loading: true }); }
     });
   }
