@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Button, Radio, Form, Row, Col, message } from 'antd';
+import { Table, Input, Modal, Button, Radio, Form, Row, Col, message, Progress } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import { columns } from './columns';
@@ -14,6 +14,8 @@ class Topic extends React.Component {
     originItems: [],
     newTopicItem: { title: '', explanation: '' },
     inputValidData: [],
+    loadedTopicCnt: 0,
+    totalTopicCnt: 0,
   };
 
   state = {
@@ -22,12 +24,14 @@ class Topic extends React.Component {
     getTopicInfo: false,
     didSort: false,
     didSearch: false,
+    didLoad: false,
   };
 
   async topicDynamicLoading() {
+    this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
-      cb: () => {}
+      cb: () => {this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({didLoad: true});}
     });
   }
 
@@ -38,6 +42,10 @@ class Topic extends React.Component {
   handleAdd = async (m) => {
     this.data.items = [...this.data.items, util.refine(m)];
     this.data.originItems = this.data.items;
+    if (m) {
+      ++this.data.loadedTopicCnt;
+    }
+    console.log(this.data.loadedTopicCnt);
     this.setState({ getTopicInfo: true });
   }
 
@@ -174,6 +182,7 @@ class Topic extends React.Component {
   render() {
     return (
       <div>
+        <Progress type='line' percent={ (this.data.loadedTopicCnt / this.data.totalTopicCnt) * 100 } /><br /><br /><br />
         <div>
           <Button
             type='primary'

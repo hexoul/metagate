@@ -42,7 +42,7 @@ class TopicRegistry {
     if (! handler || ! cb) return;
 
     // Search topics with the range from zero to total
-    let total = await this.getTotal().call();
+    let total = await this.getTotal();
     Promise.all(_.range(total).map(async (id) => {
       let topicID = id;
       // Execute handler from getTopic() when a topic was registered
