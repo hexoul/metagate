@@ -40,13 +40,11 @@ class Topic extends React.Component {
   }
 
   handleAdd = async (m) => {
+    ++this.data.loadedTopicCnt;
     if (! m) return;
+
     this.data.items = [...this.data.items, util.refine(m)];
     this.data.originItems = this.data.items;
-    if (m) {
-      ++this.data.loadedTopicCnt;
-    }
-    console.log(this.data.loadedTopicCnt);
     this.setState({ getTopicInfo: true });
   }
 
@@ -186,7 +184,6 @@ class Topic extends React.Component {
   render() {
     return (
       <div>
-        <Progress type='line' percent={ (this.data.loadedTopicCnt / this.data.totalTopicCnt) * 100 } /><br /><br /><br />
         <div>
           <Button
             type='primary'
@@ -206,6 +203,7 @@ class Topic extends React.Component {
           <Radio.Button value='Added'>Added</Radio.Button>
         </Radio.Group>
         <br />
+        <Progress type='line' percent={ (this.data.loadedTopicCnt / this.data.totalTopicCnt) * 100 } /><br /><br />
         <Table
           rowKey='id'
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}

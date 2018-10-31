@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message } from 'antd';
+import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, message, Progress } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 
 import web3 from '../ethereum/web3';
@@ -35,6 +35,8 @@ class Achievement extends React.Component {
     panes: [],
     activeKey: '0',
     tabIndex: 1,
+    loadedAchieveCnt: 0,
+    totalAchieveCnt: 0,
   };
 
   state = {
@@ -42,19 +44,21 @@ class Achievement extends React.Component {
     qrVisible: false,
     didTabChange: false,
     didSearch: false,
+    didLoad: false,
     getTopicInfo: false,
   };
 
   constructor(props) {
     super(props);
-    // TODO: init topic tabs of AddAchivModal
+    // TODO: init topic tabs of AddAchieveModal
     setTestData();
   }
 
   async achievementDynamicLoading() {
+    this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => this.handleItemAdd(ret),
-      cb: () => {}
+      cb: () => {this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({didLoad: true});}
     });
   }
 
@@ -74,6 +78,8 @@ class Achievement extends React.Component {
   }
 
   handleItemAdd = async (result) => {
+    ++this.data.loadedAchieveCnt;
+
     let newItem = await this.getAchievementFromMap(result);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
@@ -329,6 +335,7 @@ class Achievement extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
+        <Progress type='line' percent={ (this.data.loadedAchieveCnt / this.data.totalAchieveCnt) * 100 } /><br /><br />
         <Table
           // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
