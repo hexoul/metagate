@@ -11,9 +11,9 @@ const detailColumns = columns.achievementDetailColumns;
 
 // Test data
 var topicListArr = [
-  {title: 'Legal Name', id: 1030}, 
-  {title: 'Phone Number', id: 1031}, 
-  {title: 'E-mail Address', id: 1032}, 
+  {title: 'Legal Name', id: 1030},
+  {title: 'Phone Number', id: 1031},
+  {title: 'E-mail Address', id: 1032},
 ];
 var children = [];
 
@@ -36,7 +36,7 @@ class Achievement extends React.Component {
     activeKey: '0',
     tabIndex: 1,
     loadedAchieveCnt: 0,
-    totalAchieveCnt: 0,
+    totalAchieveCnt: 1,
   };
 
   state = {
@@ -58,7 +58,7 @@ class Achievement extends React.Component {
     this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
       handler: (ret) => this.handleItemAdd(ret),
-      cb: () => {this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({loading: true});}
+      cb: () => { this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({ loading: true }); }
     });
   }
 
@@ -77,11 +77,11 @@ class Achievement extends React.Component {
     };
   }
 
-  handleItemAdd = async (result) => {
-    if (!result) return;
+  handleItemAdd = async (ret) => {
     ++this.data.loadedAchieveCnt;
+    if (!ret) return;
 
-    let newItem = await this.getAchievementFromMap(result);
+    let newItem = await this.getAchievementFromMap(ret);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -108,7 +108,7 @@ class Achievement extends React.Component {
         }
         break;
       case 'issuer':
-        if( !e.target.value || !web3.utils.isAddress(e.target.value)) {
+        if( ! e.target.value || ! web3.utils.isAddress(e.target.value)) {
           e.target.style.borderColor = 'red';
           message.error('Input correct address!');
         } else {
@@ -156,6 +156,7 @@ class Achievement extends React.Component {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
+    console.log('newAchive', this.data.newAchievementItem);
     if (formCheck) this.setState({ qrVisible: true });
     else message.error('Failed cause red box or Select at least one topic!');
   }
@@ -242,48 +243,39 @@ class Achievement extends React.Component {
       closable={false}
       >
       {this.state.qrVisible ?
-        <div>
-          <center><h1>Scan QR Code to Add New Topic</h1></center>
-            <center><div style={{marginTop: '10%'}}>
-              <SendTransaction
-                id='sendTransaction'
-                request={this.props.contracts.achievementManager.createAchievement(this.test.topics, this.test.issuers, Buffer.from('title'), Buffer.from('explan'), web3.utils.toWei('5', 'ether'), 'uri')}
-                usage='createAchievement'
-                service='metagate'
-                callbackUrl='none'
-                qrsize={256}
-              />
-              <h2 style={{marginTop: '6%'}} >Title: {this.data.newAchievementItem['title']}</h2>
-              <h2>No.: {this.data.newAchievementItem['reward']}</h2>
-          </div></center>
-        </div>
+        <div><center>
+          <h1>Scan QR Code to Add New Achievement</h1>
+          <SendTransaction
+            id='sendTransaction'
+            request={this.props.contracts.achievementManager.createAchievement(
+              this.test.topics,
+              this.test.issuers,
+              Buffer.from('title'),
+              Buffer.from('explan'),
+              web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
+              'uri')}
+            usage='createAchievement'
+            service='metagate'
+            callbackUrl='none'
+            qrsize={256}
+          />
+          <h2 style={{ marginTop: '6%' }} >Title: {this.data.newAchievementItem.title}</h2>
+          <h2>Reward: {this.data.newAchievementItem.reward} META</h2>
+        </center></div>
         :
         <div>
           <Row>
-            <Col span={11}>
+            <Col span={12}>
               Title<br />
-              <Input
-                onChange={this.updateNewAchieveInfo}
-                id='title'
-                placeholder='Input Title'
-              />
-              {/* </Form.Item> */}
+              <Input onChange={this.updateNewAchieveInfo} id='title' placeholder='Input Title' />
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
-              <Input
-                type='number'
-                onChange={this.updateNewAchieveInfo}
-                  id='reward'
-                  placeholder='Input Reward'
-                  addonAfter='META'
-                />
+              <Input type='number' onChange={this.updateNewAchieveInfo} id='reward' placeholder='Input Reward' addonAfter='META' />
             </Col>
           </Row>
-          <Row>
-            <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-          </Row>
-          <Form layout='vertical' style={{ margin: '30px 0'}}>
+          <p style={{ float: 'right', color: 'red' }}>* Reward needs to be higher than 5</p>
+          <Form layout='vertical' style={{ margin: '30px 0' }}>
             <Form.Item label='Explanation'>
               <Input.TextArea
                 onChange={this.updateNewAchieveInfo}
@@ -324,7 +316,7 @@ class Achievement extends React.Component {
     return (
       <div>
         <div>
-          <Button 
+          <Button
             type='primary'
             size='large'
             onClick={() => this.setState({ addModalVisible: true })}>Add New Achievement</Button>
@@ -336,7 +328,7 @@ class Achievement extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Progress type='line' percent={ (this.data.loadedAchieveCnt / this.data.totalAchieveCnt) * 100 } /><br /><br />
+        <Progress type='line' percent={ Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
         <Table
           // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}

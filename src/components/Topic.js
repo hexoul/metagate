@@ -15,7 +15,7 @@ class Topic extends React.Component {
     newTopicItem: { title: '', explanation: '' },
     inputValidData: [],
     loadedTopicCnt: 0,
-    totalTopicCnt: 0,
+    totalTopicCnt: 1,
   };
 
   state = {
@@ -31,7 +31,7 @@ class Topic extends React.Component {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.handleAdd(ret),
-      cb: () => {this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({loading: true});}
+      cb: () => { this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({ loading: true }); }
     });
   }
 
@@ -39,11 +39,10 @@ class Topic extends React.Component {
     this.topicDynamicLoading();
   }
 
-  handleAdd = async (m) => {
+  handleAdd = async (ret) => {
     ++this.data.loadedTopicCnt;
-    if (! m) return;
-
-    this.data.items = [...this.data.items, util.refine(m)];
+    if (! ret) return;
+    this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
   }
@@ -128,33 +127,29 @@ class Topic extends React.Component {
       closable={false}
       >
         {this.state.qrVisible ?
-          <div>
-            <center><h1>Scan QR Code to Add New Topic</h1></center>
-            <center><div style={{ marginTop: '10%' }}>
-              <SendTransaction
-                id='sendTransaction'
-                request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
-                usage='registerTopic'
-                service='metagate'
-                callbackUrl='none'
-                qrsize={256}
-              />
-              <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-              <h2>No.: {this.data.newTopicItem['id']}</h2>
-            </div></center>
-          </div>
+          <div><center>
+            <h1>Scan QR Code to Add New Topic</h1>
+            <SendTransaction
+              id='sendTransaction'
+              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
+              usage='registerTopic'
+              service='metagate'
+              callbackUrl='none'
+              qrsize={256}
+            />
+            <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
+            <h2>No.: {this.data.newTopicItem.id}</h2>
+          </center></div>
           :
           <div>
             <Row>
               <Col span={12}>
-                <Form.Item label='Title' style={{ marginBottom: '0px' }}>
-                  <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
-                </Form.Item>
+                Title<br />
+                <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
               </Col>
-              <Col span={12}>
-                <Form.Item label='No' style={{ float: 'right', marginBottom: '0px' }}>
-                  <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
-                </Form.Item>
+              <Col span={11} offset={1}>
+                No.<br />
+                <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
               </Col>
             </Row>
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
@@ -195,7 +190,7 @@ class Topic extends React.Component {
           <Radio.Button value='Added'>Added</Radio.Button>
         </Radio.Group>
         <br />
-        <Progress type='line' percent={ (this.data.loadedTopicCnt / this.data.totalTopicCnt) * 100 } /><br /><br />
+        <Progress type='line' percent={ +Number(this.data.loadedTopicCnt / this.data.totalTopicCnt * 100).toFixed(2) } /><br /><br />
         <Table
           rowKey='id'
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
