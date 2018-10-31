@@ -15,7 +15,7 @@ class Topic extends React.Component {
     newTopicItem: { title: '', explanation: '' },
     inputValidData: [],
     loadedTopicCnt: 0,
-    totalTopicCnt: 0,
+    totalTopicCnt: 1,
   };
 
   state = {
@@ -198,7 +198,7 @@ class Topic extends React.Component {
           <Radio.Button value='Added'>Added</Radio.Button>
         </Radio.Group>
         <br />
-        <Progress type='line' percent={ (this.data.loadedTopicCnt / this.data.totalTopicCnt) * 100 } /><br /><br />
+        <Progress type='line' percent={ Number(this.data.loadedTopicCnt / this.data.totalTopicCnt * 100).toFixed(2) } /><br /><br />
         <Table
           rowKey='id'
           onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}

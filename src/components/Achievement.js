@@ -11,9 +11,9 @@ const detailColumns = columns.achievementDetailColumns;
 
 // Test data
 var topicListArr = [
-  {title: 'Legal Name', id: 1030}, 
-  {title: 'Phone Number', id: 1031}, 
-  {title: 'E-mail Address', id: 1032}, 
+  {title: 'Legal Name', id: 1030},
+  {title: 'Phone Number', id: 1031},
+  {title: 'E-mail Address', id: 1032},
 ];
 var children = [];
 
@@ -36,7 +36,7 @@ class Achievement extends React.Component {
     activeKey: '0',
     tabIndex: 1,
     loadedAchieveCnt: 0,
-    totalAchieveCnt: 0,
+    totalAchieveCnt: 1,
   };
 
   state = {
@@ -266,28 +266,15 @@ class Achievement extends React.Component {
           <Row>
             <Col span={12}>
               Title<br />
-              <Input
-                onChange={this.updateNewAchieveInfo}
-                id='title'
-                placeholder='Input Title'
-              />
-              {/* </Form.Item> */}
+              <Input onChange={this.updateNewAchieveInfo} id='title' placeholder='Input Title' />
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
-              <Input
-                type='number'
-                onChange={this.updateNewAchieveInfo}
-                  id='reward'
-                  placeholder='Input Reward'
-                  addonAfter='META'
-                />
+              <Input type='number' onChange={this.updateNewAchieveInfo} id='reward' placeholder='Input Reward' addonAfter='META' />
             </Col>
           </Row>
-          <Row>
-            <p style={{ float: 'right', color: 'red'}}>* Reward needs to be higher than 5</p>
-          </Row>
-          <Form layout='vertical' style={{ margin: '30px 0'}}>
+          <p style={{ float: 'right', color: 'red' }}>* Reward needs to be higher than 5</p>
+          <Form layout='vertical' style={{ margin: '30px 0' }}>
             <Form.Item label='Explanation'>
               <Input.TextArea
                 onChange={this.updateNewAchieveInfo}
@@ -340,7 +327,7 @@ class Achievement extends React.Component {
             style={{ width: '50%', float: 'right', marginBottom: '20px' }}
           />
         </div>
-        <Progress type='line' percent={ (this.data.loadedAchieveCnt / this.data.totalAchieveCnt) * 100 } /><br /><br />
+        <Progress type='line' percent={ Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
         <Table
           // rowKey={record => record.uid}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
