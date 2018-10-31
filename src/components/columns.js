@@ -16,7 +16,7 @@ columns.userColumns = [
   },
   {
     title: 'Meta ID',
-    dataIndex: 'metaID',
+    dataIndex: 'addr',
     key: 'metaID',
     width: '35%',
   },
