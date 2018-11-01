@@ -30,7 +30,7 @@ columns.userColumns = [
 
 columns.userDetailColumns = [
   {
-    title: 'Topic No.',
+    title: 'No.',
     dataIndex: 'id',
     key: 'id',
     width: '20%',

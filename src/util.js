@@ -1,21 +1,23 @@
 import web3 from './ethereum/web3';
 
-function timeConverter(UNIX_timestamp) {
-    var a = new Date(UNIX_timestamp);
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    var date = a.getDate();
-    var time = year + ' / ' + month + ' / ' + date;
-    return time;
+var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/**
+ * Convert UNIX timestamp to readable
+ * @param {*} timestamp UNIX
+ */
+function timeConverter(timestamp) {
+  var a = new Date(timestamp * 1000);
+  var month = months[a.getMonth()];
+  return a.getFullYear() + ' / ' + month + ' / ' + a.getDate();
 }
 
 function convertHexToString(input) {
-    var hex = input.toString();//force conversion
-    var str = '';
-    for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
-    return str;
+  var hex = input.toString();
+  var str = '';
+  for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
 }
 
 function sleep(ms) {
@@ -35,7 +37,7 @@ function refine(m) {
       case 'title': m[key] = convertHexToString(m[key]); break;
       case 'explanation': m[key] = convertHexToString(m[key]); break;
       case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
-      case 'createdAt': m[key] = timeConverter(Date(m[key])); break;
+      case 'createdAt': m[key] = timeConverter(m[key]); break;
       default: if (! m[key]) m[key] = ''; break;
     }
   });

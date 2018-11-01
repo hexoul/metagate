@@ -46,7 +46,6 @@ class User extends React.Component {
     ++this.data.loadedUserCnt;
     if (! ret) return;
     let newItem = await this.getUserFromMap(ret);
-    console.log(newItem);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
     this.setState({ getUserInfo: true });
