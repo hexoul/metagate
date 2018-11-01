@@ -112,7 +112,7 @@ columns.achievementColumns = [
 
 columns.achievementDetailColumns = [
   {
-    title: 'Topic No.',
+    title: 'No.',
     dataIndex: 'id',
     key: 'id',
     width: '10%',

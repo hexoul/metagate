@@ -45,6 +45,34 @@ function refine(m) {
   return m;
 }
 
+/**
+ * 
+ * @param {*} key 
+ * @param {*} val 
+ * @returns {map} b: true if valid or false if invalid, err: error message
+ */
+function validate(key, val) {
+  switch (key) {
+    case 'title':
+    case 'explanation':
+      if (! val) return { b: false, err: 'Please fill up something' }
+      if (isValidLength(val) > 32) return { b: false, err: 'Only 32 bytes allowed' }
+      return { b: true }
+    case 'reward':
+      if (val < 5) return { b: false, err: 'Reward should be greater than 5 META' }
+      return { b: true }
+    case 'issuer':
+      if (! val || ! web3.utils.isAddress(val)) return { b: false, err: 'Please fill up valid issuers' }
+      return { b: true }
+    case 'topics':
+      if (! val || val.length === 0) return { b: false, err: 'Select at least 1 topic' }
+      else if (val.filter(e => e.title === '').length > 0) return { b: false, err: 'Select a topic' }
+      else if (val.filter(e => e.issuer === '').length > 0) return { b: false, err: 'Please fill up valid issuers' }
+      return { b: true }
+    default: return { b: false, err: 'Unknown' }
+  }
+}
+
 var encoder = new TextEncoder('utf-8');
 
 /**
@@ -73,6 +101,7 @@ export {
     asyncForEach,
     refine,
     isValidLength,
+    validate,
     save,
     load,
     getTopicsFromLocal,

@@ -17,7 +17,7 @@ class Achievement extends React.Component {
     originItems: [],
     topics: [],
     originClaimTopics: [],
-    initNewAchievementItem: { title: '', explanation: '', reward: '', topic: [{ title: '', id: -1, issuer: '', key: '0' }] },
+    initNewAchievementItem: { title: '', explanation: '', reward: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -73,7 +73,7 @@ class Achievement extends React.Component {
     this.achievementDynamicLoading();
 
     // Init tab value
-    this.data.panes.push({ title: 'New Topic', content: '', topic: [], key: this.data.activeKey, closable: false });
+    this.data.panes.push({ title: 'New Topic', content: '', topics: [], key: this.data.activeKey, closable: false });
     
     this.setState({ didTabChange: true });
   }
@@ -104,35 +104,26 @@ class Achievement extends React.Component {
   }
 
   updateNewAchieveInfo = (e) => {
+    let valid = util.validate(e.target.id, e.target.value);
+    if (valid.b) e.target.style.borderColor = '#3db389';
+    else {
+      e.target.style.borderColor = 'red';
+      message.error(valid.err);
+    }
+
     switch (e.target.id) {
       case 'title':
       case 'explanation':
-        if (util.isValidLength(e.target.value) > 32) {
-          message.error('Please fill up all red box!');
-          e.target.style.borderColor = 'red';
-          e.target.value = this.data.inputValidData[e.target.id];
-        } else e.target.style.borderColor = '#3db389';
-
+        if (! valid.b) e.target.value = this.data.inputValidData[e.target.id];
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break;
-      case 'reward':
-        if (e.target.value < 5) e.target.style.borderColor = 'red';
-        else { 
-          e.target.style.borderColor = '#3db389'; 
-          this.data.newAchievementItem[e.target.id] = e.target.value;
-        }
-        break;
+      case 'reward': if (valid.b) this.data.newAchievementItem[e.target.id] = e.target.value; break;
       case 'issuer':
-        if( ! e.target.value || ! web3.utils.isAddress(e.target.value)) {
-          e.target.style.borderColor = 'red';
-          message.error('Please fill up correct address!');
-        } else {
-          e.target.style.borderColor = '#3db389'; 
-          Object.values(this.data.panes).forEach((element, i) => {
-            if (element.key === this.data.activeKey) this.data.newAchievementItem.topic[i].issuer = e.target.value;
-          });
-        }
+        if(! valid.b) break;
+        this.data.panes.forEach((element, i) => {
+          if (element.key === this.data.activeKey) this.data.newAchievementItem.topics[i].issuer = e.target.value;
+        });
         break;
       default: break;
     }
@@ -157,7 +148,7 @@ class Achievement extends React.Component {
   add = () => {
     this.data.activeKey = (this.data.tabIndex++).toString();
     this.data.panes.push({ title: 'New Topic', content: 'Content of new tab', key: this.data.activeKey });
-    this.data.newAchievementItem.topic.push({ title: '', id: -1, issuer: '', key: this.data.activeKey });
+    this.data.newAchievementItem.topics.push({ title: '', id: -1, issuer: '', key: this.data.activeKey });
     this.setState({ didTabChange: true });
   }
   
@@ -165,9 +156,9 @@ class Achievement extends React.Component {
     let lastIndex = 0;
     this.data.panes.forEach((pane, i) => { if (pane.key === targetKey) lastIndex = i - 1; });
 
-    const newTopicItems = this.data.newAchievementItem.topic.filter(element => element.key !== targetKey);
+    const newTopicItems = this.data.newAchievementItem.topics.filter(element => element.key !== targetKey);
     const panes = this.data.panes.filter(pane => pane.key !== targetKey);
-    this.data.newAchievementItem.topic = newTopicItems;
+    this.data.newAchievementItem.topics = newTopicItems;
     this.data.activeKey = panes[lastIndex].key;
     this.data.panes = panes;
     this.setState({ didTabChange: true });
@@ -179,11 +170,11 @@ class Achievement extends React.Component {
     if (this.data.panes.filter(element => element.title === selected.title).length > 0) {
       return message.error('Duplicated topic.');
     }
-    Object.values(this.data.panes).forEach((element, i) => {
+    this.data.panes.forEach((element, i) => {
       if (element.key === this.data.activeKey) {
         this.data.panes[i].title = selected.title;
-        this.data.newAchievementItem.topic[i].title = selected.title;
-        this.data.newAchievementItem.topic[i].id = selected.id;
+        this.data.newAchievementItem.topics[i].title = selected.title;
+        this.data.newAchievementItem.topics[i].id = selected.id;
       }
     });
     this.setState({ didTabChange: true });
@@ -193,12 +184,11 @@ class Achievement extends React.Component {
     console.log(this.data.newAchievementItem);
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
-      if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
-      else if (key === 'topic' && this.data.newAchievementItem[key].filter(val => val.issuer === '').length > 0) formCheck = false;
-      else if (! this.data.newAchievementItem[key]) formCheck = false;
+      let valid = util.validate(key, this.data.newAchievementItem[key]);
+      if (! valid.b) { message.error(valid.err); formCheck = false; }
     });
-    if (formCheck) this.setState({ qrVisible: true }, () => this.data.newAchievementItem = JSON.parse(JSON.stringify(this.data.initNewAchievementItem)));
-    else message.error('Select at least 1 topic');
+    if (! formCheck) return;
+    this.setState({ qrVisible: true }, () => this.data.newAchievementItem = JSON.parse(JSON.stringify(this.data.initNewAchievementItem)));
   }
 
   getModalAchievementDetail(record, index) {
@@ -263,8 +253,8 @@ class Achievement extends React.Component {
           <SendTransaction
             id='sendTransaction'
             request={this.props.contracts.achievementManager.createAchievement(
-              this.data.newAchievementItem.topic.map(val => val.id),
-              this.data.newAchievementItem.topic.map(val => val.issuer),
+              this.data.newAchievementItem.topics.map(val => val.id),
+              this.data.newAchievementItem.topics.map(val => val.issuer),
               Buffer.from(this.data.newAchievementItem.title),
               Buffer.from(this.data.newAchievementItem.explanation),
               web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
