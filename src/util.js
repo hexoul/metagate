@@ -46,9 +46,24 @@ function refine(m) {
 
 var encoder = new TextEncoder('utf-8');
 
+/**
+ * Check if in 32 bytes or not
+ * @param {*} str 
+ */
 function isValidLength(str) {
   return encoder.encode(str).length;
 }
+
+/**
+ * Serialize / Deserialize object at local storage
+ */
+var save = (key, obj) => window.localStorage.setItem(key, JSON.stringify(obj));
+var load = (key) => JSON.parse(window.localStorage.getItem(key));
+
+var getTopicsFromLocal = () => load('topics');
+var getAchievementsFromLocal = () => load('achievements');
+var setTopicsToLocal = (obj) => save('topics', obj);
+var setAchievementsToLocal = (obj) => save('achievements', obj);
 
 export {
     timeConverter,
@@ -56,5 +71,11 @@ export {
     convertHexToString,
     asyncForEach,
     refine,
-    isValidLength
+    isValidLength,
+    save,
+    load,
+    getTopicsFromLocal,
+    getAchievementsFromLocal,
+    setTopicsToLocal,
+    setAchievementsToLocal
 }

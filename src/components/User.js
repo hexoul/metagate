@@ -12,6 +12,8 @@ class User extends React.Component {
   data = {
     items: [],
     originItems: [],
+    topics: [],
+    achivements: [],
     loadedUserCnt: 0,
     totalUserCnt: 1,
   };
@@ -26,8 +28,10 @@ class User extends React.Component {
   };
 
   componentWillMount() {
-    this.data.items = this.data.originItems;
-    this.setState({ getUserInfo: true });
+    if (this.data.topics.length > 0 || this.data.achivements.length > 0) return;
+
+    let topics = util.getTopicsFromLocal();
+    let achivs = util.getAchievementsFromLocal();
   }
 
   async userDynamicLoading() {
@@ -111,7 +115,7 @@ class User extends React.Component {
         />
         <Progress type='line' percent={ +Number(this.data.loadedUserCnt / this.data.totalUserCnt * 100).toFixed(2) } /><br /><br />
         <Table
-          // rowKey={record => record.uid}
+          rowKey={record => record.addr}
           onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
           columns={tableColumns}
           dataSource={this.data.items}
