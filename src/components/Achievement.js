@@ -44,13 +44,13 @@ class Achievement extends React.Component {
 
     if (topics) {
       this.data.topics = topics;
-      this.data.originClaimTopics = topics.map(val => <Select.Option key={val.id}>{val.title}</Select.Option>);
+      this.data.originClaimTopics = topics.map(val => <Select.Option key={val.id}>{val.title}:{val.explanation}</Select.Option>);
       this.setState({ getTopicInfo: true });
     } else this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
       cb: () => {
         util.setTopicsToLocal(this.data.topics);
-        this.data.originClaimTopics = this.data.topics.map(val => <Select.Option key={val.id}>{val.title}</Select.Option>);
+        this.data.originClaimTopics = this.data.topics.map(val => <Select.Option key={val.id}>{val.title}:{val.explanation}</Select.Option>);
         this.setState({ getTopicInfo: true });
       }
     });
@@ -68,13 +68,10 @@ class Achievement extends React.Component {
     this.achievementDynamicLoading();
 
     // Init tab value
-    this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
-    this.setState({ didTabChange: true });
+    this.data.panes.push({ title: 'New Topic', content: '', topic: [], key: this.data.activeKey, closable: false });
+    this.data.newAchievementItem.topic.push({ title: '', id: -1, issuer: '', key: this.data.activeKey });
 
-    // test
-    this.test = {
-      issuers: ['0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701','0x7304f14b0909640acc4f6a192381091eb1f37701'],
-    };
+    this.setState({ didTabChange: true });
   }
 
   addAchievement = async (ret) => {
@@ -129,7 +126,7 @@ class Achievement extends React.Component {
         } else {
           e.target.style.borderColor = '#3db389'; 
           Object.values(this.data.panes).forEach((element, i) => {
-            if (element.key === this.data.activeKey) { this.data.newAchievementItem['topic'][i].issuer = e.target.value; }
+            if (element.key === this.data.activeKey) this.data.newAchievementItem.topic[i].issuer = e.target.value;
           });
         }
         break;
@@ -153,6 +150,25 @@ class Achievement extends React.Component {
     this[action](targetKey);
   }
 
+  add = () => {
+    this.data.activeKey = (this.data.tabIndex++).toString();
+    this.data.panes.push({ title: 'New Topic', content: 'Content of new tab', key: this.data.activeKey });
+    this.data.newAchievementItem.topic.push({ title: '', id: -1, issuer: '', key: this.data.activeKey });
+    this.setState({ didTabChange: true });
+  }
+  
+  remove = (targetKey) => {
+    let lastIndex = 0;
+    this.data.panes.forEach((pane, i) => { if (pane.key === targetKey) lastIndex = i - 1; });
+
+    const newTopicItems = this.data.newAchievementItem.topic.filter(element => element.key !== targetKey);
+    const panes = this.data.panes.filter(pane => pane.key !== targetKey);
+    this.data.newAchievementItem.topic = newTopicItems;
+    this.data.activeKey = panes[lastIndex].key;
+    this.data.panes = panes;
+    this.setState({ didTabChange: true });
+  }
+
   onTopicClick = (value) => {
     // eslint-disable-next-line
     let selected = this.data.topics.filter(val => val.id == value)[0];
@@ -160,13 +176,17 @@ class Achievement extends React.Component {
       return message.error('Duplicated topic.');
     }
     Object.values(this.data.panes).forEach((element, i) => {
-      if (element.key === this.data.activeKey) this.data.panes[i].title = selected.title;
+      if (element.key === this.data.activeKey) {
+        this.data.panes[i].title = selected.title;
+        this.data.newAchievementItem.topic[i].title = selected.title;
+        this.data.newAchievementItem.topic[i].id = selected.id;
+      }
     });
-    this.data.newAchievementItem.topic.push({ title: selected.title, id: selected.id, issuer: '', key: this.data.activeKey });
     this.setState({ didTabChange: true });
   }
 
   onAddClick = () => {
+    console.log(this.data.newAchievementItem);
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
@@ -275,30 +295,6 @@ class Achievement extends React.Component {
         </div>
         }
     </Modal>
-  }
-
-  add = () => {
-    this.data.activeKey = (this.data.tabIndex++).toString();
-    this.data.panes.push({ title: 'New Topic', content: 'Content of new tab', key: this.data.activeKey });
-    this.setState({ didTabChange: true });
-  }
-  
-  remove = (targetKey) => {
-    let activeKey = this.data.activeKey;
-    let lastIndex;
-    this.data.panes.forEach((pane, i) => {
-      if (pane.key === targetKey) lastIndex = i - 1;
-    });
-
-    const newTopicItems = this.data.newAchievementItem.topic.filter(element => element.key !== targetKey);
-    const panes = this.data.panes.filter(pane => pane.key !== targetKey);
-    if (lastIndex >= 0 && activeKey === targetKey) {
-      activeKey = panes[lastIndex].key;
-    }
-    this.data.newAchievementItem.topic = newTopicItems;
-    this.data.panes = panes;
-    this.data.activeKey = activeKey;
-    this.setState({ didTabChange: true });
   }
 
   render() {
