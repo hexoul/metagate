@@ -80,6 +80,8 @@ class User extends React.Component {
   }
 
   getModalUserDetail(record) {
+    record.topics = this.data.topics.filter(val => val.issuer === record.addr);
+    record.achivements = this.data.achivements.filter(val => val.creator === record.addr).map(val => val.title);
     Modal.info({
       width: '70%',
       maskClosable: true,

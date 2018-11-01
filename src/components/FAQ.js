@@ -26,9 +26,7 @@ class FAQ extends React.Component {
     this.getFaqOriginData();
   }
 
-  getFaqOriginData() {
-    this.data.items = this.data.originItems;
-  }
+  getFaqOriginData = () => this.data.items = this.data.originItems;
 
   onSearch(value) {
     var regex = new RegExp(value, 'i');
@@ -42,9 +40,7 @@ class FAQ extends React.Component {
     this.setState({ didSearch: true });
   }
 
-  onSearchInputChange = (e) => {
-    this.onSearch(e.target.value);
-  }
+  onSearchInputChange = (e) => this.onSearch(e.target.value);
 
   render() {
     return (

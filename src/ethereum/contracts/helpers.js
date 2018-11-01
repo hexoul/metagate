@@ -18,9 +18,7 @@ function ABIURL(branch, contract) {
 
 function getABI(branch, contract) {
   let addr = ABIURL(branch, contract)
-  return fetch(addr).then(response => {
-    return response.json();
-  });
+  return fetch(addr).then(response => response.json());
 }
 
 function wrongRepoAlert(addr) {
