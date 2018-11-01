@@ -32,6 +32,18 @@ class User extends React.Component {
 
     let topics = util.getTopicsFromLocal();
     let achivs = util.getAchievementsFromLocal();
+    
+    if (topics) this.data.topics = topics;
+    else this.props.contracts.topicRegistry.getAllTopic({
+      handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
+      cb: () => util.setTopicsToLocal(this.data.topics)
+    });
+
+    if (achivs) this.data.achivements = achivs;
+    else this.props.contracts.achievementManager.getAllAchievements({
+      handler: ret => { if (ret) this.data.achivements = [...this.data.achivements, util.refine(ret)] },
+      cb: () => util.setAchievementsToLocal(this.data.achivements)
+    });
   }
 
   async userDynamicLoading() {

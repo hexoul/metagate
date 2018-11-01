@@ -31,6 +31,7 @@ async function asyncForEach(array, callback) {
 }
 
 function refine(m) {
+  if (! m) return null;
   Object.keys(m).forEach(key => {
     if (! isNaN(key)) return delete m[key];
     switch (key) {
