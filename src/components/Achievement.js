@@ -9,26 +9,13 @@ import * as util from '../util';
 const tableColumns = columns.achievementColumns;
 const detailColumns = columns.achievementDetailColumns;
 
-// Test data
-var topicListArr = [
-  {title: 'Legal Name', id: 1030},
-  {title: 'Phone Number', id: 1031},
-  {title: 'E-mail Address', id: 1032},
-];
-var children = [];
-
-function setTestData() {
-  for (var i=0; i < topicListArr.length; i++) {
-    children.push(<Select.Option key={i}>{topicListArr[i].title}</Select.Option>);
-  }
-}
-
 class Achievement extends React.Component {
 
   data = {
     items: [],
     localStorageItem: [],
     originItems: [],
+    topics: [],
     originClaimTopics: [],
     newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
     inputValidData: [],
@@ -47,12 +34,26 @@ class Achievement extends React.Component {
     didSearch: false,
     loading: false,
     getTopicInfo: false,
+    getAchievementInfo: false,
   };
 
-  constructor(props) {
-    super(props);
-    // TODO: init topic tabs of AddAchieveModal
-    setTestData();
+  componentWillMount() {
+    if (this.data.topics.length > 0) return;
+
+    let topics = util.getTopicsFromLocal();
+
+    if (topics) {
+      this.data.topics = topics;
+      this.data.originClaimTopics = topics.map(val => <Select.Option key={val.id}>{val.title}</Select.Option>);
+      this.setState({ getTopicInfo: true });
+    } else this.props.contracts.topicRegistry.getAllTopic({
+      handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
+      cb: () => {
+        util.setTopicsToLocal(this.data.topics);
+        this.data.originClaimTopics = this.data.topics.map(val => <Select.Option key={val.id}>{val.title}</Select.Option>);
+        this.setState({ getTopicInfo: true });
+      }
+    });
   }
 
   async achievementDynamicLoading() {
@@ -67,7 +68,6 @@ class Achievement extends React.Component {
     this.achievementDynamicLoading();
 
     // Init tab value
-    this.data.originClaimTopics = children;
     this.data.panes.push({ title: 'New Topic', content: '', key: this.data.activeKey , closable: false });
     this.setState({ didTabChange: true });
 
@@ -83,7 +83,7 @@ class Achievement extends React.Component {
     let newItem = await this.getAchievementFromMap(ret);
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
-    this.setState({ getTopicInfo: true });
+    this.setState({ getAchievementInfo: true });
   }
 
   async getClaimTopic(claimTopics) {
@@ -116,7 +116,7 @@ class Achievement extends React.Component {
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break;
       case 'reward':
-        if (e.target.value < 5) e.target.style.borderColor = 'red'; // 아예 5미만이면 저장을 안해서 에러발생 하도록
+        if (e.target.value < 5) e.target.style.borderColor = 'red';
         else { 
           e.target.style.borderColor = '#3db389'; 
           this.data.newAchievementItem[e.target.id] = e.target.value;
@@ -154,13 +154,15 @@ class Achievement extends React.Component {
   }
 
   onTopicClick = (value) => {
-    if (this.data.panes.filter(element => element.title === topicListArr[value].title).length > 0) {
+    // eslint-disable-next-line
+    let selected = this.data.topics.filter(val => val.id == value)[0];
+    if (this.data.panes.filter(element => element.title === selected.title).length > 0) {
       return message.error('Duplicated topic.');
     }
     Object.values(this.data.panes).forEach((element, i) => {
-      if (element.key === this.data.activeKey) {this.data.panes[i].title = this.data.originClaimTopics[value].props.children;}
+      if (element.key === this.data.activeKey) this.data.panes[i].title = selected.title;
     });
-    this.data.newAchievementItem.topic.push({title: topicListArr[value].title, id: topicListArr[value].id, issuer: '', key: this.data.activeKey});
+    this.data.newAchievementItem.topic.push({ title: selected.title, id: selected.id, issuer: '', key: this.data.activeKey });
     this.setState({ didTabChange: true });
   }
 
@@ -168,15 +170,11 @@ class Achievement extends React.Component {
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
       if (key === 'topic' && this.data.newAchievementItem[key].length === 0) formCheck = false;
+      else if (key === 'topic' && this.data.newAchievementItem[key].filter(val => val.issuer === '').length > 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
-    if (formCheck) this.setState({ qrVisible: true });
+    if (formCheck) this.setState({ qrVisible: true }, () => this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' });
     else message.error('Select at least 1 topic');
-  }
-
-  onCancelClick = () => {
-    this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: ''};
-    this.setState({ addModalVisible: false, qrVisible: false });
   }
 
   getModalAchievementDetail(record, index) {
@@ -232,7 +230,7 @@ class Achievement extends React.Component {
       visible={this.state.addModalVisible}
       onOk={this.onAddClick}
       okText='Add'
-      onCancel={this.onCancelClick}
+      onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
       >
       {this.state.qrVisible ?
@@ -242,7 +240,7 @@ class Achievement extends React.Component {
             id='sendTransaction'
             request={this.props.contracts.achievementManager.createAchievement(
               this.data.newAchievementItem.topic.map(val => val.id),
-              this.test.issuers,
+              this.data.newAchievementItem.topic.map(val => val.issuer),
               Buffer.from(this.data.newAchievementItem.title),
               Buffer.from(this.data.newAchievementItem.explanation),
               web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
@@ -328,7 +326,7 @@ class Achievement extends React.Component {
           columns={tableColumns}
           dataSource={ this.data.items }
         />
-        {this.getModalAddAchievement()}
+        {this.state.getTopicInfo && this.getModalAddAchievement()}
       </div>
     );
   }
