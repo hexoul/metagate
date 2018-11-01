@@ -17,7 +17,7 @@ class Achievement extends React.Component {
     originItems: [],
     topics: [],
     originClaimTopics: [],
-    newAchievementItem: { title: '', topic: [], explanation: '', reward: '' },
+    initNewAchievementItem: { title: '', explanation: '', reward: '', topic: [{ title: '', id: -1, issuer: '', key: '0' }] },
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -36,6 +36,11 @@ class Achievement extends React.Component {
     getTopicInfo: false,
     getAchievementInfo: false,
   };
+
+  constructor(props) {
+    super(props);
+    this.data.newAchievementItem = JSON.parse(JSON.stringify(this.data.initNewAchievementItem));
+  }
 
   componentWillMount() {
     if (this.data.topics.length > 0) return;
@@ -69,8 +74,7 @@ class Achievement extends React.Component {
 
     // Init tab value
     this.data.panes.push({ title: 'New Topic', content: '', topic: [], key: this.data.activeKey, closable: false });
-    this.data.newAchievementItem.topic.push({ title: '', id: -1, issuer: '', key: this.data.activeKey });
-
+    
     this.setState({ didTabChange: true });
   }
 
@@ -193,7 +197,7 @@ class Achievement extends React.Component {
       else if (key === 'topic' && this.data.newAchievementItem[key].filter(val => val.issuer === '').length > 0) formCheck = false;
       else if (! this.data.newAchievementItem[key]) formCheck = false;
     });
-    if (formCheck) this.setState({ qrVisible: true }, () => this.data.newAchievementItem = { title: '', topic: [], explanation: '', reward: '' });
+    if (formCheck) this.setState({ qrVisible: true }, () => this.data.newAchievementItem = JSON.parse(JSON.stringify(this.data.initNewAchievementItem)));
     else message.error('Select at least 1 topic');
   }
 
