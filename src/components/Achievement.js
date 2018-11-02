@@ -58,13 +58,13 @@ class Achievement extends React.Component {
     if (topics) {
       this.data.topics = topics;
       this.data.originClaimTopics = topics.map(val => <Select.Option key={val.id}>{val.title}:{val.explanation}</Select.Option>);
-      this.setState({ getTopicInfo: true });
+      this.setState({ getTopicInfo: true }, () => this.achievementDynamicLoading());
     } else this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
       cb: () => {
         util.setTopicsToLocal(this.data.topics);
         this.data.originClaimTopics = this.data.topics.map(val => <Select.Option key={val.id}>{val.title}:{val.explanation}</Select.Option>);
-        this.setState({ getTopicInfo: true });
+        this.setState({ getTopicInfo: true }, () => this.achievementDynamicLoading());
       }
     });
   }
@@ -82,11 +82,8 @@ class Achievement extends React.Component {
   }
 
   componentDidMount() {
-    this.achievementDynamicLoading();
-
     // Init tab value
     this.data.panes.push({ title: 'New Topic', content: '', topics: [], key: this.data.activeKey, closable: false });
-    
     this.setState({ didTabChange: true });
   }
 
@@ -101,19 +98,9 @@ class Achievement extends React.Component {
     this.setState({ getAchievementInfo: true });
   }
 
-  async getClaimTopic(claimTopics) {
-    var rtn = [];
-    await util.asyncForEach(claimTopics, async (element) => {
-      var topic = await this.props.contracts.topicRegistry.getTopic(element);
-      topic['id'] = element;
-      rtn.push(util.refine(topic));
-    });
-    return rtn;
-  }
-
   async getAchievementFromMap(m) {
     util.refine(m);
-    if (m.claimTopics) m.claimTopics = await this.getClaimTopic(m.claimTopics);
+    if (m.claimTopics) m.claimTopics = this.data.topics.filter(val => m.claimTopics.includes(val.id.toString()));
     return m;
   }
 
