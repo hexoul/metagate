@@ -166,6 +166,7 @@ class Topic extends React.Component {
             </Row>
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0' }}>
+              Explanation<br />
               <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)' />
             </Form>
           </div>
