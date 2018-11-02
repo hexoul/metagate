@@ -226,7 +226,12 @@ class Achievement extends React.Component {
                 placeholder='Select a Topic'
                 optionFilterProp='children'
                 onChange={this.onTopicClick}
-                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                filterOption={(input, option) => {
+                  // eslint-disable-next-line
+                  let selected = this.data.topics.filter(m => m.id == option.key);
+                  if (! selected || ! util.cmpIgnoreCase(selected[0].title+selected[0].explanation, input)) return false;
+                  return true;
+                }}
               >
                 {this.data.originClaimTopics}
               </Select>
