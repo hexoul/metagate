@@ -44,7 +44,7 @@ class Achievement extends React.Component {
   }
 
   componentWillMount() {
-    if (this.data.topics.length > 0) return;
+    if (this.data.users.length > 0 || this.data.topics.length > 0) return;
 
     let users = util.getUsersFromLocal();
     let topics = util.getTopicsFromLocal();
@@ -203,7 +203,7 @@ class Achievement extends React.Component {
           <h4 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h4> <hr />
-          <h4 style={{ margin: '10px 0' }}>Creator: Metadium / {record.creator}</h4> <hr />
+          <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}</h4> <hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topics</h3></center>
           <Table size='small' rowKey='id' columns={detailColumns} dataSource={record.claimTopics} />
         </div>

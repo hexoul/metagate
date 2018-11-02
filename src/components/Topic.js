@@ -12,6 +12,7 @@ class Topic extends React.Component {
   data = {
     items: [],
     originItems: [],
+    users: [],
     newTopicItem: { title: '', explanation: '' },
     inputValidData: [],
     loadedTopicCnt: 0,
@@ -27,6 +28,18 @@ class Topic extends React.Component {
     loading: false,
   };
 
+  componentWillMount() {
+    if (this.data.users.length > 0) return;
+
+    let users = util.getUsersFromLocal();
+
+    if (users) { this.data.users = users; this.topicDynamicLoading(); }
+    else this.props.contracts.aaRegistry.getAllAttestationAgencies({
+      handler: ret => { if (ret) this.data.users = [...this.data.users, util.refine(ret)] },
+      cb: () => { util.setUsersToLocal(this.data.users); this.topicDynamicLoading(); }
+    });
+  }
+
   async topicDynamicLoading() {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
@@ -39,13 +52,11 @@ class Topic extends React.Component {
     });
   }
 
-  componentDidMount() {
-    this.topicDynamicLoading();
-  }
-
   addTopic = async (ret) => {
     ++this.data.loadedTopicCnt;
     if (! ret) return;
+    let user = this.data.users.filter(m => m.addr === ret.issuer);
+    if (user) ret.issuerTitle = user[0].title;
     this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -108,7 +119,7 @@ class Topic extends React.Component {
         <div style={{ marginTop: '5%', width: '90%' }}>
           <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
-          <h4 style={{ margin: '10px 0' }}>Creator : Metadium / {record.issuer}</h4><hr />
+          <h4 style={{ margin: '10px 0' }}>Creator : {record.issuerTitle} / {record.issuer}</h4><hr />
         </div>
       ),
       onOk() {}

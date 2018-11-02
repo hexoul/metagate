@@ -53,7 +53,7 @@ columns.topicColumns = [
   },
   {
     title: 'Issuer',
-    dataIndex: 'issuer',
+    dataIndex: 'issuerTitle',
     key: 'issuer',
     width: '20%',
   },
