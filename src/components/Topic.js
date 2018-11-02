@@ -48,14 +48,12 @@ class Topic extends React.Component {
   }
 
   handleSorting = (e) => {
-    let sortData = [];
     switch (e.target.value) {
-      case 'All': sortData = this.data.originItems; break;
-      case 'Pre-fixed': this.data.originItems.forEach(element => { if (element.id < 1025) sortData.push(element) }); break;
-      case 'Added': this.data.originItems.forEach(element => { if (element.id > 1024) sortData.push(element) }); break;
+      case 'All': this.data.items = this.data.originItems; break;
+      case 'Pre-fixed': this.data.items = this.data.originItems.filter(m => m.id < 1025); break;
+      case 'Added': this.data.items = this.data.originItems.filter(m => m.id >= 1024); break;
       default: break;
     }
-    this.data.items = sortData;
     this.setState({ didSort: true });
   }
 

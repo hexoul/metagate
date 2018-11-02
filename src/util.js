@@ -45,6 +45,10 @@ function refine(m) {
   return m;
 }
 
+function cmpIgnoreCase(a, b) {
+  return a.toLowerCase().includes(b.toLowerCase());
+}
+
 /**
  * 
  * @param {*} key 
@@ -100,6 +104,7 @@ export {
     convertHexToString,
     asyncForEach,
     refine,
+    cmpIgnoreCase,
     isValidLength,
     validate,
     save,
