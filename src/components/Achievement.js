@@ -15,6 +15,7 @@ class Achievement extends React.Component {
     items: [],
     localStorageItem: [],
     originItems: [],
+    users: [],
     topics: [],
     originClaimTopics: [],
     initNewAchievementItem: { title: '', explanation: '', reward: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
@@ -45,7 +46,14 @@ class Achievement extends React.Component {
   componentWillMount() {
     if (this.data.topics.length > 0) return;
 
+    let users = util.getUsersFromLocal();
     let topics = util.getTopicsFromLocal();
+
+    if (users) this.data.users = users;
+    else this.props.contracts.aaRegistry.getAllAttestationAgencies({
+      handler: ret => { if (ret) this.data.users = [...this.data.users, util.refine(ret)] },
+      cb: () => util.setUsersToLocal(this.data.users)
+    });
 
     if (topics) {
       this.data.topics = topics;
@@ -65,7 +73,11 @@ class Achievement extends React.Component {
     this.data.totalAchieveCnt = await this.props.contracts.achievementManager.getLengthOfAchievements();
     this.props.contracts.achievementManager.getAllAchievements({
       handler: ret => this.addAchievement(ret),
-      cb: () => { this.data.loadedAchieveCnt = this.data.totalAchieveCnt; this.setState({ loading: true }); }
+      cb: () => {
+        this.data.loadedAchieveCnt = this.data.totalAchieveCnt;
+        util.setAchievementsToLocal(this.data.originItems);
+        this.setState({ loading: true });
+      }
     });
   }
 
@@ -82,6 +94,8 @@ class Achievement extends React.Component {
     ++this.data.loadedAchieveCnt;
     if (! ret) return;
     let newItem = await this.getAchievementFromMap(ret);
+    let user = this.data.users.filter(m => m.addr === ret.creator);
+    if (user) ret.creatorTitle = user[0].title;
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
     this.setState({ getAchievementInfo: true });
@@ -316,7 +330,7 @@ class Achievement extends React.Component {
         </div>
         <Progress type='line' percent={ +Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
         <Table
-          // rowKey={record => record.uid}
+          rowKey={record => record.id}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
           columns={tableColumns}
           dataSource={ this.data.items }

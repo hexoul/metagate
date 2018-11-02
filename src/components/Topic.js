@@ -31,7 +31,11 @@ class Topic extends React.Component {
     this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.addTopic(ret),
-      cb: () => { this.data.loadedTopicCnt = this.data.totalTopicCnt; this.setState({ loading: true }); }
+      cb: () => {
+        this.data.loadedTopicCnt = this.data.totalTopicCnt;
+        util.setTopicsToLocal(this.data.originItems);
+        this.setState({ loading: true });
+      }
     });
   }
 

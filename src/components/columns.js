@@ -80,7 +80,7 @@ columns.topicColumns = [
 columns.achievementColumns = [
   {
     title: 'Creator',
-    dataIndex: 'creator',
+    dataIndex: 'creatorTitle',
     key: 'creator',
     width: '20%',
   },

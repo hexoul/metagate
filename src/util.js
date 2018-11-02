@@ -93,8 +93,10 @@ function isValidLength(str) {
 var save = (key, obj) => window.localStorage.setItem(key, JSON.stringify(obj));
 var load = (key) => JSON.parse(window.localStorage.getItem(key));
 
+var getUsersFromLocal = () => load('users');
 var getTopicsFromLocal = () => load('topics');
 var getAchievementsFromLocal = () => load('achievements');
+var setUsersToLocal = (obj) => save('users', obj);
 var setTopicsToLocal = (obj) => save('topics', obj);
 var setAchievementsToLocal = (obj) => save('achievements', obj);
 
@@ -109,8 +111,10 @@ export {
     validate,
     save,
     load,
+    getUsersFromLocal,
     getTopicsFromLocal,
     getAchievementsFromLocal,
+    setUsersToLocal,
     setTopicsToLocal,
     setAchievementsToLocal
 }

@@ -50,7 +50,11 @@ class User extends React.Component {
     this.data.totalUserCnt = await this.props.contracts.aaRegistry.getAttestationAgencyNum();
     this.props.contracts.aaRegistry.getAllAttestationAgencies({
       handler: ret => this.addUser(ret),
-      cb: () => { this.data.loadedUserCnt = this.data.totalUserCnt; this.setState({ loading: true }); }
+      cb: () => {
+        this.data.loadedUserCnt = this.data.totalUserCnt;
+        util.setUsersToLocal(this.data.originItems);
+        this.setState({ loading: true });
+      }
     });
   }
 
