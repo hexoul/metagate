@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, message } from 'antd';
 import { User, Topic, Achievement, FAQ, Splash } from './components';
 
 // Styles.
@@ -34,6 +34,13 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+
+    message.config({
+      top: 30,
+      duration: 2,
+      maxCount: 6,
+    });
+
     this.prevNav = 'splash';
     this.initContracts();
   }
