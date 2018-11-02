@@ -73,15 +73,17 @@ class Topic extends React.Component {
   }
 
   updateNewTopicInfo = (e) => {
+    let valid = util.validate(e.target.id, e.target.value);
+    if (valid.b) e.target.style.borderColor = '#3db389';
+    else {
+      e.target.style.borderColor = 'red';
+      message.error(valid.err);
+    }
+
     switch (e.target.id) {
       case 'title':
       case 'explanation':
-        if (util.isValidLength(e.target.value) > 32) {
-          message.error('Please fill up all red box!');
-          e.target.style.borderColor = 'red';
-          e.target.value = this.data.inputValidData[e.target.id];
-        } else e.target.style.borderColor = '#3db389';
-
+        if (! valid.b && e.target.value) e.target.value = this.data.inputValidData[e.target.id];
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newTopicItem[e.target.id] = e.target.value;
         break;
@@ -99,10 +101,11 @@ class Topic extends React.Component {
   onAddClick = () => {
     var formCheck = true;
     Object.keys(this.data.newTopicItem).map(async (key) => {
-      if (! this.data.newTopicItem[key]) formCheck = false;
+      let valid = util.validate(key, this.data.newTopicItem[key]);
+      if (! valid.b) { message.error(valid.err); formCheck = false; }
     });
-    if (formCheck) this.setState({ qrVisible: true });
-    else message.error('Failed cause red box or Select at least one topic!');
+    if (! formCheck) return;
+    this.setState({ qrVisible: true });
   }
 
   onCancelClick = () => {

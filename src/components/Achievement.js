@@ -115,7 +115,7 @@ class Achievement extends React.Component {
     switch (e.target.id) {
       case 'title':
       case 'explanation':
-        if (! valid.b) e.target.value = this.data.inputValidData[e.target.id];
+        if (! valid.b && e.target.value) e.target.value = this.data.inputValidData[e.target.id];
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break;
