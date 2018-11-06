@@ -80,10 +80,7 @@ class Topic extends React.Component {
   updateNewTopicInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
     if (valid.b) e.target.style.borderColor = '#3db389';
-    else {
-      e.target.style.borderColor = 'red';
-      message.error(valid.err);
-    }
+    else e.target.style.borderColor = 'red';
 
     switch (e.target.id) {
       case 'title':

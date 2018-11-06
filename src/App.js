@@ -81,7 +81,7 @@ class App extends React.Component {
             style={{ lineHeight: '64px' }}
             onClick={this.onMenuClick}
           >
-            <Menu.Item key='1'>AA/SP Registry</Menu.Item>
+            <Menu.Item key='1'>AA Registry</Menu.Item>
             <Menu.Item key='2'>Topic Registry</Menu.Item>
             <Menu.Item key='3'>Achievement Registry</Menu.Item>
           </Menu>

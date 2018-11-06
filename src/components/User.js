@@ -1,10 +1,11 @@
 import React from 'react';
-import { Table, List, Input, Modal, Row, Col, Progress } from 'antd';
+import { Table, List, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import {columns} from './columns';
 import * as util from '../util';
 
-const tableColumns = columns.userColumns;
+var tableColumns = columns.userColumns;
 const detailColumns = columns.userDetailColumns;
 
 class User extends React.Component {
@@ -26,6 +27,21 @@ class User extends React.Component {
     didSearch: false,
     loading: false,
   };
+
+  constructor(props) {
+    super(props);
+    tableColumns.forEach(({ dataIndex }, i) => {
+      if (dataIndex !== 'addr') return;
+      tableColumns[i].render = val => (
+        <div>
+          {val}&nbsp;&nbsp;
+          <CopyToClipboard text={val}>
+            <Button onClick={(e) => { message.info('Copied !!'); e.stopPropagation(); }}>copy</Button>
+          </CopyToClipboard>
+        </div>
+      );
+    });
+  }
 
   componentWillMount() {
     if (this.data.topics.length > 0 || this.data.achivements.length > 0) return;
@@ -86,7 +102,7 @@ class User extends React.Component {
 
   getModalUserDetail(record) {
     record.topics = this.data.topics.filter(val => val.issuer === record.addr);
-    record.achivements = this.data.achivements.filter(val => val.creator === record.addr).map(val => val.title);
+    record.achivements = this.data.achivements.filter(val => val.creator === record.addr).map(e => [e.title, e.explanation, e.reward].join(' / '));
     Modal.info({
       width: '70%',
       maskClosable: true,

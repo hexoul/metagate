@@ -1,23 +1,32 @@
 let columns = {};
 
+var strSorter = (a, b) => {
+  if (a.title > b.title) return 1;
+  else if (a.title < b.title) return -1;
+  return 0;
+}
+
 columns.userColumns = [
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '25%',
+    width: '15%',
+    sorter: (a, b) => strSorter(a,b),
   },
   {
     title: 'Meta ID',
     dataIndex: 'addr',
     key: 'metaID',
-    width: '35%',
+    width: '55%',
+    sorter: (a, b) => strSorter(a,b),
   },
   {
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
     width: '20%',
+    sorter: (a, b) => strSorter(a,b),
   }
 ];
 

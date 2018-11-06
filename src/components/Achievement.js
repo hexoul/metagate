@@ -112,10 +112,7 @@ class Achievement extends React.Component {
   updateNewAchieveInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
     if (valid.b) e.target.style.borderColor = '#3db389';
-    else {
-      e.target.style.borderColor = 'red';
-      message.error(valid.err);
-    }
+    else e.target.style.borderColor = 'red';
 
     switch (e.target.id) {
       case 'title':
@@ -292,7 +289,13 @@ class Achievement extends React.Component {
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
-              <Input id='reward' type='number' onChange={this.updateNewAchieveInfo} placeholder='Reward needs to be higher than 5' addonAfter='META' />
+              <Input
+                id='reward'
+                type='number'
+                onChange={this.updateNewAchieveInfo}
+                placeholder='Input META Amount. Reward needs to be higher than 5'
+                addonAfter='META'
+              />
             </Col>
           </Row>
           <Form layout='vertical' style={{ margin: '30px 0' }}>
