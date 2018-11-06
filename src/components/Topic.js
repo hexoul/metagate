@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import { columns } from './columns';
 import * as util from '../util';
@@ -62,6 +63,7 @@ class Topic extends React.Component {
     if (! ret) return;
     let user = this.data.users.filter(m => m.addr === ret.issuer);
     if (user) ret.issuerTitle = user[0].title;
+    else ret.issuerTitle = ret.issuer;
     this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getTopicInfo: true });
@@ -124,7 +126,11 @@ class Topic extends React.Component {
         <div style={{ marginTop: '5%', width: '90%' }}>
           <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
-          <h4 style={{ margin: '10px 0' }}>Creator : {record.issuerTitle} / {record.issuer}</h4><hr />
+          <h4 style={{ margin: '10px 0' }}>Creator : {record.issuerTitle} / {record.issuer}&nbsp;&nbsp;
+            <CopyToClipboard text={record.issuer}>
+              <Button onClick={() => message.info('Copied !!')}>copy</Button>
+            </CopyToClipboard>
+          </h4><hr />
         </div>
       ),
       onOk() {}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import web3 from '../ethereum/web3';
 import { columns } from './columns';
@@ -98,6 +99,7 @@ class Achievement extends React.Component {
     let newItem = await this.getAchievementFromMap(ret);
     let user = this.data.users.filter(m => m.addr === ret.creator);
     if (user) ret.creatorTitle = user[0].title;
+    else ret.creatorTitle = ret.creator;
     this.data.items = [...this.data.items, newItem];
     this.data.originItems = this.data.items;
     this.setState({ getAchievementInfo: true });
@@ -205,7 +207,11 @@ class Achievement extends React.Component {
           <h4 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h4> <hr />
-          <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}</h4> <hr />
+          <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
+            <CopyToClipboard text={record.creator}>
+              <Button onClick={() => message.info('Copied !!')}>copy</Button>
+            </CopyToClipboard>
+          </h4><hr />
           <center><h3 style={{ marginTop: '30px' }}>Required Topics</h3></center>
           <Table size='small' rowKey='id' columns={detailColumns} dataSource={record.claimTopics} />
         </div>

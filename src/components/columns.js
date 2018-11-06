@@ -1,8 +1,8 @@
 let columns = {};
 
 var strSorter = (a, b) => {
-  if (a.title > b.title) return 1;
-  else if (a.title < b.title) return -1;
+  if (a > b) return 1;
+  else if (a < b) return -1;
   return 0;
 }
 
@@ -12,21 +12,21 @@ columns.userColumns = [
     dataIndex: 'title',
     key: 'title',
     width: '15%',
-    sorter: (a, b) => strSorter(a,b),
+    sorter: (a, b) => strSorter(a.title, b.title),
   },
   {
     title: 'Meta ID',
     dataIndex: 'addr',
     key: 'metaID',
     width: '55%',
-    sorter: (a, b) => strSorter(a,b),
+    sorter: (a, b) => strSorter(a.addr, b.addr),
   },
   {
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
     width: '20%',
-    sorter: (a, b) => strSorter(a,b),
+    sorter: (a, b) => strSorter(a.createdAt, b.createdAt),
   }
 ];
 
@@ -58,24 +58,28 @@ columns.topicColumns = [
     dataIndex: 'issuerTitle',
     key: 'issuer',
     width: '20%',
+    sorter: (a, b) => strSorter(a.issuerTitle, b.issuerTitle),
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
     width: '25%',
+    sorter: (a, b) => strSorter(a.title, b.title),
   },
   {
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
     width: '25%',
+    sorter: (a, b) => strSorter(a.explanation, b.explanation),
   },
   {
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
     width: '20%',
+    sorter: (a, b) => strSorter(a.createdAt, b.createdAt),
   }
 ];
 
@@ -85,30 +89,35 @@ columns.achievementColumns = [
     dataIndex: 'creatorTitle',
     key: 'creator',
     width: '20%',
+    sorter: (a, b) => strSorter(a.creatorTitle, b.creatorTitle),
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
     width: '20%',
+    sorter: (a, b) => strSorter(a.title, b.title),
   },
   {
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
     width: '35%',
+    sorter: (a, b) => strSorter(a.explanation, b.explanation),
   },
   {
     title: 'Reward',
     dataIndex: 'reward',
     key: 'reward',
     width: '10%',
+    sorter: (a, b) => a.reward - b.reward,
   },
   {
     title: 'Registered on',
     dataIndex: 'createdAt',
     key: 'createdAt',
     width: '20%',
+    sorter: (a, b) => strSorter(a.createdAt, b.createdAt),
   }
 ];
 
