@@ -243,6 +243,11 @@ class Achievement extends React.Component {
     </Form.Item>
   }
 
+  moveToFAQ() {
+    this.setState({ addModalVisible: false });
+    this.props.moveToFAQ();
+  }
+
   getModalAddAchievement() {
     return <Modal
       width='40%'
@@ -282,16 +287,16 @@ class Achievement extends React.Component {
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
-              <Input id='reward' type='number' onChange={this.updateNewAchieveInfo} placeholder='Input Reward' addonAfter='META' />
+              <Input id='reward' type='number' onChange={this.updateNewAchieveInfo} placeholder='Reward needs to be higher than 5' addonAfter='META' />
             </Col>
           </Row>
-          <p style={{ float: 'right', color: 'red' }}>* Reward needs to be higher than 5</p>
           <Form layout='vertical' style={{ margin: '30px 0' }}>
             Explanation<br />
             <Input id='explanation' onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes)' />
             <p /><hr />Required Claim Topics<p />
             {this.getTopicTabs()}
           </Form>
+          <a onClick={() => this.moveToFAQ()}>FAQ</a>
         </div>
         }
     </Modal>

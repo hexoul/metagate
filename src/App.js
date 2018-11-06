@@ -41,21 +41,21 @@ class App extends React.Component {
       maxCount: 6,
     });
 
-    this.prevNav = 'splash';
     this.initContracts();
   }
 
   onMenuClick = ({ key }) => {
-    this.prevNav = key;
     this.setState({ nav: key });
   }
+
+  moveToFAQ = () => this.setState({ nav: 'faq' });
 
   getContent() {
     if (! this.state.contractReady) return;
     switch (this.state.nav) {
       case '1': return <User contracts={this.contracts} />;
-      case '2': return <Topic contracts={this.contracts} />;
-      case '3': return <Achievement contracts={this.contracts} />;
+      case '2': return <Topic contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
+      case '3': return <Achievement contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
       case 'splash': return <Splash onClick={() => this.setState({ nav: 'faq' })}/>;
       case 'faq': return <FAQ />;
       default: return;
@@ -71,7 +71,7 @@ class App extends React.Component {
               className='logoimg'
               alt='logo'
               src='https://github.com/METADIUM/metadium-token-contract/blob/master/misc/Metadium_Logo_Vertical_PNG.png?raw=true'
-              onClick={() => this.setState({ nav: this.prevNav })}
+              onClick={() => this.setState({ nav: 'splash' })}
             />
           </div>
           <Menu

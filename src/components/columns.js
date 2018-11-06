@@ -2,13 +2,6 @@ let columns = {};
 
 columns.userColumns = [
   {
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-    sorter: (a, b) => a.type.length - b.type.length,
-    width: '10%',
-  },
-  {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',

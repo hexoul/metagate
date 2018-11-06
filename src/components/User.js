@@ -65,15 +65,9 @@ class User extends React.Component {
   addUser = async (ret) => {
     ++this.data.loadedUserCnt;
     if (! ret) return;
-    let newItem = await this.getUserFromMap(ret);
-    this.data.items = [...this.data.items, newItem];
+    this.data.items = [...this.data.items, util.refine(ret)];
     this.data.originItems = this.data.items;
     this.setState({ getUserInfo: true });
-  }
-
-  async getUserFromMap(m) {
-    m.type = 'AA';
-    return util.refine(m);
   }
 
   onSearch(value) {

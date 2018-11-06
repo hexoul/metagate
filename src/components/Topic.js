@@ -129,6 +129,11 @@ class Topic extends React.Component {
     });
   }
 
+  moveToFAQ() {
+    this.setState({ addModalVisible: false });
+    this.props.moveToFAQ();
+  }
+
   getModalAddTopic() {
     return <Modal
       width='40%'
@@ -169,6 +174,7 @@ class Topic extends React.Component {
               Explanation<br />
               <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)' />
             </Form>
+            <a onClick={() => this.moveToFAQ()}>FAQ</a>
           </div>
         }
     </Modal>;
