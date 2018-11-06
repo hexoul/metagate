@@ -204,7 +204,7 @@ class Achievement extends React.Component {
       content: (
         <div>
           <h5 style={{ marginBottom: '10px', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
-          <h4 style={{ margin: '10px 0 0 0' }}>Address: {record.id}</h4><hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>ID: {record.id}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h4> <hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
