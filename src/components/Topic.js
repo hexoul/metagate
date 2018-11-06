@@ -46,6 +46,11 @@ class Topic extends React.Component {
       handler: ret => this.addTopic(ret),
       cb: () => {
         this.data.loadedTopicCnt = this.data.totalTopicCnt;
+        this.data.originItems.sort((a, b) => {
+          if (a.id > b.id) return 1;
+          else if (a.id < b.id) return -1;
+          return 0;
+        });
         util.setTopicsToLocal(this.data.originItems);
         this.setState({ loading: true });
       }

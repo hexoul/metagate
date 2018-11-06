@@ -62,6 +62,11 @@ class Achievement extends React.Component {
     } else this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
       cb: () => {
+        this.data.topics.sort((a, b) => {
+          if (a.id > b.id) return 1;
+          else if (a.id < b.id) return -1;
+          return 0;
+        });
         util.setTopicsToLocal(this.data.topics);
         this.data.originClaimTopics = this.data.topics.map(val => <Select.Option key={val.id}>{val.title}:{val.explanation}</Select.Option>);
         this.setState({ getTopicInfo: true }, () => this.achievementDynamicLoading());

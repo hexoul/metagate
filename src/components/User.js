@@ -36,7 +36,14 @@ class User extends React.Component {
     if (topics) this.data.topics = topics;
     else this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => { if (ret) this.data.topics = [...this.data.topics, util.refine(ret)] },
-      cb: () => util.setTopicsToLocal(this.data.topics)
+      cb: () => {
+        this.data.topics.sort((a, b) => {
+          if (a.id > b.id) return 1;
+          else if (a.id < b.id) return -1;
+          return 0;
+        });
+        util.setTopicsToLocal(this.data.topics);
+      }
     });
 
     if (achivs) this.data.achivements = achivs;
