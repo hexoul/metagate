@@ -9,7 +9,7 @@ class Splash extends React.Component {
         <br/><h1><b>METAGATE</b></h1><br />
         <h2>Search, Identify and Register<br />
         {/* eslint-disable-next-line */}
-        <a onClick={() => this.props.onClick()}>How to use?</a></h2>
+        <a onClick={() => this.props.moveToFAQ()}>How to use?</a></h2>
       </center>
     );
   }

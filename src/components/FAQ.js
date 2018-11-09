@@ -24,7 +24,7 @@ class FAQ extends React.Component {
 
   initFaqData() {
     for (var i=0; i < faqContents.length; i++) {
-      if ( this.data.faqTitle === faqContents[i].title) { this.data.activeKey = i.toString() }
+      if (this.data.faqTitle === faqContents[i].title) this.data.activeKey = i.toString();
       this.data.originItems.push(<Collapse.Panel header={faqContents[i].title} key={i}>{faqContents[i].content}</Collapse.Panel>);
     }
     this.getFaqOriginData();
@@ -57,7 +57,7 @@ class FAQ extends React.Component {
           enterButton
           style={{ width: '80%', marginBottom: '20px' }}
         />
-        <Collapse accordion style={{ margin: '20px 0' }} defaultActiveKey = {this.data.activeKey}>
+        <Collapse accordion style={{ margin: '20px 0' }} defaultActiveKey={this.data.activeKey}>
           {this.data.items}
         </Collapse>
       </div>

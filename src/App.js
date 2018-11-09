@@ -50,7 +50,10 @@ class App extends React.Component {
     this.setState({ nav: key });
   }
 
-  moveToFAQ = (faqTitle) => { this.data.faqTitle = faqTitle; this.setState({ nav: 'faq' });};
+  moveToFAQ = (faqTitle) => {
+    this.data.faqTitle = faqTitle;
+    this.setState({ nav: 'faq' });
+  };
 
   getContent() {
     if (! this.state.contractReady) return;
@@ -58,8 +61,8 @@ class App extends React.Component {
       case '1': return <User contracts={this.contracts} />;
       case '2': return <Topic contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
       case '3': return <Achievement contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
-      case 'splash': return <Splash onClick={() => this.setState({ nav: 'faq' })}/>;
-      case 'faq': return <FAQ faqTitle = {this.data.faqTitle}/>;
+      case 'splash': return <Splash moveToFAQ={this.moveToFAQ}/>;
+      case 'faq': return <FAQ faqTitle={this.data.faqTitle}/>;
       default: return;
     }
   }

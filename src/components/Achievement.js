@@ -339,7 +339,7 @@ class Achievement extends React.Component {
           rowKey={record => record.id}
           onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
           columns={tableColumns}
-          dataSource={ this.data.items }
+          dataSource={this.data.items}
         />
         {this.state.getTopicInfo && this.getModalAddAchievement()}
       </div>

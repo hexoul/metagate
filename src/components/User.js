@@ -115,7 +115,7 @@ class User extends React.Component {
           <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0' }}>Explanation: {record.explanation}</h4>
           <h4 style={{ margin: '10px 0' }}>Meta ID: {record.addr}&nbsp;&nbsp;
-          <CopyToClipboard text={record.addr }>
+          <CopyToClipboard text={record.addr}>
               <Button onClick={() => message.info('Copied !!')}>copy</Button>
           </CopyToClipboard>
           </h4><hr />
