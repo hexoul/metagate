@@ -251,9 +251,9 @@ class Achievement extends React.Component {
     </Form.Item>
   }
 
-  moveToFAQ() {
+  moveToFAQ(faqTitle) {
     this.setState({ addModalVisible: false });
-    this.props.moveToFAQ();
+    this.props.moveToFAQ(faqTitle);
   }
 
   getModalAddAchievement() {
@@ -299,18 +299,18 @@ class Achievement extends React.Component {
                 id='reward'
                 type='number'
                 onChange={this.updateNewAchieveInfo}
-                placeholder='Input META Amount. Reward needs to be higher than 5'
+                placeholder='Enter Reward (min. 5)'
                 addonAfter='META'
               />
             </Col>
           </Row>
           <Form layout='vertical' style={{ margin: '30px 0' }}>
             Explanation<br />
-            <Input id='explanation' onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes)' />
+            <Input id='explanation' onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes) \ (ex. Score over 10,000 points)' />
             <p /><hr />Required Claim Topics<p />
             {this.getTopicTabs()}
           </Form>
-          <a onClick={() => this.moveToFAQ()}>FAQ</a>
+          <a onClick={() => this.moveToFAQ('How do I add Achievement?')}>How do I add Achievement?</a>
         </div>
         }
     </Modal>

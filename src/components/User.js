@@ -1,12 +1,14 @@
 import React from 'react';
-import { Table, List, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
+import { Table, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 import {columns} from './columns';
 import * as util from '../util';
 
 var tableColumns = columns.userColumns;
-const detailColumns = columns.userDetailColumns;
+const userTopicDetailColumns = columns.userTopicDetailColumns;
+const userAchieveDetailColumns = columns.userAchieveDetailColumns
+
 
 class User extends React.Component {
 
@@ -102,7 +104,8 @@ class User extends React.Component {
 
   getModalUserDetail(record) {
     record.topics = this.data.topics.filter(val => val.issuer === record.addr);
-    record.achivements = this.data.achivements.filter(val => val.creator === record.addr).map(e => [e.title, e.explanation, e.reward].join(' / '));
+    record.achivements = this.data.achivements.filter(val => val.creator === record.addr);
+
     Modal.info({
       width: '70%',
       maskClosable: true,
@@ -111,25 +114,29 @@ class User extends React.Component {
         <div>
           <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0' }}>Explanation: {record.explanation}</h4>
-          <h4 style={{ margin: '10px 0' }}>Meta ID: {record.addr}</h4>
+          <h4 style={{ margin: '10px 0' }}>Meta ID: {record.addr}&nbsp;&nbsp;
+          <CopyToClipboard text={record.addr }>
+              <Button onClick={() => message.info('Copied !!')}>copy</Button>
+          </CopyToClipboard>
+          </h4><hr />
           <Row>
             <Col span={11}>
               <Table
                 size='small'
                 rowKey='id'
                 title={() => 'Topic created'}
-                columns={detailColumns}
+                columns={userTopicDetailColumns}
                 dataSource={record.topics}
               />
             </Col>
             <Col span={11} offset={1}>
-              <List
-                size='small'
-                header={<div>Achievement created</div>}
-                bordered
-                dataSource={record.achivements}
-                renderItem={item => (<List.Item>{item}</List.Item>)}
-              />
+              <Table
+                  size='small'
+                  rowKey='id'
+                  title={() => 'Achievement created'}
+                  columns={userAchieveDetailColumns}
+                  dataSource={record.achivements}
+                />
             </Col>
           </Row>
         </div>

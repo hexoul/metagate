@@ -26,6 +26,8 @@ class App extends React.Component {
     aaRegistry: new AttestationAgencyRegistry(),
   };
 
+  data = { faqTitle: '', }
+
   async initContracts() {
     await getContractsAddresses(web3config.netid);
     Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
@@ -48,7 +50,7 @@ class App extends React.Component {
     this.setState({ nav: key });
   }
 
-  moveToFAQ = () => this.setState({ nav: 'faq' });
+  moveToFAQ = (faqTitle) => { this.data.faqTitle = faqTitle; this.setState({ nav: 'faq' });};
 
   getContent() {
     if (! this.state.contractReady) return;
@@ -57,7 +59,7 @@ class App extends React.Component {
       case '2': return <Topic contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
       case '3': return <Achievement contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
       case 'splash': return <Splash onClick={() => this.setState({ nav: 'faq' })}/>;
-      case 'faq': return <FAQ />;
+      case 'faq': return <FAQ faqTitle = {this.data.faqTitle}/>;
       default: return;
     }
   }

@@ -30,18 +30,39 @@ columns.userColumns = [
   }
 ];
 
-columns.userDetailColumns = [
+columns.userTopicDetailColumns = [
   {
     title: 'No.',
     dataIndex: 'id',
     key: 'id',
-    width: '20%',
+    //width: '20%',
   },
   {
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '80%',
+    //width: '80%',
+  },
+];
+
+columns.userAchieveDetailColumns = [
+  {
+    title: 'Title',
+    dataIndex: 'title',
+    key: 'title',
+   // width: '80%',
+  },
+  {
+    title: 'Explanation',
+    dataIndex: 'explanation',
+    key: 'explanation',
+    //width: '20%',
+  },
+  {
+    title: 'Reward',
+    dataIndex: 'reward',
+    key: 'reward',
+    //width: '20%',
   },
 ];
 

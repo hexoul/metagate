@@ -127,7 +127,7 @@ class Topic extends React.Component {
           <h5 style={{ margin: '10px 0', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator : {record.issuerTitle} / {record.issuer}&nbsp;&nbsp;
-            <CopyToClipboard text={record.issuer}>
+            <CopyToClipboard text={record.issuer }>
               <Button onClick={() => message.info('Copied !!')}>copy</Button>
             </CopyToClipboard>
           </h4><hr />
@@ -137,9 +137,9 @@ class Topic extends React.Component {
     });
   }
 
-  moveToFAQ() {
+  moveToFAQ(faqTitle) {
     this.setState({ addModalVisible: false });
-    this.props.moveToFAQ();
+    this.props.moveToFAQ(faqTitle);
   }
 
   getModalAddTopic() {
@@ -180,9 +180,9 @@ class Topic extends React.Component {
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0' }}>
               Explanation<br />
-              <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Input Explanation (max. 32 bytes)' />
+              <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
             </Form>
-            <a onClick={() => this.moveToFAQ()}>FAQ</a>
+            <a onClick={() => this.moveToFAQ('How do I add Topic?')}>How do I add Topic?</a>
           </div>
         }
     </Modal>;
