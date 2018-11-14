@@ -1,8 +1,6 @@
 import React from 'react';
 import { Input, Collapse } from 'antd';
 
-import faqContents from './faqContent';
-
 class FAQ extends React.Component {
 
   data = {
@@ -14,6 +12,7 @@ class FAQ extends React.Component {
 
   state = {
     didSearch : false,
+    didInitContents: false,
   };
 
   constructor(props) {
@@ -22,22 +21,24 @@ class FAQ extends React.Component {
     this.initFaqData();
   }
 
-  initFaqData() {
-    for (var i=0; i < faqContents.length; i++) {
-      if (this.data.faqTitle === faqContents[i].title) this.data.activeKey = i.toString();
-      this.data.originItems.push(<Collapse.Panel header={faqContents[i].title} key={i}>{faqContents[i].content}</Collapse.Panel>);
+  async initFaqData() {
+    let addr = 'https://raw.githubusercontent.com/JeongGoEun/metagate_faq/master/FaqContents.json';
+    this.faqContents = await fetch(addr).then(response => response.json());
+    for (var i=0; i < this.faqContents.length; i++) {
+      if (this.data.faqTitle === this.faqContents[i].title) this.data.activeKey = i.toString();
+      this.data.originItems.push(<Collapse.Panel header={this.faqContents[i].title} key={i}>{this.faqContents[i].content}</Collapse.Panel>);
     }
     this.getFaqOriginData();
   }
 
-  getFaqOriginData = () => this.data.items = this.data.originItems;
+  getFaqOriginData = () => { this.data.items = this.data.originItems; this.setState({didInitContents: true}); }
 
   onSearch(value) {
     var regex = new RegExp(value, 'i');
     if (! value) this.getFaqOriginData();
     else {
       var searchedData = [];
-      faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
+      this.faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
         .forEach(ret => searchedData.push(<Collapse.Panel header={ret.title} key={ret.title}>{ret.content}</Collapse.Panel>));
       this.data.items = searchedData;
     }
