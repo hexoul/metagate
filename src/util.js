@@ -87,6 +87,11 @@ function isValidLength(str) {
   return encoder.encode(str).length;
 }
 
+async function getGithubContents(org, repo, branch, source) {
+  const URL = `https://raw.githubusercontent.com/${org}/${repo}/${branch}/${source}`;
+  return fetch(URL).then(response => response.json());
+}
+
 /**
  * Serialize / Deserialize object at local storage
  */
@@ -108,6 +113,7 @@ export {
     refine,
     cmpIgnoreCase,
     isValidLength,
+    getGithubContents,
     validate,
     save,
     load,
