@@ -182,6 +182,7 @@ class Topic extends React.Component {
               Explanation<br />
               <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
             </Form>
+            {/* eslint-disable-next-line */}
             <a onClick={() => this.moveToFAQ('How do I add Topic?')}>How do I add Topic?</a>
           </div>
         }

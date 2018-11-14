@@ -59,7 +59,7 @@ function validate(key, val) {
   switch (key) {
     case 'title':
     case 'explanation':
-      if (! val) return { b: false, err: 'Please fill up something' }
+      if (! val) return { b: false, err: 'Please fill all red box' }
       if (isValidLength(val) > 32) return { b: false, err: 'Only 32 bytes allowed' }
       return { b: true }
     case 'reward':
@@ -70,10 +70,10 @@ function validate(key, val) {
       return { b: true }
     case 'topics':
       if (! val || val.length === 0) return { b: false, err: 'Select at least 1 topic' }
-      else if (val.filter(e => e.title === '').length > 0) return { b: false, err: 'Select a topic' }
+      else if (val.filter(e => e.title === '').length > 0) return { b: false, err: 'Duplicated topic' }
       else if (val.filter(e => e.issuer === '').length > 0) return { b: false, err: 'Please fill up valid issuers' }
       return { b: true }
-    default: return { b: false, err: 'Unknown' }
+    default: return { b: false, err: 'Error encountered, please try again' }
   }
 }
 

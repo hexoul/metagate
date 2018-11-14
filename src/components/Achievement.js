@@ -310,6 +310,7 @@ class Achievement extends React.Component {
             <p /><hr />Required Claim Topics<p />
             {this.getTopicTabs()}
           </Form>
+          {/* eslint-disable-next-line */}
           <a onClick={() => this.moveToFAQ('How do I add Achievement?')}>How do I add Achievement?</a>
         </div>
         }
