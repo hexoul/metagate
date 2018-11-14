@@ -1,6 +1,8 @@
 import React from 'react';
 import { Input, Collapse } from 'antd';
 
+import { getGithubContents } from '../util';
+
 class FAQ extends React.Component {
 
   data = {
@@ -12,7 +14,7 @@ class FAQ extends React.Component {
 
   state = {
     didSearch : false,
-    didInitContents: false,
+    initContents: false,
   };
 
   constructor(props) {
@@ -22,8 +24,7 @@ class FAQ extends React.Component {
   }
 
   async initFaqData() {
-    let addr = 'https://raw.githubusercontent.com/JeongGoEun/metagate_faq/master/FaqContents.json';
-    this.faqContents = await fetch(addr).then(response => response.json());
+    this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
     for (var i=0; i < this.faqContents.length; i++) {
       if (this.data.faqTitle === this.faqContents[i].title) this.data.activeKey = i.toString();
       this.data.originItems.push(<Collapse.Panel header={this.faqContents[i].title} key={i}>{this.faqContents[i].content}</Collapse.Panel>);
@@ -31,7 +32,7 @@ class FAQ extends React.Component {
     this.getFaqOriginData();
   }
 
-  getFaqOriginData = () => { this.data.items = this.data.originItems; this.setState({didInitContents: true}); }
+  getFaqOriginData = () => { this.data.items = this.data.originItems; this.setState({ initContents: true }); }
 
   onSearch(value) {
     var regex = new RegExp(value, 'i');
