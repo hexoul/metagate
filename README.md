@@ -22,6 +22,14 @@ $ npm install
 $ npm start
 ```
 
+## Deploy
+
+```bash
+$ npm run build
+$ npm install -g serve
+$ serve -l 3002 -s build
+```
+
 ## What more
 
 - [antd](http://github.com/ant-design/ant-design/)
