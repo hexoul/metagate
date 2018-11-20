@@ -224,7 +224,7 @@ class Topic extends React.Component {
             dataSource={this.data.items}
           />
           :
-          <center><ReactLoading type={'spin'} color={'#1DA57A'} height={667} width={300} /></center>
+          <center><ReactLoading type='spin' color='#1DA57A' height='20vh' width='20vw' /></center>
         }
         {this.getModalAddTopic()}
       </div>
