@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactLoading from 'react-loading';
 import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd';
 import { SendTransaction } from 'metasdk-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -214,12 +215,15 @@ class Topic extends React.Component {
         </Radio.Group>
         <br />
         <Progress type='line' percent={ +Number(this.data.loadedTopicCnt / this.data.totalTopicCnt * 100).toFixed(2) } /><br /><br />
-        <Table
-          rowKey='id'
-          onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
-          columns={tableColumns}
-          dataSource={this.data.items}
-        />
+        {this.state.loading ? 
+          <Table
+            rowKey='id'
+            locale={{emptyText: 'Load data'}}
+            onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
+            columns={tableColumns}
+            dataSource={this.data.items}
+          /> : <center><ReactLoading type={'spin'} color={'#1DA57A'} height={667} width={300} /></center>
+        }
         {this.getModalAddTopic()}
       </div>
     );
