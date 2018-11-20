@@ -1,7 +1,8 @@
 import React from 'react';
-import { Input, Collapse } from 'antd';
-
+import { Input } from 'antd';
+import Collapsible from 'react-collapsible';
 import { getGithubContents } from '../util';
+import styles from '../components/style/style.css'
 
 class FAQ extends React.Component {
 
@@ -26,13 +27,18 @@ class FAQ extends React.Component {
   async initFaqData() {
     this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
     for (var i=0; i < this.faqContents.length; i++) {
+      var contents = [];
       if (this.data.faqTitle === this.faqContents[i].title) this.data.activeKey = i.toString();
-      this.data.originItems.push(<Collapse.Panel header={this.faqContents[i].title} key={i}>{this.faqContents[i].content}</Collapse.Panel>);
+      this.faqContents[i].content.forEach((item, index) => {contents.push(<p key={index.toString()+i.toString()}>{item}</p>)});
+      this.faqContents[i].content = contents;
+      this.data.originItems.push(<Collapsible className={styles.Collapsible} trigger={this.faqContents[i].title} tabIndex={i} key={i}>{this.faqContents[i].content}</Collapsible>);
     }
     this.getFaqOriginData();
   }
 
-  getFaqOriginData = () => { this.data.items = this.data.originItems; this.setState({ initContents: true }); }
+  getFaqOriginData = () => { 
+    this.data.items = this.data.originItems; this.setState({ initContents: true });
+  }
 
   onSearch(value) {
     var regex = new RegExp(value, 'i');
@@ -40,7 +46,7 @@ class FAQ extends React.Component {
     else {
       var searchedData = [];
       this.faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
-        .forEach(ret => searchedData.push(<Collapse.Panel header={ret.title} key={ret.title}>{ret.content}</Collapse.Panel>));
+        .forEach(ret => searchedData.push(<Collapsible trigger={ret.title} tabIndex={ret.tabIndex} key={ret.title}>{ret.content}</Collapsible>));
       this.data.items = searchedData;
     }
     this.setState({ didSearch: true });
@@ -59,9 +65,9 @@ class FAQ extends React.Component {
           enterButton
           style={{ width: '80%', marginBottom: '20px' }}
         />
-        <Collapse accordion style={{ margin: '20px 0' }} defaultActiveKey={this.data.activeKey}>
-          {this.data.items}
-        </Collapse>
+        <div style={{ marginBottom: '20px' }}>
+         {this.data.items}  
+        </div>
       </div>
     );
   }

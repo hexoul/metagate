@@ -1,0 +1,24 @@
+.Collapsible {
+  padding: 5px 5px;
+  width: 80%;
+  margin-bottom: 10px;
+  color: rgb(0, 0, 0);
+  position: relative;
+  line-height: 22px;
+  border-color: #e0dcdc;
+  border-style: double;
+  border-radius: 10px;
+  font-family: auto;
+}
+
+.Collapsible__trigger {
+    margin-bottom: 10px;
+    display: block;
+    color: black;
+    padding: 12px 12px 12px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: rgba(0,0,0,.04);
+    font-size: larger;
+    outline: none;
+}
