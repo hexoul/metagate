@@ -209,12 +209,14 @@ class User extends React.Component {
         </div>
         <Progress type='line' percent={ +Number(this.data.loadedUserCnt / this.data.totalUserCnt * 100).toFixed(2) } /><br /><br />
         {this.state.loading ? 
-        <Table
-          rowKey={record => record.addr}
-          onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
-          columns={tableColumns}
-          dataSource={this.data.items}
-        /> : <center><ReactLoading type={'spin'} color={'#1DA57A'} height={667} width={300} /></center>
+          <Table
+            rowKey={record => record.addr}
+            onRow={(record, index) => ({ onClick: () => this.getModalUserDetail(record) })}
+            columns={tableColumns}
+            dataSource={this.data.items}
+          />
+          :
+          <center><ReactLoading type='spin' color='#1DA57A' height='20vh' width='20vw' /></center>
         }
         {this.getModalAddTopic()}
       </div>

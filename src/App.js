@@ -91,12 +91,12 @@ class App extends React.Component {
             <Menu.Item key='3'>Achievement Registry</Menu.Item>
           </Menu>
         </Layout.Header>
-        <Layout.Content style={{ padding: '5vh 5vw 0vh 5vw', backgroundColor: '#fff' }}>
+        <Layout.Content style={{ padding: '5vh 5vw 0vh 5vw', backgroundColor: '#fff', minHeight: '70vh' }}>
           {this.getContent()}
         </Layout.Content>
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
-            <b onClick={() => {this.data.faqTitle = ''; this.setState({ nav: 'faq' });}}>FAQ</b>
+            <b onClick={() => { this.data.faqTitle = ''; this.setState({ nav: 'faq' }); }}>FAQ</b>
             &nbsp;| Customer service :&nbsp;
             <a href='mailto:contact@metadium.com' target='_blank' rel='noopener noreferrer'>contact@metadium.com</a>
           </div>

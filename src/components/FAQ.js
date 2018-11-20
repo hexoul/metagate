@@ -26,12 +26,9 @@ class FAQ extends React.Component {
   async initFaqData() {
     this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
     for (var i=0; i < this.faqContents.length; i++) {
-      // eslint-disable-next-line
-      if (this.data.faqTitle === this.faqContents[i].title) {
-        this.data.originItems.push(this.getCollapsibleComp(true, this.faqContents[i].title, i, i, this.faqContents[i].content));
-      } else {
-        this.data.originItems.push(this.getCollapsibleComp(false, this.faqContents[i].title, i, i, this.faqContents[i].content));
-      }
+      let open = false;
+      if (this.data.faqTitle === this.faqContents[i].title) open = true;
+      this.data.originItems.push(this.getCollapsibleComp(open, this.faqContents[i].title, i, i, this.faqContents[i].content));
     }
     this.getFaqOriginData();
   }
