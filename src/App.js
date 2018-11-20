@@ -96,7 +96,7 @@ class App extends React.Component {
         </Layout.Content>
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
-            <b onClick={() => this.setState({ nav: 'faq' })}>FAQ</b>
+            <b onClick={() => {this.data.faqTitle = ''; this.setState({ nav: 'faq' });}}>FAQ</b>
             &nbsp;| Customer service :&nbsp;
             <a href='mailto:contact@metadium.com' target='_blank' rel='noopener noreferrer'>contact@metadium.com</a>
           </div>
