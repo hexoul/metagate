@@ -10,7 +10,6 @@ class FAQ extends React.Component {
     items: [],
     originItems: [],
     faqTitle: '',
-    activeKey: '',
   };
 
   state = {
@@ -27,12 +26,18 @@ class FAQ extends React.Component {
   async initFaqData() {
     this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
     for (var i=0; i < this.faqContents.length; i++) {
-      if (this.data.faqTitle === this.faqContents[i].title) this.data.activeKey = i.toString();
       // eslint-disable-next-line
-      this.faqContents[i].content = this.faqContents[i].content.map((item, index) => <p key={index.toString()+i.toString()}>{item}</p>);
-      this.data.originItems.push(<Collapsible className={styles.Collapsible} trigger={this.faqContents[i].title} tabIndex={i} key={i}>{this.faqContents[i].content}</Collapsible>);
+      if (this.data.faqTitle === this.faqContents[i].title) {
+        this.data.originItems.push(this.getCollapsibleComp(true, this.faqContents[i].title, i, i, this.faqContents[i].content));
+      } else {
+        this.data.originItems.push(this.getCollapsibleComp(false, this.faqContents[i].title, i, i, this.faqContents[i].content));
+      }
     }
     this.getFaqOriginData();
+  }
+
+  getCollapsibleComp = (open, trigger, tabIndex, key, content) => {
+    return <Collapsible className={styles.Collapsible} transitionTime={200} open={open} trigger={trigger} tabIndex={tabIndex} key={key}><div dangerouslySetInnerHTML={{__html: content}} /></Collapsible>;
   }
 
   getFaqOriginData = () => { 
