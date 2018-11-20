@@ -27,10 +27,9 @@ class FAQ extends React.Component {
   async initFaqData() {
     this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
     for (var i=0; i < this.faqContents.length; i++) {
-      var contents = [];
       if (this.data.faqTitle === this.faqContents[i].title) this.data.activeKey = i.toString();
-      this.faqContents[i].content.forEach((item, index) => {contents.push(<p key={index.toString()+i.toString()}>{item}</p>)});
-      this.faqContents[i].content = contents;
+      // eslint-disable-next-line
+      this.faqContents[i].content = this.faqContents[i].content.map((item, index) => <p key={index.toString()+i.toString()}>{item}</p>);
       this.data.originItems.push(<Collapsible className={styles.Collapsible} trigger={this.faqContents[i].title} tabIndex={i} key={i}>{this.faqContents[i].content}</Collapsible>);
     }
     this.getFaqOriginData();
