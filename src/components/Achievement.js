@@ -338,12 +338,14 @@ class Achievement extends React.Component {
         </div>
         <Progress type='line' percent={ +Number(this.data.loadedAchieveCnt / this.data.totalAchieveCnt * 100).toFixed(2) } /><br /><br />
         {this.state.loading ? 
-        <Table
-          rowKey={record => record.id}
-          onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
-          columns={tableColumns}
-          dataSource={this.data.items}
-        /> : <center><ReactLoading type={'spin'} color={'#1DA57A'} height={667} width={300} /></center> 
+          <Table
+            rowKey={record => record.id}
+            onRow={(record, index) => ({ onClick: () => this.getModalAchievementDetail(record, index) })}
+            columns={tableColumns}
+            dataSource={this.data.items}
+          />
+          :
+          <center><ReactLoading type={'spin'} color={'#1DA57A'} height={667} width={300} /></center> 
         }
         {this.state.getTopicInfo && this.getModalAddAchievement()}
       </div>
