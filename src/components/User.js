@@ -2,6 +2,7 @@ import React from 'react';
 import ReactLoading from 'react-loading';
 import { Table, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import Web3 from 'web3';
 
 import {columns} from './columns';
 import * as util from '../util';
@@ -20,6 +21,7 @@ class User extends React.Component {
     achivements: [],
     loadedUserCnt: 0,
     totalUserCnt: 1,
+    newAddress: '',
   };
 
   state = {
@@ -27,6 +29,7 @@ class User extends React.Component {
     originItems: [],
     getUserInfo: false,
     infoModalvisible: false,
+    addModalVisible: false,
     didSearch: false,
     loading: false,
   };
@@ -96,11 +99,37 @@ class User extends React.Component {
     this.setState({ getUserInfo: true });
   }
 
+  updateNewAAInfo = (e) => {
+    let valid = util.validate(e.target.id, e.target.value);
+    if (valid.b) {e.target.style.borderColor = '#3db389'; this.data.newAddress = e.target.value;}
+    else {e.target.style.borderColor = 'red';}
+  }
+
   onSearch(value) {
     var regex = new RegExp(value, 'i');
     if (! value) this.data.items = this.data.originItems;
     else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
     this.setState({ didSearch: true });
+  }
+
+  onAddClick = () => {
+    var formCheck = true;
+    let valid = util.validate('issuer', this.data.newAddress);
+    if (! valid.b) { message.error(valid.err); formCheck = false; }
+    if (! formCheck) return;
+
+    let web3;
+    if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+      web3 = new Web3(window.web3.currentProvider);
+      web3.eth.sendTransaction({from:this.data.newAddress, to:'', gas:85000});
+    } else {
+      alert('Not installed metamask, move to url for meta mask installation.');
+      window.open('https://metamask.io/');
+    }
+  }
+
+  onCancelClick = () => {
+    this.setState({ addModalVisible: false});
   }
 
   getModalUserDetail(record) {
@@ -146,16 +175,38 @@ class User extends React.Component {
     });
   }
 
+  getModalAddTopic() {
+    return <Modal
+      width='40%'
+      title='Add New AA'
+      visible={this.state.addModalVisible}
+      okText='Add'
+      onOk={this.onAddClick}
+      onCancel={this.onCancelClick}
+      closable={false}
+      >
+        <div> <Input id='issuer' placeholder="Input New Attestation Agency Address" onChange={this.updateNewAAInfo}/> </div>
+    </Modal>;
+  }
+
   render() {
     return (
       <div>
-        <Input.Search
-          enterButton
-          placeholder='Search by Type, Meta ID, Title'
-          onSearch={value => this.onSearch(value)}
-          onChange={e => this.onSearch(e.target.value)}
-          style={{ width: '50%', float: 'right', marginBottom: '20px' }}
-        />
+        <div>
+          <Button
+              type='primary'
+              size='large'
+              onClick={() => this.setState({ addModalVisible: true })}>
+              Add New AA
+          </Button>
+          <Input.Search
+            enterButton
+            placeholder='Search by Type, Meta ID, Title'
+            onSearch={value => this.onSearch(value)}
+            onChange={e => this.onSearch(e.target.value)}
+            style={{ width: '50%', float: 'right', marginBottom: '20px' }}
+          />
+        </div>
         <Progress type='line' percent={ +Number(this.data.loadedUserCnt / this.data.totalUserCnt * 100).toFixed(2) } /><br /><br />
         {this.state.loading ? 
           <Table
@@ -167,6 +218,7 @@ class User extends React.Component {
           :
           <center><ReactLoading type='spin' color='#1DA57A' height='20vh' width='20vw' /></center>
         }
+        {this.getModalAddTopic()}
       </div>
     );
   }
