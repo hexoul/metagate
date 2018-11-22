@@ -101,8 +101,10 @@ class User extends React.Component {
 
   updateNewAAInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
-    if (valid.b) {e.target.style.borderColor = '#3db389'; this.data.newAddress = e.target.value;}
-    else {e.target.style.borderColor = 'red';}
+    if (valid.b) e.target.style.borderColor = '#3db389';
+    else e.target.style.borderColor = 'red';
+
+    this.data.newAddress = e.target.value;
   }
 
   onSearch(value) {
@@ -113,18 +115,18 @@ class User extends React.Component {
   }
 
   onAddClick = () => {
-    var formCheck = true;
     let valid = util.validate('issuer', this.data.newAddress);
-    if (! valid.b) { message.error(valid.err); formCheck = false; }
-    if (! formCheck) return;
-
-    let web3;
+    if (! valid.b) {
+      message.error(valid.err);
+      return;
+    }
+    
     if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
-      web3 = new Web3(window.web3.currentProvider);
-      web3.eth.sendTransaction({from:this.data.newAddress, to:'', gas:85000});
+      let web3 = new Web3(window.web3.currentProvider);
+      web3.eth.sendTransaction({ from:this.data.newAddress, to:'', gas:85000 });
     } else {
-      alert('Not installed metamask, move to url for meta mask installation.');
-      window.open('https://metamask.io/');
+      alert('METAMASK REQUIRED. Please install.');
+      window.open('https://metamask.io/', '_blank');
     }
   }
 
@@ -185,7 +187,7 @@ class User extends React.Component {
       onCancel={this.onCancelClick}
       closable={false}
       >
-        <div> <Input id='issuer' placeholder="Input New Attestation Agency Address" onChange={this.updateNewAAInfo}/> </div>
+        <Input id='issuer' placeholder="Input New Attestation Agency Address" onChange={this.updateNewAAInfo}/>
     </Modal>;
   }
 
@@ -194,10 +196,11 @@ class User extends React.Component {
       <div>
         <div>
           <Button
-              type='primary'
-              size='large'
-              onClick={() => this.setState({ addModalVisible: true })}>
-              Add New AA
+            type='primary'
+            size='large'
+            onClick={() => this.setState({ addModalVisible: true })}
+          >
+            Add New AA
           </Button>
           <Input.Search
             enterButton
