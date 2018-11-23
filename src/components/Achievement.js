@@ -114,8 +114,8 @@ class Achievement extends React.Component {
 
   updateNewAchieveInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
-    if (valid.b) e.target.style.borderColor = '#3db389';
-    else e.target.style.borderColor = 'red';
+    if (valid.b) e.target.style.borderColor = util.borderColor.valid;
+    else e.target.style.borderColor = util.borderColor.invalid;
 
     switch (e.target.id) {
       case 'title':
@@ -245,7 +245,7 @@ class Achievement extends React.Component {
               >
                 {this.data.originClaimTopics}
               </Select>
-              <Input id='issuer' onChange={this.updateNewAchieveInfo} placeholder='Enter Meta ID of Issuer' />
+              <Input id='issuer' style={{ borderColor: 'red' }} onChange={this.updateNewAchieveInfo} placeholder='Enter Meta ID of Issuer' />
             </Tabs.TabPane>)
           }
       </Tabs>
@@ -263,7 +263,8 @@ class Achievement extends React.Component {
       title='Add New Achievement'
       visible={this.state.addModalVisible}
       onOk={this.onAddClick}
-      okText='Add'
+      okText='QRcode'
+      cancelText='Close'
       onCancel={() => this.setState({ addModalVisible: false, qrVisible: false })}
       closable={false}
       >
@@ -292,7 +293,7 @@ class Achievement extends React.Component {
           <Row>
             <Col span={12}>
               Title<br />
-              <Input id='title' onChange={this.updateNewAchieveInfo} placeholder='Input Title' />
+              <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewAchieveInfo} placeholder='Input Title' />
             </Col>
             <Col span={11} offset={1}>
               Reward<br />
@@ -307,7 +308,7 @@ class Achievement extends React.Component {
           </Row>
           <Form layout='vertical' style={{ margin: '30px 0' }}>
             Explanation<br />
-            <Input id='explanation' onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes) \ (ex. Score over 10,000 points)' />
+            <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewAchieveInfo} placeholder='Enter Explanation (max. 32 bytes) \ (ex. Score over 10,000 points)' />
             <p /><hr />Required Claim Topics<p />
             {this.getTopicTabs()}
           </Form>

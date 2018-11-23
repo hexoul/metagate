@@ -1,5 +1,10 @@
 import web3 from './ethereum/web3';
 
+var borderColor = {
+  valid: '#3db389',
+  invalid: 'red',
+};
+
 var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 /**
@@ -106,21 +111,22 @@ var setTopicsToLocal = (obj) => save('topics', obj);
 var setAchievementsToLocal = (obj) => save('achievements', obj);
 
 export {
-    timeConverter,
-    sleep,
-    convertHexToString,
-    asyncForEach,
-    refine,
-    cmpIgnoreCase,
-    isValidLength,
-    getGithubContents,
-    validate,
-    save,
-    load,
-    getUsersFromLocal,
-    getTopicsFromLocal,
-    getAchievementsFromLocal,
-    setUsersToLocal,
-    setTopicsToLocal,
-    setAchievementsToLocal
+  borderColor,
+  timeConverter,
+  sleep,
+  convertHexToString,
+  asyncForEach,
+  refine,
+  cmpIgnoreCase,
+  isValidLength,
+  getGithubContents,
+  validate,
+  save,
+  load,
+  getUsersFromLocal,
+  getTopicsFromLocal,
+  getAchievementsFromLocal,
+  setUsersToLocal,
+  setTopicsToLocal,
+  setAchievementsToLocal
 }

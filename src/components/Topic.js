@@ -82,8 +82,8 @@ class Topic extends React.Component {
 
   updateNewTopicInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
-    if (valid.b) e.target.style.borderColor = '#3db389';
-    else e.target.style.borderColor = 'red';
+    if (valid.b) e.target.style.borderColor = util.borderColor.valid;
+    else e.target.style.borderColor = util.borderColor.invalid;
 
     switch (e.target.id) {
       case 'title':
@@ -148,7 +148,8 @@ class Topic extends React.Component {
       width='40%'
       title='Add New Topic'
       visible={this.state.addModalVisible}
-      okText='Add'
+      okText='QRcode'
+      cancelText='Close'
       onOk={this.onAddClick}
       onCancel={this.onCancelClick}
       closable={false}
@@ -171,7 +172,7 @@ class Topic extends React.Component {
             <Row>
               <Col span={12}>
                 Title<br />
-                <Input id='title' onChange={this.updateNewTopicInfo} placeholder='Input Title' />
+                <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Input Title' />
               </Col>
               <Col span={11} offset={1}>
                 No.<br />
@@ -181,7 +182,7 @@ class Topic extends React.Component {
             <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
             <Form layout='vertical' style={{ margin: '30px 0' }}>
               Explanation<br />
-              <Input id='explanation' onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
+              <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
             </Form>
             {/* eslint-disable-next-line */}
             <a onClick={() => this.moveToFAQ('How do I add Topic?')}>How do I add Topic?</a>
