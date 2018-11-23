@@ -68,7 +68,8 @@ function validate(key, val) {
       if (isValidLength(val) > 32) return { b: false, err: 'Only 32 bytes allowed' }
       return { b: true }
     case 'reward':
-      if (val < 5) return { b: false, err: 'Reward should be greater than 5 META' }
+    case 'reserved':
+      if (val < 5) return { b: false, err: key.toUpperCase() + ' should be greater than 5 META' }
       return { b: true }
     case 'issuer':
       if (! val || ! web3.utils.isAddress(val)) return { b: false, err: 'Please fill up valid issuers' }

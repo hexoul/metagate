@@ -20,7 +20,7 @@ class Achievement extends React.Component {
     users: [],
     topics: [],
     originClaimTopics: [],
-    initNewAchievementItem: { title: '', explanation: '', reward: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
+    initNewAchievementItem: { title: '', explanation: '', reward: '', reserved: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -124,7 +124,9 @@ class Achievement extends React.Component {
         this.data.inputValidData[e.target.id] = e.target.value;
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break;
-      case 'reward': if (valid.b) this.data.newAchievementItem[e.target.id] = e.target.value; break;
+      case 'reward':
+      case 'reserved':
+        if (valid.b) this.data.newAchievementItem[e.target.id] = e.target.value; break;
       case 'issuer':
         if(! valid.b) break;
         this.data.panes.forEach((element, i) => {
@@ -266,7 +268,7 @@ class Achievement extends React.Component {
         Buffer.from(this.data.newAchievementItem.explanation),
         web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
         'uri');
-      request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'));
+      request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reserved.toString(), 'ether'));
     }
 
     return <Modal
@@ -307,6 +309,18 @@ class Achievement extends React.Component {
                 type='number'
                 onChange={this.updateNewAchieveInfo}
                 placeholder='Enter Reward (min. 5)'
+                addonAfter='META'
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={11} offset={13}>
+              Reserved<br />
+              <Input
+                id='reserved'
+                type='number'
+                onChange={this.updateNewAchieveInfo}
+                placeholder='Enter Reserved (min. 5)'
                 addonAfter='META'
               />
             </Col>
