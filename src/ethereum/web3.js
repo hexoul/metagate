@@ -23,8 +23,8 @@ function getTxDataWoNonce(to, data) {
     gasPrice: web3.utils.toHex(10e9), // 10 Gwei
     from: web3config.addr,
     to: to,
-    data: data
-    //,value: web3.utils.toHex(web3.utils.toWei('0.001', 'ether'))
+    data: data,
+    // value: web3.utils.toHex(web3.utils.toWei('0.001', 'ether'))
   };
 }
 

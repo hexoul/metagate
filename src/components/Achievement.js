@@ -187,7 +187,6 @@ class Achievement extends React.Component {
   }
 
   onAddClick = () => {
-    console.log(this.data.newAchievementItem);
     var formCheck = true;
     Object.keys(this.data.newAchievementItem).map(async (key) => {
       let valid = util.validate(key, this.data.newAchievementItem[key]);
@@ -258,6 +257,18 @@ class Achievement extends React.Component {
   }
 
   getModalAddAchievement() {
+    var request;
+    if (this.state.qrVisible) {
+      request = this.props.contracts.achievementManager.createAchievement(
+        this.data.newAchievementItem.topics.map(val => val.id),
+        this.data.newAchievementItem.topics.map(val => val.issuer),
+        Buffer.from(this.data.newAchievementItem.title),
+        Buffer.from(this.data.newAchievementItem.explanation),
+        web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
+        'uri');
+      request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'));
+    }
+
     return <Modal
       width='40%'
       title='Add New Achievement'
@@ -273,13 +284,7 @@ class Achievement extends React.Component {
           <h1>Scan QR Code to Add New Achievement</h1>
           <SendTransaction
             id='sendTransaction'
-            request={this.props.contracts.achievementManager.createAchievement(
-              this.data.newAchievementItem.topics.map(val => val.id),
-              this.data.newAchievementItem.topics.map(val => val.issuer),
-              Buffer.from(this.data.newAchievementItem.title),
-              Buffer.from(this.data.newAchievementItem.explanation),
-              web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
-              'uri')}
+            request={request}
             usage='createAchievement'
             service='metagate'
             callbackUrl='none'
