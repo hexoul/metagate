@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactLoading from 'react-loading';
-import { Table, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
+import { Table, Form, Input, Modal, Row, Col, Progress, Button, message } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 import Web3 from 'web3';
 
 import {columns} from './columns';
@@ -21,7 +22,8 @@ class User extends React.Component {
     achivements: [],
     loadedUserCnt: 0,
     totalUserCnt: 1,
-    newAddress: '',
+    newUserItem: { issuer: '', title: '', explanation: '' },
+    inputValidData: {},
   };
 
   state = {
@@ -101,10 +103,21 @@ class User extends React.Component {
 
   updateNewAAInfo = (e) => {
     let valid = util.validate(e.target.id, e.target.value);
-    if (valid.b) e.target.style.borderColor = '#3db389';
-    else e.target.style.borderColor = 'red';
+    if (valid.b) e.target.style.borderColor = util.borderColor.valid;
+    else e.target.style.borderColor = util.borderColor.invalid;
 
-    this.data.newAddress = e.target.value;
+    switch (e.target.id) {
+      case 'issuer':
+        this.data.newUserItem[e.target.id] = e.target.value;
+        break;
+      case 'title':
+      case 'explanation':
+        if (! valid.b && e.target.value) e.target.value = this.data.inputValidData[e.target.id];
+        this.data.inputValidData[e.target.id] = e.target.value;
+        this.data.newUserItem[e.target.id] = e.target.value;
+        break;
+      default: break;
+    }
   }
 
   onSearch(value) {
@@ -115,15 +128,27 @@ class User extends React.Component {
   }
 
   onAddClick = () => {
-    let valid = util.validate('issuer', this.data.newAddress);
-    if (! valid.b) {
-      message.error(valid.err);
-      return;
-    }
+    var formCheck = true;
+    Object.keys(this.data.newUserItem).map(async (key) => {
+      let valid = util.validate(key, this.data.newUserItem[key]);
+      if (! valid.b) { message.error(valid.err); formCheck = false; }
+    });
+    if (! formCheck) return;
     
     if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       let web3 = new Web3(window.web3.currentProvider);
-      web3.eth.sendTransaction({ from:this.data.newAddress, to:'', gas:85000 });
+      let { to, data } = this.props.contracts.aaRegistry.registerAttestationAgency(
+        this.data.newUserItem.issuer,
+        Buffer.from(this.data.newUserItem.title),
+        Buffer.from(this.data.newUserItem.explanation));
+      web3.eth.getAccounts((err, accounts) => {
+        if (err) return;
+        web3.eth.sendTransaction({
+          from: accounts[0],
+          to: to,
+          data: data,
+        });
+      });
     } else {
       alert('METAMASK REQUIRED. Please install.');
       window.open('https://metamask.io/', '_blank');
@@ -187,7 +212,14 @@ class User extends React.Component {
       onCancel={this.onCancelClick}
       closable={false}
       >
-        <Input id='issuer' placeholder="Input New Attestation Agency Address" onChange={this.updateNewAAInfo}/>
+        <Form layout='vertical' style={{ margin: '30px 0' }}>
+          Address<br />
+          <Input id='issuer' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder="Input New Address" />
+          Title<br />
+          <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder='Input title' />
+          Explanation<br />
+          <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
+        </Form>
     </Modal>;
   }
 

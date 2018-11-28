@@ -4,7 +4,9 @@ import { Table, Input, Modal, Row, Col, Button, Select, Form, Tabs, Progress, me
 import { SendTransaction } from 'metasdk-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
+import Web3 from 'web3';
 import web3 from '../ethereum/web3';
+
 import { columns } from './columns';
 import * as util from '../util';
 
@@ -21,7 +23,7 @@ class Achievement extends React.Component {
     topics: [],
     originClaimTopics: [],
     initNewAchievementItem: { title: '', explanation: '', reward: '', reserve: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
-    inputValidData: [],
+    inputValidData: {},
     topicIssuerMap: [],
     panes: [],
     activeKey: '0',
@@ -205,6 +207,25 @@ class Achievement extends React.Component {
     this.setState({ qrVisible: true }, () => this.data.newAchievementItem = JSON.parse(JSON.stringify(this.data.initNewAchievementItem)));
   }
 
+  onCharge = (id, charge) => {
+    if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+      let web3 = new Web3(window.web3.currentProvider);
+      let { to, value, data } = this.props.contracts.achievementManager.updateAchievement(id, charge);
+      web3.eth.getAccounts((err, accounts) => {
+        if (err) return;
+        web3.eth.sendTransaction({
+          from: accounts[0],
+          to: to,
+          value: value,
+          data: data,
+        });
+      });
+    } else {
+      alert('METAMASK REQUIRED. Please install.');
+      window.open('https://metamask.io/', '_blank');
+    }
+  }
+
   getModalAchievementDetail(record, index) {
     Modal.info({
       width: '50%',
@@ -217,7 +238,7 @@ class Achievement extends React.Component {
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>
             Reward: {record.rewardMeta} / Reserved: {record.reservedMeta}&nbsp;&nbsp;
-            <Button onClick={() => message.info('Charge !!')}>charge</Button>
+            <Button onClick={() => this.onCharge(record.id, record.reward)}>charge</Button>
           </h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
             <CopyToClipboard text={record.creator}>

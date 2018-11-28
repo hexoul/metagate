@@ -16,7 +16,7 @@ class Topic extends React.Component {
     originItems: [],
     users: [],
     newTopicItem: { title: '', explanation: '' },
-    inputValidData: [],
+    inputValidData: {},
     loadedTopicCnt: 0,
     totalTopicCnt: 1,
   };
