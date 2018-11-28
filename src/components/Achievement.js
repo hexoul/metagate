@@ -215,7 +215,10 @@ class Achievement extends React.Component {
           <h5 style={{ marginBottom: '10px', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>ID: {record.id}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
-          <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward} / Reserved: {record.reserved}</h4><hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>
+            Reward: {record.rewardMeta} / Reserved: {record.reservedMeta}&nbsp;&nbsp;
+            <Button onClick={() => message.info('Charge !!')}>charge</Button>
+          </h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
             <CopyToClipboard text={record.creator}>
               <Button onClick={() => message.info('Copied !!')}>copy</Button>

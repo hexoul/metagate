@@ -42,8 +42,8 @@ function refine(m) {
     switch (key) {
       case 'title': m[key] = convertHexToString(m[key]); break;
       case 'explanation': m[key] = convertHexToString(m[key]); break;
-      case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
-      case 'reserved': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
+      case 'reward': m[key+'Meta'] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
+      case 'reserved': m[key+'Meta'] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
       case 'createdAt': m[key] = timeConverter(m[key]); break;
       default: if (! m[key]) m[key] = ''; break;
     }
