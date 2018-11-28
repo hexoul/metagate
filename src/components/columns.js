@@ -123,7 +123,7 @@ columns.achievementColumns = [
     title: 'Explanation',
     dataIndex: 'explanation',
     key: 'explanation',
-    width: '35%',
+    width: '25%',
     sorter: (a, b) => strSorter(a.explanation, b.explanation),
   },
   {
@@ -132,6 +132,13 @@ columns.achievementColumns = [
     key: 'reward',
     width: '10%',
     sorter: (a, b) => a.reward - b.reward,
+  },
+  {
+    title: 'Reserved',
+    dataIndex: 'reserved',
+    key: 'reserved',
+    width: '10%',
+    sorter: (a, b) => a.reserved - b.reserved,
   },
   {
     title: 'Registered on',
@@ -153,12 +160,18 @@ columns.achievementDetailColumns = [
     title: 'Title',
     dataIndex: 'title',
     key: 'title',
-    width: '20%',
+    width: '10%',
   },
   {
     title: 'Issuer',
     dataIndex: 'issuer',
     key: 'issuer',
+    width: '40%',
+  },
+  {
+    title: 'Want',
+    dataIndex: 'want',
+    key: 'want',
     width: '40%',
   },
 ];

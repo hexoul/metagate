@@ -43,6 +43,7 @@ function refine(m) {
       case 'title': m[key] = convertHexToString(m[key]); break;
       case 'explanation': m[key] = convertHexToString(m[key]); break;
       case 'reward': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
+      case 'reserved': m[key] = web3.utils.fromWei(m[key], 'ether') + 'META'; break;
       case 'createdAt': m[key] = timeConverter(m[key]); break;
       default: if (! m[key]) m[key] = ''; break;
     }
@@ -68,7 +69,7 @@ function validate(key, val) {
       if (isValidLength(val) > 32) return { b: false, err: 'Only 32 bytes allowed' }
       return { b: true }
     case 'reward':
-    case 'reserved':
+    case 'reserve':
       if (val < 5) return { b: false, err: key.toUpperCase() + ' should be greater than 5 META' }
       return { b: true }
     case 'issuer':
@@ -76,7 +77,7 @@ function validate(key, val) {
       return { b: true }
     case 'topics':
       if (! val || val.length === 0) return { b: false, err: 'Select at least 1 topic' }
-      else if (val.filter(e => e.title === '').length > 0) return { b: false, err: 'Duplicated topic' }
+      else if (val.filter(e => e.title === val).length > 0) return { b: false, err: 'Duplicated topic' }
       else if (val.filter(e => e.issuer === '').length > 0) return { b: false, err: 'Please fill up valid issuers' }
       return { b: true }
     default: return { b: false, err: 'Error encountered, please try again' }

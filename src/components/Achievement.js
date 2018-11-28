@@ -20,7 +20,7 @@ class Achievement extends React.Component {
     users: [],
     topics: [],
     originClaimTopics: [],
-    initNewAchievementItem: { title: '', explanation: '', reward: '', reserved: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
+    initNewAchievementItem: { title: '', explanation: '', reward: '', reserve: '', topics: [{ title: '', id: -1, issuer: '', key: '0' }] },
     inputValidData: [],
     topicIssuerMap: [],
     panes: [],
@@ -107,8 +107,15 @@ class Achievement extends React.Component {
   }
 
   async getAchievementFromMap(m) {
+    m.reserved = await this.props.contracts.achievementManager.getReserved(m.id);
     util.refine(m);
-    if (m.claimTopics) m.claimTopics = this.data.topics.filter(val => m.claimTopics.includes(val.id.toString()));
+    if (m.claimTopics) {
+      let wantToBeClaimed = {}
+      m.claimTopics.forEach((v, i) => { wantToBeClaimed[v] = m.issuers[i]; });
+      let supClaimTopics = this.data.topics.filter(val => m.claimTopics.includes(val.id.toString()));
+      supClaimTopics.forEach(topic => { topic['want'] = wantToBeClaimed[topic.id]; });
+      m.claimTopics = supClaimTopics;
+    }
     return m;
   }
 
@@ -125,7 +132,7 @@ class Achievement extends React.Component {
         this.data.newAchievementItem[e.target.id] = e.target.value;
         break;
       case 'reward':
-      case 'reserved':
+      case 'reserve':
         if (valid.b) this.data.newAchievementItem[e.target.id] = e.target.value; break;
       case 'issuer':
         if(! valid.b) break;
@@ -208,7 +215,7 @@ class Achievement extends React.Component {
           <h5 style={{ marginBottom: '10px', float: 'right' }}>Registered on: {record.createdAt}</h5><br />
           <h4 style={{ margin: '10px 0 0 0' }}>ID: {record.id}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
-          <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward}</h4> <hr />
+          <h4 style={{ margin: '10px 0 0 0' }}>Reward: {record.reward} / Reserved: {record.reserved}</h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
             <CopyToClipboard text={record.creator}>
               <Button onClick={() => message.info('Copied !!')}>copy</Button>
@@ -253,11 +260,6 @@ class Achievement extends React.Component {
     </Form.Item>
   }
 
-  moveToFAQ(faqTitle) {
-    this.setState({ addModalVisible: false });
-    this.props.moveToFAQ(faqTitle);
-  }
-
   getModalAddAchievement() {
     var request;
     if (this.state.qrVisible) {
@@ -268,7 +270,7 @@ class Achievement extends React.Component {
         Buffer.from(this.data.newAchievementItem.explanation),
         web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
         'uri');
-      request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reserved.toString(), 'ether'));
+      request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reserve.toString(), 'ether'));
     }
 
     return <Modal
@@ -294,6 +296,7 @@ class Achievement extends React.Component {
           />
           <h2 style={{ marginTop: '6%' }} >Title: {this.data.newAchievementItem.title}</h2>
           <h2>Reward: {this.data.newAchievementItem.reward} META</h2>
+          <h2>Reserve: {this.data.newAchievementItem.reserve} META</h2>
         </center></div>
         :
         <div>
@@ -315,12 +318,12 @@ class Achievement extends React.Component {
           </Row>
           <Row>
             <Col span={11} offset={13}>
-              Reserved<br />
+              Reserve<br />
               <Input
-                id='reserved'
+                id='reserve'
                 type='number'
                 onChange={this.updateNewAchieveInfo}
-                placeholder='Enter Reserved (min. 5)'
+                placeholder='Enter Reserve (min. 5)'
                 addonAfter='META'
               />
             </Col>
@@ -332,10 +335,15 @@ class Achievement extends React.Component {
             {this.getTopicTabs()}
           </Form>
           {/* eslint-disable-next-line */}
-          <a onClick={() => this.moveToFAQ('How do I add Achievement?')}>How do I add Achievement?</a>
+          <a onClick={() => this.moveToFAQ('How do I add an Achievement?')}>How do I add an Achievement?</a>
         </div>
         }
     </Modal>
+  }
+
+  moveToFAQ(faqTitle) {
+    this.setState({ addModalVisible: false });
+    this.props.moveToFAQ(faqTitle);
   }
 
   render() {

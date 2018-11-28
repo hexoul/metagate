@@ -185,7 +185,7 @@ class Topic extends React.Component {
               <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
             </Form>
             {/* eslint-disable-next-line */}
-            <a onClick={() => this.moveToFAQ('How do I add Topic?')}>How do I add Topic?</a>
+            <a onClick={() => this.moveToFAQ('How do I add a Topic?')}>How do I add a Topic?</a>
           </div>
         }
     </Modal>;
