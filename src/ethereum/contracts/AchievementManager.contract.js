@@ -8,11 +8,11 @@ var _ = require('underscore');
 class AchievementManager {
 
   async init() {
-    const { ACHIEVEMENT_MANAGER_ADDRESS } = getAddresses(web3config.netid);
+    this.addresses = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
 
     const achievementManagerAbi = await getABI(branch, 'AchievementManager');
-    this.achievementManagerInstance = new web3.eth.Contract(achievementManagerAbi.abi, ACHIEVEMENT_MANAGER_ADDRESS);
+    this.achievementManagerInstance = new web3.eth.Contract(achievementManagerAbi.abi, this.addresses.ACHIEVEMENT_MANAGER_ADDRESS);
   }
 
   async getAchievementById(achievementID) {
@@ -85,6 +85,40 @@ class AchievementManager {
 
     // Return transaction param
     return this.achievementManagerInstance.methods.createAchievement(topics, issuers, title, explanation, reward, uri).send.request();
+  }
+
+  /**
+   * 
+   * @param {bytes32} id
+   * @param {uint256} reward
+   */
+  updateAchievement(id, reward) {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.updateAchievement) return;
+
+    // Return transaction param
+    return {
+      to: this.addresses.ACHIEVEMENT_MANAGER_ADDRESS,
+      value: reward,
+      data: this.achievementManagerInstance.methods.updateAchievement(id, reward).encodeABI(),
+    };
+  }
+
+  /**
+   * 
+   * @param {bytes32} id 
+   * @param {uint256} reserve 
+   */
+  fundAchievement(id, reserve) {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.fundAchievement) return;
+
+    // Return transaction param
+    return {
+      to: this.addresses.ACHIEVEMENT_MANAGER_ADDRESS,
+      value: reserve,
+      data: this.achievementManagerInstance.methods.fundAchievement(id).encodeABI(),
+    };
   }
 }
 

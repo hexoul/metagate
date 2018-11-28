@@ -8,11 +8,11 @@ var _ = require('underscore');
 class AttestationAgencyRegistry {
 
   async init() {
-    const { ATTESTATION_AGENCY_REGISTRY_ADDRESS } = getAddresses(web3config.netid);
+    this.addresses = getAddresses(web3config.netid);
     const branch = getBranch(web3config.netid);
 
     const aaRegistryAbi = await getABI(branch, 'AttestationAgencyRegistry');
-    this.aaRegistryInstance = new web3.eth.Contract(aaRegistryAbi.abi, ATTESTATION_AGENCY_REGISTRY_ADDRESS);
+    this.aaRegistryInstance = new web3.eth.Contract(aaRegistryAbi.abi, this.addresses.ATTESTATION_AGENCY_REGISTRY_ADDRESS);
   }
 
   async isRegistered(addr) {
@@ -48,6 +48,23 @@ class AttestationAgencyRegistry {
       // Execute handler from getAttestationAgencySingle() when an AA was registered
       await this.getAttestationAgencySingle(idx).then(ret => handler(ret));
     })).then(() => cb());
+  }
+
+  /**
+   * 
+   * @param {address} addr 
+   * @param {bytes32} title 
+   * @param {bytes32} explanation 
+   */
+  async registerAttestationAgency(addr, title, explanation) {
+    // Validate ABI
+    if (! this.aaRegistryInstance.methods.registerAttestationAgency) return;
+
+    // Return transaction param
+    return {
+      to: this.addresses.ATTESTATION_AGENCY_REGISTRY_ADDRESS,
+      data: this.aaRegistryInstance.methods.registerAttestationAgency(addr, title, explanation).encodeABI()
+    };
   }
 }
 
