@@ -56,7 +56,7 @@ class AttestationAgencyRegistry {
    * @param {bytes32} title 
    * @param {bytes32} explanation 
    */
-  async registerAttestationAgency(addr, title, explanation) {
+  registerAttestationAgency(addr, title, explanation) {
     // Validate ABI
     if (! this.aaRegistryInstance.methods.registerAttestationAgency) return;
 

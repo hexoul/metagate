@@ -140,7 +140,8 @@ class User extends React.Component {
       let { to, data } = this.props.contracts.aaRegistry.registerAttestationAgency(
         this.data.newUserItem.issuer,
         Buffer.from(this.data.newUserItem.title),
-        Buffer.from(this.data.newUserItem.explanation));
+        Buffer.from(this.data.newUserItem.explanation)
+        );
       web3.eth.getAccounts((err, accounts) => {
         if (err) return;
         web3.eth.sendTransaction({
