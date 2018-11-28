@@ -23,6 +23,22 @@ class AchievementManager {
     return this.achievementManagerInstance.methods.getAchievementById(achievementID).call();
   }
 
+  async getReserved(achievementID) {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.balance) return;
+
+    // Call
+    return this.achievementManagerInstance.methods.balance(achievementID).call();
+  }
+
+  async getLengthOfAchievements() {
+    // Validate ABI
+    if (! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
+
+    // Call
+    return this.achievementManagerInstance.methods.getLengthOfAchievements().call();
+  }
+
   async getAllAchievements({handler, cb}) {
     if (! handler || ! cb) return;
 
@@ -36,14 +52,6 @@ class AchievementManager {
     Promise.all(achievementIDs.map(async (id) => {
       await this.getAchievementById(id).then(achievement => handler(achievement));
     })).then(() => cb());
-  }
-
-  async getLengthOfAchievements() {
-    // Validate ABI
-    if (! this.achievementManagerInstance.methods.getLengthOfAchievements) return;
-
-    // Call
-    return this.achievementManagerInstance.methods.getLengthOfAchievements().call();
   }
 
   async getAllAchievementsByLength({handler, cb}) {
