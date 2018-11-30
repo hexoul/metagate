@@ -1,5 +1,5 @@
 # Gateway
-To enter by registering topic and achievement.
+Entrypoint to use ERC721, 725, 735 by registering identity, topic and achievement.
 
 ## Web3
 
