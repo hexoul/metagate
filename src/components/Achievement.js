@@ -210,7 +210,7 @@ class Achievement extends React.Component {
   onCharge = (id, charge) => {
     if(typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
       let web3 = new Web3(window.web3.currentProvider);
-      let { to, value, data } = this.props.contracts.achievementManager.updateAchievement(id, charge);
+      let { to, value, data } = this.props.contracts.achievementManager.fundAchievement(id, charge);
       web3.eth.getAccounts((err, accounts) => {
         if (err) return;
         web3.eth.sendTransaction({
@@ -238,7 +238,7 @@ class Achievement extends React.Component {
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>
             Reward: {record.rewardMeta} / Reserved: {record.reservedMeta}&nbsp;&nbsp;
-            <Button onClick={() => this.onCharge(record.id, record.reward)}>charge</Button>
+            <Button onClick={() => this.onCharge(record.id, web3.utils.toWei('10','ether'))}>charge 10 META</Button>
           </h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
             <CopyToClipboard text={record.creator}>
