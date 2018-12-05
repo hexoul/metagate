@@ -159,7 +159,7 @@ class Topic extends React.Component {
             <h1>Scan QR Code to Add New Topic</h1>
             <SendTransaction
               id='sendTransaction'
-              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation))}
+              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation)).request}
               usage='registerTopic'
               service='metagate'
               callbackUrl='none'

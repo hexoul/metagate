@@ -293,7 +293,7 @@ class Achievement extends React.Component {
         Buffer.from(this.data.newAchievementItem.title),
         Buffer.from(this.data.newAchievementItem.explanation),
         web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
-        'uri');
+        'uri').request;
       request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reserve.toString(), 'ether'));
     }
 

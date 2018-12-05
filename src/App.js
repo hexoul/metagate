@@ -6,10 +6,11 @@ import { User, Topic, Achievement, FAQ, Splash } from './components';
 import './App.css';
 
 // Web3.
+import web3 from './ethereum/web3';
 import web3config from './ethereum/web3-config.json';
 
 // Contracts.
-import { getContractsAddresses, Identity, IdentityManager, TopicRegistry, AchievementManager, AttestationAgencyRegistry } from './ethereum/contracts';
+import { contracts, initContracts } from 'meta-web3';
 
 class App extends React.Component {
 
@@ -18,20 +19,14 @@ class App extends React.Component {
     contractReady: false,
   };
 
-  contracts = {
-    identity: new Identity(),
-    identityManager: new IdentityManager(),
-    topicRegistry: new TopicRegistry(),
-    achievementManager: new AchievementManager(),
-    aaRegistry: new AttestationAgencyRegistry(),
-  };
-
   data = { faqTitle: '', }
 
   async initContracts() {
-    await getContractsAddresses(web3config.netid);
-    Promise.all(Object.values(this.contracts).map(async (contract) => { await contract.init() }))
-      .then(() => this.setState({ contractReady: true }));
+    initContracts({
+      web3: web3,
+      netid: web3config.netid,
+      identity: web3config.identity,
+    }).then(async () => this.setState({ contractReady: true }));
   }
 
   constructor(props) {
@@ -58,9 +53,9 @@ class App extends React.Component {
   getContent() {
     if (! this.state.contractReady) return;
     switch (this.state.nav) {
-      case '1': return <User contracts={this.contracts} />;
-      case '2': return <Topic contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
-      case '3': return <Achievement contracts={this.contracts} moveToFAQ={this.moveToFAQ} />;
+      case '1': return <User contracts={contracts} />;
+      case '2': return <Topic contracts={contracts} moveToFAQ={this.moveToFAQ} />;
+      case '3': return <Achievement contracts={contracts} moveToFAQ={this.moveToFAQ} />;
       case 'splash': return <Splash moveToFAQ={this.moveToFAQ}/>;
       case 'faq': return <FAQ faqTitle={this.data.faqTitle}/>;
       default: return;

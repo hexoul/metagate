@@ -12,7 +12,6 @@ var tableColumns = columns.userColumns;
 const userTopicDetailColumns = columns.userTopicDetailColumns;
 const userAchieveDetailColumns = columns.userAchieveDetailColumns
 
-
 class User extends React.Component {
 
   data = {
