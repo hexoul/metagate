@@ -40,7 +40,7 @@ function sign(msg) {
   const hash = ethUtil.hashPersonalMessage(new Buffer(msg, 'hex'));
   return ethUtil.ecsign(hash, privateKey, web3.version.network);
 }
-  
+
 function signTx(txData) {
   const transaction = new Tx(txData);
   transaction.sign(privateKey);
