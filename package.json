@@ -21,7 +21,7 @@
     "start": "PORT=3002 react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "standard --parser babel-eslint",
-    "fix": "standard --fix",
+    "fix": "standard --parser babel-eslint --fix",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
