@@ -1,68 +1,67 @@
-import React from 'react';
-import { Layout, Menu, message } from 'antd';
-import { User, Topic, Achievement, FAQ, Splash } from './components';
+import React from 'react'
+import { Layout, Menu, message } from 'antd'
+import { User, Topic, Achievement, FAQ, Splash } from './components'
 
 // Styles.
-import './App.css';
+import './App.css'
 
 // Web3.
-import web3 from './ethereum/web3';
-import web3config from './ethereum/web3-config.json';
+import web3 from './ethereum/web3'
+import web3config from './ethereum/web3-config.json'
 
 // Contracts.
-import { contracts, initContracts } from 'meta-web3';
+import { contracts, initContracts } from 'meta-web3'
 
 class App extends React.Component {
-
   state = {
     nav: 'splash',
-    contractReady: false,
+    contractReady: false
   };
 
-  data = { faqTitle: '', }
+  data = { faqTitle: '' }
 
-  async initContracts() {
+  async initContracts () {
     initContracts({
       web3: web3,
       netid: web3config.netid,
-      identity: web3config.identity,
-    }).then(async () => this.setState({ contractReady: true }));
+      identity: web3config.identity
+    }).then(async () => this.setState({ contractReady: true }))
   }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
 
     message.config({
       top: 30,
       duration: 2,
-      maxCount: 6,
-    });
+      maxCount: 6
+    })
 
-    this.initContracts();
+    this.initContracts()
   }
 
   onMenuClick = ({ key }) => {
-    this.setState({ nav: key });
+    this.setState({ nav: key })
   }
 
   moveToFAQ = (faqTitle) => {
-    this.data.faqTitle = faqTitle;
-    this.setState({ nav: 'faq' });
+    this.data.faqTitle = faqTitle
+    this.setState({ nav: 'faq' })
   };
 
-  getContent() {
-    if (! this.state.contractReady) return;
+  getContent () {
+    if (!this.state.contractReady) return
     switch (this.state.nav) {
-      case '1': return <User contracts={contracts} />;
-      case '2': return <Topic contracts={contracts} moveToFAQ={this.moveToFAQ} />;
-      case '3': return <Achievement contracts={contracts} moveToFAQ={this.moveToFAQ} />;
-      case 'splash': return <Splash moveToFAQ={this.moveToFAQ}/>;
-      case 'faq': return <FAQ faqTitle={this.data.faqTitle}/>;
-      default: return;
+      case '1': return <User contracts={contracts} />
+      case '2': return <Topic contracts={contracts} moveToFAQ={this.moveToFAQ} />
+      case '3': return <Achievement contracts={contracts} moveToFAQ={this.moveToFAQ} />
+      case 'splash': return <Splash moveToFAQ={this.moveToFAQ} />
+      case 'faq': return <FAQ faqTitle={this.data.faqTitle} />
+      default:
     }
   }
 
-  render() {
+  render () {
     return (
       <Layout className='layout'>
         <Layout.Header>
@@ -91,7 +90,7 @@ class App extends React.Component {
         </Layout.Content>
         <Layout.Footer>
           <div style={{ textAlign: 'right' }}>
-            <b onClick={() => { this.data.faqTitle = ''; this.setState({ nav: 'faq' }); }}>FAQ</b>
+            <b onClick={() => { this.data.faqTitle = ''; this.setState({ nav: 'faq' }) }}>FAQ</b>
             &nbsp;| Customer service :&nbsp;
             <a href='mailto:contact@metadium.com' target='_blank' rel='noopener noreferrer'>contact@metadium.com</a>
           </div>
@@ -99,8 +98,8 @@ class App extends React.Component {
           <center>metagate ©2018 Created by hexoul</center>
         </Layout.Footer>
       </Layout>
-    );
+    )
   }
 }
 
-export default App;
+export default App

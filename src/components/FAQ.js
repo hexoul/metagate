@@ -1,61 +1,60 @@
-import React from 'react';
-import { Input } from 'antd';
-import Collapsible from 'react-collapsible';
-import { getGithubContents } from '../util';
+import React from 'react'
+import { Input } from 'antd'
+import Collapsible from 'react-collapsible'
+import { getGithubContents } from '../util'
 import styles from '../components/style/style.css'
 
 class FAQ extends React.Component {
-
   data = {
     items: [],
     originItems: [],
-    faqTitle: '',
+    faqTitle: ''
   };
 
   state = {
-    didSearch : false,
-    initContents: false,
+    didSearch: false,
+    initContents: false
   };
 
-  constructor(props) {
-    super(props);
-    this.data.faqTitle = this.props.faqTitle;
-    this.initFaqData();
+  constructor (props) {
+    super(props)
+    this.data.faqTitle = this.props.faqTitle
+    this.initFaqData()
   }
 
-  async initFaqData() {
-    this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json');
-    for (var i=0; i < this.faqContents.length; i++) {
-      let open = false;
-      if (this.data.faqTitle === this.faqContents[i].title) open = true;
-      this.data.originItems.push(this.getCollapsibleComp(open, this.faqContents[i].title, i, i, this.faqContents[i].content));
+  async initFaqData () {
+    this.faqContents = await getGithubContents('JeongGoEun', 'metagate_faq', 'master', 'FaqContents.json')
+    for (var i = 0; i < this.faqContents.length; i++) {
+      let open = false
+      if (this.data.faqTitle === this.faqContents[i].title) open = true
+      this.data.originItems.push(this.getCollapsibleComp(open, this.faqContents[i].title, i, i, this.faqContents[i].content))
     }
-    this.getFaqOriginData();
+    this.getFaqOriginData()
   }
 
   getCollapsibleComp = (open, trigger, tabIndex, key, content) => {
-    return <Collapsible className={styles.Collapsible} transitionTime={200} open={open} trigger={trigger} tabIndex={tabIndex} key={key}><div dangerouslySetInnerHTML={{__html: content}} /></Collapsible>;
+    return <Collapsible className={styles.Collapsible} transitionTime={200} open={open} trigger={trigger} tabIndex={tabIndex} key={key}><div dangerouslySetInnerHTML={{ __html: content }} /></Collapsible>
   }
 
-  getFaqOriginData = () => { 
-    this.data.items = this.data.originItems; this.setState({ initContents: true });
+  getFaqOriginData = () => {
+    this.data.items = this.data.originItems; this.setState({ initContents: true })
   }
 
-  onSearch(value) {
-    var regex = new RegExp(value, 'i');
-    if (! value) this.getFaqOriginData();
+  onSearch (value) {
+    var regex = new RegExp(value, 'i')
+    if (!value) this.getFaqOriginData()
     else {
-      var searchedData = [];
+      var searchedData = []
       this.faqContents.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
-        .forEach(ret => searchedData.push(<Collapsible trigger={ret.title} tabIndex={ret.tabIndex} key={ret.title}>{ret.content}</Collapsible>));
-      this.data.items = searchedData;
+        .forEach(ret => searchedData.push(<Collapsible trigger={ret.title} tabIndex={ret.tabIndex} key={ret.title}>{ret.content}</Collapsible>))
+      this.data.items = searchedData
     }
-    this.setState({ didSearch: true });
+    this.setState({ didSearch: true })
   }
 
   onSearchInputChange = (e) => this.onSearch(e.target.value);
 
-  render() {
+  render () {
     return (
       <div>
         <h1><b>FAQ</b></h1><br />
@@ -67,11 +66,11 @@ class FAQ extends React.Component {
           style={{ width: '80%', marginBottom: '20px' }}
         />
         <div style={{ marginBottom: '20px' }}>
-         {this.data.items}  
+          {this.data.items}
         </div>
       </div>
-    );
+    )
   }
 }
 
-export {FAQ}
+export { FAQ }

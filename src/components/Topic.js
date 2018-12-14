@@ -1,16 +1,15 @@
-import React from 'react';
-import ReactLoading from 'react-loading';
-import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd';
-import { SendTransaction } from 'metasdk-react';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
+import React from 'react'
+import ReactLoading from 'react-loading'
+import { Table, Input, Modal, Button, Radio, Form, Row, Col, Progress, message } from 'antd'
+import { SendTransaction } from 'metasdk-react'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
-import { columns } from './columns';
-import * as util from '../util';
+import { columns } from './columns'
+import * as util from '../util'
 
-const tableColumns = columns.topicColumns;
+const tableColumns = columns.topicColumns
 
 class Topic extends React.Component {
-
   data = {
     items: [],
     originItems: [],
@@ -18,7 +17,7 @@ class Topic extends React.Component {
     newTopicItem: { title: '', explanation: '' },
     inputValidData: {},
     loadedTopicCnt: 0,
-    totalTopicCnt: 1,
+    totalTopicCnt: 1
   };
 
   state = {
@@ -27,98 +26,99 @@ class Topic extends React.Component {
     getTopicInfo: false,
     didSort: false,
     didSearch: false,
-    loading: false,
+    loading: false
   };
 
-  componentWillMount() {
-    if (this.data.users.length > 0) return;
+  componentWillMount () {
+    if (this.data.users.length > 0) return
 
-    let users = util.getUsersFromLocal();
+    let users = util.getUsersFromLocal()
 
-    if (users) { this.data.users = users; this.topicDynamicLoading(); }
-    else this.props.contracts.aaRegistry.getAllAttestationAgencies({
-      handler: ret => { if (ret) this.data.users = [...this.data.users, util.refine(ret)] },
-      cb: () => { util.setUsersToLocal(this.data.users); this.topicDynamicLoading(); }
-    });
+    if (users) { this.data.users = users; this.topicDynamicLoading() } else {
+      this.props.contracts.aaRegistry.getAllAttestationAgencies({
+        handler: ret => { if (ret) this.data.users = [...this.data.users, util.refine(ret)] },
+        cb: () => { util.setUsersToLocal(this.data.users); this.topicDynamicLoading() }
+      })
+    }
   }
 
-  async topicDynamicLoading() {
-    this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal();
+  async topicDynamicLoading () {
+    this.data.totalTopicCnt = await this.props.contracts.topicRegistry.getTotal()
     this.props.contracts.topicRegistry.getAllTopic({
       handler: ret => this.addTopic(ret),
       cb: () => {
-        this.data.loadedTopicCnt = this.data.totalTopicCnt;
+        this.data.loadedTopicCnt = this.data.totalTopicCnt
         this.data.originItems.sort((a, b) => {
-          if (a.id > b.id) return 1;
-          else if (a.id < b.id) return -1;
-          return 0;
-        });
-        util.setTopicsToLocal(this.data.originItems);
-        this.setState({ loading: true });
+          if (a.id > b.id) return 1
+          else if (a.id < b.id) return -1
+          return 0
+        })
+        util.setTopicsToLocal(this.data.originItems)
+        this.setState({ loading: true })
       }
-    });
+    })
   }
 
   addTopic = async (ret) => {
-    ++this.data.loadedTopicCnt;
-    if (! ret) return;
-    let user = this.data.users.filter(m => m.addr === ret.issuer);
-    if (user) ret.issuerTitle = user[0].title;
-    else ret.issuerTitle = ret.issuer;
-    this.data.items = [...this.data.items, util.refine(ret)];
-    this.data.originItems = this.data.items;
-    this.setState({ getTopicInfo: true });
+    ++this.data.loadedTopicCnt
+    if (!ret) return
+    let user = this.data.users.filter(m => m.addr === ret.issuer)
+    if (user) ret.issuerTitle = user[0].title
+    else ret.issuerTitle = ret.issuer
+    this.data.items = [...this.data.items, util.refine(ret)]
+    this.data.originItems = this.data.items
+    this.setState({ getTopicInfo: true })
   }
 
   handleSorting = (e) => {
     switch (e.target.value) {
-      case 'All': this.data.items = this.data.originItems; break;
-      case 'Pre-fixed': this.data.items = this.data.originItems.filter(m => m.id < 1025); break;
-      case 'Added': this.data.items = this.data.originItems.filter(m => m.id >= 1024); break;
-      default: break;
+      case 'All': this.data.items = this.data.originItems; break
+      case 'Pre-fixed': this.data.items = this.data.originItems.filter(m => m.id < 1025); break
+      case 'Added': this.data.items = this.data.originItems.filter(m => m.id >= 1024); break
+      default: break
     }
-    this.setState({ didSort: true });
+    this.setState({ didSort: true })
   }
 
   updateNewTopicInfo = (e) => {
-    let valid = util.validate(e.target.id, e.target.value);
-    if (valid.b) e.target.style.borderColor = util.borderColor.valid;
-    else e.target.style.borderColor = util.borderColor.invalid;
+    let valid = util.validate(e.target.id, e.target.value)
+    if (valid.b) e.target.style.borderColor = util.borderColor.valid
+    else e.target.style.borderColor = util.borderColor.invalid
 
     switch (e.target.id) {
       case 'title':
       case 'explanation':
-        if (! valid.b && e.target.value) e.target.value = this.data.inputValidData[e.target.id];
-        this.data.inputValidData[e.target.id] = e.target.value;
-        this.data.newTopicItem[e.target.id] = e.target.value;
-        break;
-      default: break;
+        if (!valid.b && e.target.value) e.target.value = this.data.inputValidData[e.target.id]
+        this.data.inputValidData[e.target.id] = e.target.value
+        this.data.newTopicItem[e.target.id] = e.target.value
+        break
+      default: break
     }
   }
 
-  onSearch(value) {
-    var regex = new RegExp(value, 'i');
-    if (! value) this.data.items = this.data.originItems;
-    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0);
-    this.setState({ didSearch: true });
+  onSearch (value) {
+    var regex = new RegExp(value, 'i')
+    if (!value) this.data.items = this.data.originItems
+    else this.data.items = this.data.originItems.filter(element => Object.values(element).filter(val => val.toString().match(regex)).length > 0)
+    this.setState({ didSearch: true })
   }
 
   onAddClick = () => {
-    var formCheck = true;
+    var formCheck = true
     Object.keys(this.data.newTopicItem).map(async (key) => {
-      let valid = util.validate(key, this.data.newTopicItem[key]);
-      if (! valid.b) { message.error(valid.err); formCheck = false; }
-    });
-    if (! formCheck) return;
-    this.setState({ qrVisible: true });
+      let valid = util.validate(key, this.data.newTopicItem[key])
+      if (!valid.b) { message.error(valid.err); formCheck = false }
+    })
+    if (!formCheck) return
+    this.setState({ qrVisible: true })
   }
 
   onCancelClick = () => {
-    this.data.newTopicItem = { title: '', explanation: '' };
-    this.setState({ addModalVisible: false, qrVisible: false });
+    this.data.newTopicItem = { title: '', explanation: '' }
+    this.setState({ addModalVisible: false, qrVisible: false })
   }
 
-  getModalTopicDetail(record) {
+  getModalTopicDetail (record) {
     Modal.info({
       width: '40%',
       maskClosable: true,
@@ -134,16 +134,16 @@ class Topic extends React.Component {
           </h4><hr />
         </div>
       ),
-      onOk() {}
-    });
+      onOk () {}
+    })
   }
 
-  moveToFAQ(faqTitle) {
-    this.setState({ addModalVisible: false });
-    this.props.moveToFAQ(faqTitle);
+  moveToFAQ (faqTitle) {
+    this.setState({ addModalVisible: false })
+    this.props.moveToFAQ(faqTitle)
   }
 
-  getModalAddTopic() {
+  getModalAddTopic () {
     return <Modal
       width='40%'
       title='Add New Topic'
@@ -153,45 +153,44 @@ class Topic extends React.Component {
       onOk={this.onAddClick}
       onCancel={this.onCancelClick}
       closable={false}
-      >
-        {this.state.qrVisible ?
-          <div><center>
-            <h1>Scan QR Code to Add New Topic</h1>
-            <SendTransaction
-              id='sendTransaction'
-              request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation)).request}
-              usage='registerTopic'
-              service='metagate'
-              callbackUrl='none'
-              qrsize={256}
-            />
-            <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
-          </center></div>
-          :
-          <div>
-            <Row>
-              <Col span={12}>
+    >
+      {this.state.qrVisible
+        ? <div><center>
+          <h1>Scan QR Code to Add New Topic</h1>
+          <SendTransaction
+            id='sendTransaction'
+            request={this.props.contracts.topicRegistry.registerTopic(Buffer.from(this.data.newTopicItem.title), Buffer.from(this.data.newTopicItem.explanation)).request}
+            usage='registerTopic'
+            service='metagate'
+            callbackUrl='none'
+            qrsize={256}
+          />
+          <h2 style={{ marginTop: '6%' }} >Title: {this.data.newTopicItem.title}</h2>
+        </center></div>
+        : <div>
+          <Row>
+            <Col span={12}>
                 Title<br />
-                <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Input Title' />
-              </Col>
-              <Col span={11} offset={1}>
+              <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Input Title' />
+            </Col>
+            <Col span={11} offset={1}>
                 No.<br />
-                <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled={true} />
-              </Col>
-            </Row>
-            <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
-            <Form layout='vertical' style={{ margin: '30px 0' }}>
+              <Input id='topic' onChange={this.updateNewTopicInfo} placeholder='Input Topic ID' disabled />
+            </Col>
+          </Row>
+          <p style={{ float: 'right', color: 'red' }}>* No. in user / choose different No</p>
+          <Form layout='vertical' style={{ margin: '30px 0' }}>
               Explanation<br />
-              <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
-            </Form>
-            {/* eslint-disable-next-line */}
+            <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewTopicInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
+          </Form>
+          {/* eslint-disable-next-line */}
             <a onClick={() => this.moveToFAQ('How do I add a Topic?')}>How do I add a Topic?</a>
-          </div>
-        }
-    </Modal>;
+        </div>
+      }
+    </Modal>
   }
 
-  render() {
+  render () {
     return (
       <div>
         <div>
@@ -215,22 +214,21 @@ class Topic extends React.Component {
           <Radio.Button value='Added'>Added</Radio.Button>
         </Radio.Group>
         <br />
-        <Progress type='line' percent={ +Number(this.data.loadedTopicCnt / this.data.totalTopicCnt * 100).toFixed(2) } /><br /><br />
-        {this.state.loading ? 
-          <Table
+        <Progress type='line' percent={+Number(this.data.loadedTopicCnt / this.data.totalTopicCnt * 100).toFixed(2)} /><br /><br />
+        {this.state.loading
+          ? <Table
             rowKey='id'
-            locale={{emptyText: 'Load data'}}
+            locale={{ emptyText: 'Load data' }}
             onRow={(record, index) => ({ onClick: () => this.getModalTopicDetail(record) })}
             columns={tableColumns}
             dataSource={this.data.items}
           />
-          :
-          <center><ReactLoading type='spin' color='#1DA57A' height='20vh' width='20vw' /></center>
+          : <center><ReactLoading type='spin' color='#1DA57A' height='20vh' width='20vw' /></center>
         }
         {this.getModalAddTopic()}
       </div>
-    );
+    )
   }
 }
 
-export {Topic}
+export { Topic }
