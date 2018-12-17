@@ -1,5 +1,9 @@
 # Gateway
-Entrypoint to use ERC721, 725, 735 by registering identity, topic and achievement.
+
+[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hexoul/metagate/master/LICENSE)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+> Entrypoint to use ERC721, 725, 735 by registering identity, topic and achievement.
 
 ## Web3
 
