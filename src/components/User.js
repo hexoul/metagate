@@ -22,7 +22,7 @@ class User extends React.Component {
     totalUserCnt: 1,
     newUserItem: { issuer: '', title: '', explanation: '' },
     inputValidData: {}
-  };
+  }
 
   state = {
     items: [],
@@ -32,7 +32,7 @@ class User extends React.Component {
     addModalVisible: false,
     didSearch: false,
     loading: false
-  };
+  }
 
   constructor (props) {
     super(props)

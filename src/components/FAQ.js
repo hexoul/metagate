@@ -9,12 +9,12 @@ class FAQ extends React.Component {
     items: [],
     originItems: [],
     faqTitle: ''
-  };
+  }
 
   state = {
     didSearch: false,
     initContents: false
-  };
+  }
 
   constructor (props) {
     super(props)

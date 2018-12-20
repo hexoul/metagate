@@ -29,7 +29,7 @@ class Achievement extends React.Component {
     tabIndex: 1,
     loadedAchieveCnt: 0,
     totalAchieveCnt: 1
-  };
+  }
 
   state = {
     addModalVisible: false,
@@ -39,7 +39,7 @@ class Achievement extends React.Component {
     loading: false,
     getTopicInfo: false,
     getAchievementInfo: false
-  };
+  }
 
   constructor (props) {
     super(props)

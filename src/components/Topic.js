@@ -18,7 +18,7 @@ class Topic extends React.Component {
     inputValidData: {},
     loadedTopicCnt: 0,
     totalTopicCnt: 1
-  };
+  }
 
   state = {
     addModalVisible: false,
@@ -27,7 +27,7 @@ class Topic extends React.Component {
     didSort: false,
     didSearch: false,
     loading: false
-  };
+  }
 
   componentWillMount () {
     if (this.data.users.length > 0) return
