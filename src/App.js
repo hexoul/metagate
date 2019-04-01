@@ -23,7 +23,7 @@ class App extends React.Component {
   async initContracts () {
     initContracts({
       web3: web3,
-      netid: web3config.netid,
+      branch: web3config.netid,
       identity: web3config.identity
     }).then(async () => this.setState({ contractReady: true }))
   }
