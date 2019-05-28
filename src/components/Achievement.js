@@ -243,7 +243,7 @@ class Achievement extends React.Component {
           <h4 style={{ margin: '10px 0 0 0' }}>Explanation: {record.explanation}</h4><hr />
           <h4 style={{ margin: '10px 0 0 0' }}>
             Reward: {record.rewardMeta} / Reserved: {record.reservedMeta}&nbsp;&nbsp;
-            <Button onClick={() => this.onCharge(record.id, web3.utils.toWei('10', 'ether'))}>charge 10 META</Button>
+            <Button onClick={() => this.onCharge(record.id, '10')}>charge 10 META</Button>
           </h4><hr />
           <h4 style={{ margin: '10px 0' }}>Creator: {record.creatorTitle} / {record.creator}&nbsp;&nbsp;
             <CopyToClipboard text={record.creator}>
@@ -295,8 +295,8 @@ class Achievement extends React.Component {
       request = this.props.contracts.achievementManager.createAchievement(
         this.data.newAchievementItem.topics.map(val => val.id),
         this.data.newAchievementItem.topics.map(val => val.issuer),
-        Buffer.from(this.data.newAchievementItem.title),
-        Buffer.from(this.data.newAchievementItem.explanation),
+        web3.utils.asciiToHex(this.data.newAchievementItem.title),
+        web3.utils.asciiToHex(this.data.newAchievementItem.explanation),
         web3.utils.toWei(this.data.newAchievementItem.reward.toString(), 'ether'),
         'uri').request
       request.params[0].value = web3.utils.toHex(web3.utils.toWei(this.data.newAchievementItem.reserve.toString(), 'ether'))

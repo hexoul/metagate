@@ -141,8 +141,8 @@ class User extends React.Component {
       let web3 = new Web3(window.web3.currentProvider)
       let { to, data } = this.props.contracts.aaRegistry.registerAttestationAgency(
         this.data.newUserItem.issuer,
-        Buffer.from(this.data.newUserItem.title),
-        Buffer.from(this.data.newUserItem.explanation)
+        web3.utils.asciiToHex(this.data.newUserItem.title),
+        web3.utils.asciiToHex(this.data.newUserItem.explanation)
       )
       web3.eth.getAccounts((err, accounts) => {
         if (err) return
@@ -216,12 +216,27 @@ class User extends React.Component {
       closable={false}
     >
       <Form layout='vertical' style={{ margin: '30px 0' }}>
-          Address<br />
-        <Input id='issuer' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder='Input New Address' />
-          Title<br />
-        <Input id='title' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder='Input title' />
-          Explanation<br />
-        <Input id='explanation' style={{ borderColor: 'red' }} onChange={this.updateNewAAInfo} placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)' />
+        Address<br />
+        <Input
+          id='issuer'
+          style={{ borderColor: 'red' }}
+          onChange={this.updateNewAAInfo}
+          placeholder='Input New Address'
+        />
+        Title<br />
+        <Input
+          id='title'
+          style={{ borderColor: 'red' }}
+          onChange={this.updateNewAAInfo}
+          placeholder='Input title'
+        />
+        Explanation<br />
+        <Input
+          id='explanation'
+          style={{ borderColor: 'red' }}
+          onChange={this.updateNewAAInfo}
+          placeholder='Enter Explanation(max. 32 bytes) / (ex. SNS Service - Account ID)'
+        />
       </Form>
     </Modal>
   }
